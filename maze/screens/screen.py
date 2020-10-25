@@ -8,5 +8,5 @@ class Screen:
     def update(self):
         pass
 
-    def render(self):
+    def render(self, surface):
         pass

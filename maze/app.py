@@ -6,12 +6,13 @@ class App:
     def __init__(self):
         self.running = True
         self.surface = None
-        self.current_screen = MenuScreen(self)
+        self.current_screen = None
         self.next_screen = None
 
     def run(self):
         pygame.init()
         self.surface = pygame.display.set_mode((800, 600))
+        self.current_screen = MenuScreen(self)
 
         while self.running:
             for event in pygame.event.get():
@@ -23,7 +24,7 @@ class App:
             self.current_screen.update()
 
             self.surface.fill((0, 0, 0))
-            self.current_screen.render()
+            self.current_screen.render(self.surface)
             pygame.display.flip()
 
             self.process_screen_change()
