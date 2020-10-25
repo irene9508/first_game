@@ -1,4 +1,4 @@
 venv/
 .idea/
 maze/__pycache__/
- maze/screens/__pycache__/
+maze/screens/__pycache__/
