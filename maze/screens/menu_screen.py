@@ -1,4 +1,5 @@
 from maze.screens.screen import Screen
+from maze.screens import game_screen
 import pygame
 
 
@@ -21,15 +22,19 @@ class MenuScreen(Screen):
         self.menu = self.menu_size.render(self.text, True, self.letter)
 
     def process_event(self, event):
-        pass
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                self.app.running = False
+            if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
+                self.app.set_screen(game_screen.GameScreen(self.app))
 
     def update(self):
-        print("menu screen update")
+        pass
 
     def render(self, surface):
         surface.blit(self.background, [0, 0])
 
-        surface.blit(self.title_shadow, (27, 450))  # l/r, u/d
+        surface.blit(self.title_shadow, (27, 450))  # (horizontal, vertical)
         surface.blit(self.title, (25, 450))
 
         surface.blit(self.menu_shadow, (502, 530))
