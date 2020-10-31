@@ -6,16 +6,16 @@ import pygame
 class MenuScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
-        self.background = pygame.image.load("data/images/background2.jpg")
+        self.background = pygame.image.load("data/images/background.jpg")
         self.letter = (255, 255, 255)
         self.shadow = (0, 0, 0)
 
-        self.title_font = 'data/fonts/font1.ttf'
+        self.title_font = 'data/fonts/font2.ttf'
         self.title_size = pygame.font.Font(self.title_font, 120)
         self.title_shadow = self.title_size.render('MAZE', True, self.shadow)
         self.title = self.title_size.render('MAZE', True, self.letter)
 
-        self.menu_font = 'data/fonts/font1.ttf'
+        self.menu_font = 'data/fonts/font2.ttf'
         self.text = 'Press Enter to Start'
         self.menu_size = pygame.font.Font(self.menu_font, 32)
         self.menu_shadow = self.menu_size.render(self.text, True, self.shadow)
@@ -37,5 +37,5 @@ class MenuScreen(Screen):
         surface.blit(self.title_shadow, (27, 450))  # (horizontal, vertical)
         surface.blit(self.title, (25, 450))
 
-        surface.blit(self.menu_shadow, (502, 530))
-        surface.blit(self.menu, (500, 530))
+        surface.blit(self.menu_shadow, (202, 540))
+        surface.blit(self.menu, (200, 540))

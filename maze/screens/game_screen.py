@@ -9,7 +9,8 @@ class GameScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
         self.game = Game()
-        self.game.add_entity(CharacterEntity(self.game))
+        self.character = CharacterEntity(self.game)
+        self.game.add_entity(self.character)
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
