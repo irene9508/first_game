@@ -11,7 +11,7 @@ class GameScreen(Screen):
         self.game = Game()
         self.character = CharacterEntity(self.game)
         self.game.add_entity(self.character)
-        self.delta_time = None
+        self.background = pygame.image.load("data/images/background.jpg")
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -19,8 +19,8 @@ class GameScreen(Screen):
                 self.app.set_screen(menu_screen.MenuScreen(self.app))
 
     def update(self, delta_time):
-        self.delta_time = delta_time
         self.game.update(delta_time)
 
     def render(self, surface):
+        surface.blit(self.background, [0, 0])
         self.game.render(surface)

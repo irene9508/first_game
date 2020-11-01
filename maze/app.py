@@ -8,7 +8,7 @@ class App:
         self.surface = None
         self.current_screen = None
         self.next_screen = None
-        self.delta_time = None
+        self.delta_time = 0
 
     def run(self):
         pygame.init()
