@@ -1,8 +1,8 @@
 
 class Entity:
     def __init__(self, game):
-        self.x = 400
-        self.y = 400
+        self.x = 0
+        self.y = 0
         self.rotation = 0.0
         self.game = game
         self.marked_for_destroy = False
@@ -10,7 +10,7 @@ class Entity:
     def destroy(self):
         pass
 
-    def update(self):
+    def update(self, delta_time):
         pass
 
     def render(self, surface):

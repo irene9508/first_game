@@ -3,9 +3,9 @@ class Game:
         self.entities = []
         self.entity_queue = []
 
-    def update(self):
+    def update(self, delta_time):
         for entity in self.entities:
-            entity.update()
+            entity.update(delta_time)
         self.initialize_entities()
 
     def render(self, surface):

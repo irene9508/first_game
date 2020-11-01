@@ -11,14 +11,16 @@ class GameScreen(Screen):
         self.game = Game()
         self.character = CharacterEntity(self.game)
         self.game.add_entity(self.character)
+        self.delta_time = None
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.app.set_screen(menu_screen.MenuScreen(self.app))
 
-    def update(self):
-        self.game.update()
+    def update(self, delta_time):
+        self.delta_time = delta_time
+        self.game.update(delta_time)
 
     def render(self, surface):
         self.game.render(surface)

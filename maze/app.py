@@ -8,11 +8,13 @@ class App:
         self.surface = None
         self.current_screen = None
         self.next_screen = None
+        self.delta_time = None
 
     def run(self):
         pygame.init()
         self.surface = pygame.display.set_mode((800, 600))
         self.current_screen = MenuScreen(self)
+        tic = 0
 
         while self.running:
             for event in pygame.event.get():
@@ -21,7 +23,10 @@ class App:
                 else:
                     self.current_screen.process_event(event)
 
-            self.current_screen.update()
+            self.current_screen.update(self.delta_time)
+            toc = pygame.time.get_ticks() / 1000
+            self.delta_time = toc - tic
+            tic = pygame.time.get_ticks() / 1000
 
             self.surface.fill((0, 0, 0))
             self.current_screen.render(self.surface)
