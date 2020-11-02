@@ -6,7 +6,11 @@ from pygame import mixer
 class CharacterEntity(Entity):
     def __init__(self, game):
         super().__init__(game)
-        self.character = pygame.image.load("data/images/character.png")
+        self.character1 = pygame.image.load("data/images/character1.png")
+        self.character2 = pygame.image.load("data/images/character2.png")
+        self.character3 = pygame.image.load("data/images/character3.png")
+        self.character4 = pygame.image.load("data/images/character4.png")
+        self.counter = 0
         self.x = 280
         self.y = 300
 
@@ -34,34 +38,58 @@ class CharacterEntity(Entity):
             pygame.mixer.stop()
             bullet_sound = mixer.Sound('data/sounds/laser.wav')
             bullet_sound.play()
-            self.game.add_entity(BulletEntity(self.game, self.x, self.y,
+            self.game.add_entity(BulletEntity(self.game, self.x, self.y - 100,
                                               self.rotation))
         elif keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.rotation = 90
             pygame.mixer.stop()
             bullet_sound = mixer.Sound('data/sounds/laser.wav')
             bullet_sound.play()
-            self.game.add_entity(BulletEntity(self.game, self.x, self.y,
+            self.game.add_entity(BulletEntity(self.game, self.x - 100, self.y,
                                               self.rotation))
         elif keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.rotation = 180
             pygame.mixer.stop()
             bullet_sound = mixer.Sound('data/sounds/laser.wav')
             bullet_sound.play()
-            self.game.add_entity(BulletEntity(self.game, self.x, self.y,
+            self.game.add_entity(BulletEntity(self.game, self.x, self.y + 100,
                                               self.rotation))
         elif keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.rotation = 270
             pygame.mixer.stop()
             bullet_sound = mixer.Sound('data/sounds/laser.wav')
             bullet_sound.play()
-            self.game.add_entity(BulletEntity(self.game, self.x, self.y,
+            self.game.add_entity(BulletEntity(self.game, self.x + 100, self.y,
                                               self.rotation))
 
     def render(self, surface):
-        character = pygame.transform.rotate(self.character, self.rotation)
-        width = character.get_size()[0]
-        height = character.get_size()[1]
-        surface.blit(character, (int(self.x - width / 2),
-                                 int(self.y - height / 2)))
-        pygame.draw.rect(surface, (255, 255, 255), (self.x, self.y, 2, 2))
+        if self.counter < 20:
+            self.counter += 1
+            character = pygame.transform.rotate(self.character1, self.rotation)
+            width = character.get_size()[0]
+            height = character.get_size()[1]
+            surface.blit(character, (int(self.x - width / 2),
+                                     int(self.y - height / 2)))
+        elif self.counter < 40:
+            self.counter += 1
+            character = pygame.transform.rotate(self.character2, self.rotation)
+            width = character.get_size()[0]
+            height = character.get_size()[1]
+            surface.blit(character, (int(self.x - width / 2),
+                                     int(self.y - height / 2)))
+        elif self.counter < 60:
+            self.counter += 1
+            character = pygame.transform.rotate(self.character3, self.rotation)
+            width = character.get_size()[0]
+            height = character.get_size()[1]
+            surface.blit(character, (int(self.x - width / 2),
+                                     int(self.y - height / 2)))
+        elif self.counter >= 60:
+            self.counter = 0
+            character = pygame.transform.rotate(self.character4, self.rotation)
+            width = character.get_size()[0]
+            height = character.get_size()[1]
+            surface.blit(character, (int(self.x - width / 2),
+                                     int(self.y - height / 2)))
+
+# pygame.draw.rect(surface, (255, 255, 255), (self.x, self.y, 2, 2))
