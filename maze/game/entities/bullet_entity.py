@@ -20,13 +20,12 @@ class BulletEntity(Entity):
             self.y += speed * delta_time
         if self.rotation == 270:
             self.x += speed * delta_time
-        if self.x < 0 or self.y < 0 or self.x > 800 or self.y > 600:
+        if self.x < 0 or self.x > 800 or self.y < 0 or self.y > 600:
             self.marked_for_destroy = True
 
     def render(self, surface):
         bullet = pygame.transform.rotate(self.bullet, self.rotation)
-        width = bullet.get_size()[0]
-        height = bullet.get_size()[1]
+        width, height = bullet.get_size()[0], bullet.get_size()[1]
         surface.blit(bullet, (int(self.x - width / 2),
                               int(self.y - height / 2)))
         # pygame.draw.rect(surface, (255, 255, 255), (self.x, self.y, 2, 2))

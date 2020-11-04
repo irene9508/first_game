@@ -28,3 +28,10 @@ class Game:
         # add queued entities:
         self.entities.extend(self.entity_queue)
         self.entity_queue.clear()
+
+    def get_entity_of_category(self, category):
+        for entity in self.entities:
+            if isinstance(entity, category):
+                return entity
+            else:
+                return None

@@ -1,11 +1,11 @@
 
 class Entity:
     def __init__(self, game):
-        self.x = 0
-        self.y = 0
+        self.marked_for_destroy = False
         self.rotation = 0.0
         self.game = game
-        self.marked_for_destroy = False
+        self.x = 0
+        self.y = 0
 
     def destroy(self):
         pass
