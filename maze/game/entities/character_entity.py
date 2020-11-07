@@ -23,6 +23,7 @@ class CharacterEntity(Entity):
                              pygame.image.load("data/images/enemy1/e1d2.png"),
                              pygame.image.load("data/images/enemy1/e1d3.png"),
                              pygame.image.load("data/images/enemy1/e1d4.png")]
+        self.solid_collision_rect = pygame.Rect(-100, 20, 200, 80)
         self.collision_rect = pygame.Rect(-100, 20, 200, 80)
         self.animation_length = 0.12  # controls speed of sprite animation
         self.shooting_timer = 0.2  # prevents the bullets from rapid firing
@@ -70,7 +71,7 @@ class CharacterEntity(Entity):
                 self.bullet_sound.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(BulletEntity(self.game, self.x,
-                                                  self.y - 100, self.rotation))
+                                                  self.y - 150, self.rotation))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.sprites_left
             self.rotation = 90
@@ -78,7 +79,7 @@ class CharacterEntity(Entity):
                 pygame.mixer.stop()
                 self.bullet_sound.play()
                 self.shooting_timer = shot_speed
-                self.game.add_entity(BulletEntity(self.game, self.x - 100,
+                self.game.add_entity(BulletEntity(self.game, self.x - 150,
                                                   self.y, self.rotation))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.sprites_down
@@ -88,7 +89,7 @@ class CharacterEntity(Entity):
                 self.bullet_sound.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(BulletEntity(self.game, self.x,
-                                                  self.y + 100, self.rotation))
+                                                  self.y + 150, self.rotation))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.sprites_right
             self.rotation = 270
@@ -96,7 +97,7 @@ class CharacterEntity(Entity):
                 pygame.mixer.stop()
                 self.bullet_sound.play()
                 self.shooting_timer = shot_speed
-                self.game.add_entity(BulletEntity(self.game, self.x + 100,
+                self.game.add_entity(BulletEntity(self.game, self.x + 150,
                                                   self.y, self.rotation))
 
     def render(self, surface):

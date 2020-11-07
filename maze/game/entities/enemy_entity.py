@@ -22,11 +22,13 @@ class EnemyEntity(Entity):
                              pygame.image.load("data/images/enemy1/e1d2.png"),
                              pygame.image.load("data/images/enemy1/e1d3.png"),
                              pygame.image.load("data/images/enemy1/e1d4.png")]
-        self.collision_rect = pygame.Rect(-100, 20, 200, 80)
+        self.solid_collision_rect = pygame.Rect(-100, 20, 200, 80)
         self.animation_length = 0.12  # controls speed of sprite animation
         self.sprite_index = 0  # needed to iterate through the list of sprites
         self.sprites = self.sprites_down
         self.solid = True
+        self.height = self.sprites[0].get_size()
+        self.width = self.sprites[0].get_size()
         self.x = 50
         self.y = 50
 
