@@ -20,6 +20,8 @@ class GameScreen(Screen):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.app.set_screen(menu_screen.MenuScreen(self.app))
+            if event.key == pygame.K_COMMA:  # or another key (combi)
+                Game.show_debug_info(self.game)
 
     def update(self, delta_time):
         self.game.update(delta_time)

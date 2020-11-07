@@ -24,9 +24,12 @@ class BulletEntity(Entity):
             self.marked_for_destroy = True
 
     def render(self, surface):
+        super().render(surface)
         bullet = pygame.transform.rotate(self.bullet, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
         surface.blit(bullet, (int(self.x - width / 2),
                               int(self.y - height / 2)))
         # pygame.draw.rect(surface, (255, 255, 255), (self.x, self.y, 2, 2))
-
+        # if self.debugging:
+        #     pygame.draw.circle(surface, (0, 0, 0), (int(self.x), int(self.y)),
+        #                        int(max(width, height) / 2.2), 1)
