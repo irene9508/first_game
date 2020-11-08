@@ -82,6 +82,3 @@ class EnemyEntity(Entity):
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
         super().render(surface)
-
-    def solve_trigger_collision(self):
-        pass

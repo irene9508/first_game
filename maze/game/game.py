@@ -11,25 +11,24 @@ class Game:
             entity1.update(delta_time)
 
         for entity1 in self.entities:
-            # solve collision between enemy and character:
             for entity2 in self.entities:
                 if entity1 != entity2:
                     if entity1.solid and entity2.solid:
-                        self.find_collisions(entity1, entity2)
+                        self.find_collisions(entity1, entity2,
+                                             entity1.collision_rect_solid,
+                                             entity2.collision_rect_solid)
                     if entity1.trigger and entity2.trigger:
-                        self.find_collisions(entity1, entity2)
+                        self.find_collisions(entity1, entity2,
+                                             entity1.collision_rect_trigger,
+                                             entity2.collision_rect_trigger)
 
         self.initialize_entities()
 
-    def find_collisions(self, entity1, entity2):
-        rect1 = pygame.Rect(entity1.x + entity1.collision_rect_solid.x,
-                            entity1.y + entity1.collision_rect_solid.y,
-                            entity1.collision_rect_solid.width,
-                            entity1.collision_rect_solid.height)
-        rect2 = pygame.Rect(entity2.x + entity2.collision_rect_solid.x,
-                            entity2.y + entity2.collision_rect_solid.y,
-                            entity2.collision_rect_solid.width,
-                            entity2.collision_rect_solid.height)
+    def find_collisions(self, entity1, entity2, coll_rect1, coll_rect2):
+        rect1 = pygame.Rect(entity1.x + coll_rect1.x, entity1.y + coll_rect1.y,
+                            coll_rect1.width, coll_rect1.height)
+        rect2 = pygame.Rect(entity2.x + coll_rect2.x, entity2.y + coll_rect2.y,
+                            coll_rect2.width, coll_rect2.height)
 
         diff1 = rect1.left - rect2.right
         diff2 = rect2.left - rect1.right
@@ -37,15 +36,12 @@ class Game:
         diff4 = rect2.top - rect1.bottom
 
         if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
-            if entity1.solid:
-                if entity2.solid:
-                    self.solve_solid_collision(entity1, entity2, diff1, diff2,
-                                               diff3, diff4)
-            if entity1.trigger:
-                if entity2.trigger:
-                    entity1.solve_trigger_collision()
-                    entity2.solve_trigger_collision()
-
+            if entity1.solid and entity2.solid:
+                self.solve_solid_collision(entity1, entity2, diff1, diff2,
+                                           diff3, diff4)
+            if entity1.trigger and entity2.trigger:
+                entity1.solve_trigger_collision()
+                entity2.solve_trigger_collision()
 
     @staticmethod
     def solve_solid_collision(entity1, entity2, diff1, diff2, diff3, diff4):
