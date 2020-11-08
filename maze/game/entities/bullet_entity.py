@@ -6,7 +6,7 @@ class BulletEntity(Entity):
     def __init__(self, game, x, y, rotation):
         super().__init__(game)
         self.sprite = pygame.image.load("data/images/bullet.png")
-        self.collision_rect_trigger = pygame.Rect(-100, 20, 200, 80)
+        self.collision_rect_trigger = pygame.Rect(0, 0, 50, 50)
         self.rotation = rotation
         self.trigger = True
         self.x = x
@@ -26,11 +26,11 @@ class BulletEntity(Entity):
             self.marked_for_destroy = True
 
     def render(self, surface):
-        super().render(surface)
         bullet = pygame.transform.rotate(self.sprite, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
         surface.blit(bullet, (int(self.x - width / 2),
                               int(self.y - height / 2)))
+        super().render(surface)
 
     def solve_trigger_collision(self):
         self.marked_for_destroy = True
