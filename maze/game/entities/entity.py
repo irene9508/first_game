@@ -3,12 +3,13 @@ import pygame
 
 class Entity:
     def __init__(self, game):
-        self.marked_for_destroy = False
-        self.solid_collision_rect = pygame.Rect(0, 0, 0, 0)  # x, y, width, height
+        self.collision_rect_solid = pygame.Rect(0, 0, 0, 0)  # x/y/width/height
         self.debugging = False
+        self.game = game
+        self.marked_for_destroy = False
         self.rotation = 0.0
         self.solid = False  # for collisions
-        self.game = game
+        self.trigger = False
         self.x = 0
         self.y = 0
 
@@ -22,7 +23,7 @@ class Entity:
         if self.debugging:
             if self.solid:
                 pygame.draw.rect(surface, (255, 255, 255),
-                                 (int(self.x + self.solid_collision_rect.x),
-                                  int(self.y + self.solid_collision_rect.y),
-                                  self.solid_collision_rect.width,
-                                  self.solid_collision_rect.height), 1)
+                                 (int(self.x + self.collision_rect_solid.x),
+                                  int(self.y + self.collision_rect_solid.y),
+                                  self.collision_rect_solid.width,
+                                  self.collision_rect_solid.height), 1)

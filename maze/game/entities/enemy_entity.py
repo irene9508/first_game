@@ -6,28 +6,33 @@ import pygame
 class EnemyEntity(Entity):
     def __init__(self, game):
         super().__init__(game)
-        self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png"),
-                             pygame.image.load("data/images/enemy1/e1l2.png"),
-                             pygame.image.load("data/images/enemy1/e1l3.png"),
-                             pygame.image.load("data/images/enemy1/e1l4.png")]
-        self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png"),
-                              pygame.image.load("data/images/enemy1/e1r2.png"),
-                              pygame.image.load("data/images/enemy1/e1r3.png"),
-                              pygame.image.load("data/images/enemy1/e1r4.png")]
-        self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png"),
-                           pygame.image.load("data/images/enemy1/e1u2.png"),
-                           pygame.image.load("data/images/enemy1/e1u3.png"),
-                           pygame.image.load("data/images/enemy1/e1u4.png")]
+
+        self.sprites_left = [pygame.image.load("data/images/enemy2/e2l1.png"),
+                             pygame.image.load("data/images/enemy2/e2l2.png"),
+                             pygame.image.load("data/images/enemy2/e2l3.png"),
+                             pygame.image.load("data/images/enemy2/e2l4.png")]
+        self.sprites_right = [pygame.image.load("data/images/enemy2/e2r1.png"),
+                              pygame.image.load("data/images/enemy2/e2r2.png"),
+                              pygame.image.load("data/images/enemy2/e2r3.png"),
+                              pygame.image.load("data/images/enemy2/e2r4.png")]
+        self.sprites_up = [pygame.image.load("data/images/enemy3/e3r1.png"),
+                           pygame.image.load("data/images/enemy3/e3r1.png"),
+                           pygame.image.load("data/images/enemy3/e3r1.png"),
+                           pygame.image.load("data/images/enemy3/e3r1.png")]
         self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png"),
                              pygame.image.load("data/images/enemy1/e1d2.png"),
                              pygame.image.load("data/images/enemy1/e1d3.png"),
                              pygame.image.load("data/images/enemy1/e1d4.png")]
-        self.solid_collision_rect = pygame.Rect(-100, 20, 200, 80)
-        self.animation_length = 0.12  # controls speed of sprite animation
-        self.sprite_index = 0  # needed to iterate through the list of sprites
+
         self.sprites = self.sprites_down
-        self.solid = True
+        self.sprites_index = 0  # needed to iterate through the list of sprites
+
+        self.animation_length = 0.12  # controls speed of sprite animation
+        self.collision_rect_solid = pygame.Rect(-100, 20, 200, 80)
+        self.collision_rect_trigger = pygame.Rect(-100, 20, 200, 80)
         self.height = self.sprites[0].get_size()
+        self.solid = True
+        self.trigger = True
         self.width = self.sprites[0].get_size()
         self.x = 50
         self.y = 50
@@ -36,9 +41,9 @@ class EnemyEntity(Entity):
         # animating, used in render():
         self.animation_length -= delta_time
         if self.animation_length <= 0:
-            self.sprite_index += 1
-            if self.sprite_index == 4:
-                self.sprite_index = 0
+            self.sprites_index += 1
+            if self.sprites_index == 4:
+                self.sprites_index = 0
             self.animation_length = 0.12
 
         speed = 50
@@ -73,7 +78,10 @@ class EnemyEntity(Entity):
                     self.sprites = self.sprites_left
 
     def render(self, surface):
-        sprite = self.sprites[self.sprite_index]
+        sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
         super().render(surface)
+
+    def solve_trigger_collision(self):
+        pass

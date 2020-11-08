@@ -7,6 +7,11 @@ import pygame
 class CharacterEntity(Entity):
     def __init__(self, game):
         super().__init__(game)
+
+        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png"),
+                             pygame.image.load("data/images/enemy1/e1d2.png"),
+                             pygame.image.load("data/images/enemy1/e1d3.png"),
+                             pygame.image.load("data/images/enemy1/e1d4.png")]
         self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png"),
                              pygame.image.load("data/images/enemy1/e1l2.png"),
                              pygame.image.load("data/images/enemy1/e1l3.png"),
@@ -19,18 +24,15 @@ class CharacterEntity(Entity):
                            pygame.image.load("data/images/enemy1/e1u2.png"),
                            pygame.image.load("data/images/enemy1/e1u3.png"),
                            pygame.image.load("data/images/enemy1/e1u4.png")]
-        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png"),
-                             pygame.image.load("data/images/enemy1/e1d2.png"),
-                             pygame.image.load("data/images/enemy1/e1d3.png"),
-                             pygame.image.load("data/images/enemy1/e1d4.png")]
-        self.solid_collision_rect = pygame.Rect(-100, 20, 200, 80)
-        self.collision_rect = pygame.Rect(-100, 20, 200, 80)
-        self.animation_length = 0.12  # controls speed of sprite animation
-        self.shooting_timer = 0.2  # prevents the bullets from rapid firing
-        self.sprite_index = 0  # needed to iterate through the list of sprites
-        self.bullet_sound = mixer.Sound('data/sounds/laser.wav')
+
+        self.sprites_index = 0  # needed to iterate through the list of sprites
         self.sprites = self.sprites_down
+
+        self.animation_length = 0.12  # controls speed of sprite animation
+        self.collision_rect_solid = pygame.Rect(-100, 20, 200, 80)
+        self.shooting_timer = 0.2  # prevents the bullets from rapid firing
         self.solid = True
+        self.sound_shot = mixer.Sound('data/sounds/laser.wav')
         self.x = 280
         self.y = 300
 
@@ -40,9 +42,9 @@ class CharacterEntity(Entity):
         # animating, used in render()
         self.animation_length -= delta_time
         if self.animation_length <= 0:
-            self.sprite_index += 1
-            if self.sprite_index == 4:
-                self.sprite_index = 0
+            self.sprites_index += 1
+            if self.sprites_index == 4:
+                self.sprites_index = 0
             self.animation_length = 0.12
 
         # moving:
@@ -68,7 +70,7 @@ class CharacterEntity(Entity):
             self.rotation = 0
             if self.shooting_timer <= 0:
                 pygame.mixer.stop()
-                self.bullet_sound.play()
+                self.sound_shot.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(BulletEntity(self.game, self.x,
                                                   self.y - 150, self.rotation))
@@ -77,7 +79,7 @@ class CharacterEntity(Entity):
             self.rotation = 90
             if self.shooting_timer <= 0:
                 pygame.mixer.stop()
-                self.bullet_sound.play()
+                self.sound_shot.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(BulletEntity(self.game, self.x - 150,
                                                   self.y, self.rotation))
@@ -86,7 +88,7 @@ class CharacterEntity(Entity):
             self.rotation = 180
             if self.shooting_timer <= 0:
                 pygame.mixer.stop()
-                self.bullet_sound.play()
+                self.sound_shot.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(BulletEntity(self.game, self.x,
                                                   self.y + 150, self.rotation))
@@ -95,15 +97,13 @@ class CharacterEntity(Entity):
             self.rotation = 270
             if self.shooting_timer <= 0:
                 pygame.mixer.stop()
-                self.bullet_sound.play()
+                self.sound_shot.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(BulletEntity(self.game, self.x + 150,
                                                   self.y, self.rotation))
 
     def render(self, surface):
-        sprite = self.sprites[self.sprite_index]
+        sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
         super().render(surface)
-
-        # make enemy class that inherits from parent enemy class
