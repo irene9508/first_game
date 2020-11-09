@@ -5,11 +5,13 @@ class Game:
     def __init__(self):
         self.entities = []
         self.entity_queue = []
+        self.debugging = False
 
     def update(self, delta_time):
         for entity1 in self.entities:
             entity1.update(delta_time)
 
+        # check for collisions:
         for entity1 in self.entities:
             for entity2 in self.entities:
                 if entity1 != entity2:
@@ -36,12 +38,15 @@ class Game:
         diff4 = rect2.top - rect1.bottom
 
         if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
+            # bump into each other:
             if entity1.solid and entity2.solid:
                 self.solve_solid_collision(entity1, entity2, diff1, diff2,
                                            diff3, diff4)
+            # trigger a reaction:
             if entity1.trigger and entity2.trigger:
-                entity1.solve_trigger_collision()
-                entity2.solve_trigger_collision()
+                if entity1.collision_group != entity2.collision_group:
+                    entity1.solve_trigger_collision(entity2)
+                    entity2.solve_trigger_collision(entity1)
 
     @staticmethod
     def solve_solid_collision(entity1, entity2, diff1, diff2, diff3, diff4):
@@ -88,5 +93,4 @@ class Game:
         return None
 
     def show_debug_info(self):
-        for entity in self.entities:
-            entity.debugging = not entity.debugging
+        self.debugging = not self.debugging

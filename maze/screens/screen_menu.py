@@ -1,9 +1,9 @@
 from maze.screens.screen import Screen
-from maze.screens import game_screen
+from maze.screens import screen_game
 import pygame
 
 
-class MenuScreen(Screen):
+class ScreenMenu(Screen):
     def __init__(self, app):
         super().__init__(app)
         self.background = pygame.image.load("data/images/background.jpg")
@@ -16,17 +16,17 @@ class MenuScreen(Screen):
         self.title = self.title_size.render('MAZE', True, self.letter)
 
         self.menu_font = 'data/fonts/font2.ttf'
-        self.text = 'Press Enter to Start'
         self.menu_size = pygame.font.Font(self.menu_font, 32)
-        self.menu_shadow = self.menu_size.render(self.text, True, self.shadow)
-        self.menu = self.menu_size.render(self.text, True, self.letter)
+        self.menu_text = 'Press Enter to Start'
+        self.menu_shadow = self.menu_size.render(self.menu_text, True, self.shadow)
+        self.menu = self.menu_size.render(self.menu_text, True, self.letter)
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 self.app.running = False
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-                self.app.set_screen(game_screen.GameScreen(self.app))
+                self.app.set_screen(screen_game.ScreenGame(self.app))
 
     def update(self, delta_time):
         pass

@@ -1,5 +1,5 @@
 import pygame
-from maze.screens.menu_screen import MenuScreen
+from maze.screens.screen_menu import ScreenMenu
 
 
 class App:
@@ -13,7 +13,7 @@ class App:
     def run(self):
         pygame.init()
         self.surface = pygame.display.set_mode((800, 600))
-        self.current_screen = MenuScreen(self)
+        self.current_screen = ScreenMenu(self)
         tic = 0
 
         while self.running:
