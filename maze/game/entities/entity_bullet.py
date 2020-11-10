@@ -9,14 +9,15 @@ class EntityBullet(Entity):
         self.collision_group = collision_group
         self.width = self.sprite.get_size()[0]
         self.height = self.sprite.get_size()[1]
-        self.coll_rect_trigger = pygame.Rect(-(self.width/2), -(self.height/2),
-                                             self.width, self.height)
+        self.collision_rect_trigger = pygame.Rect(-(self.width / 2),
+                                                  -(self.height / 2),
+                                                  self.width, self.height)
         self.rotation = rotation
         self.trigger = True
         self.x = x
         self.y = y
 
-    def update(self, delta_time):
+    def update(self, delta_time, screen_width, screen_height):
         # movement direction:
         speed = 100
         if self.rotation == 0:
@@ -29,7 +30,8 @@ class EntityBullet(Entity):
             self.x += speed * delta_time
 
         # destruction:
-        if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:
+        if self.x < 0 or self.x > screen_width or self.y < 0 \
+                or self.y > screen_height:
             self.marked_for_destroy = True
 
     def render(self, surface):

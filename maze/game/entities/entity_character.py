@@ -26,7 +26,7 @@ class EntityCharacter(Entity):
         self.x = 280
         self.y = 300
 
-    def update(self, delta_time):
+    def update(self, delta_time, screen_width, screen_height):
         keys = pygame.key.get_pressed()
 
         # animating, used in render()

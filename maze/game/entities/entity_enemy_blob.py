@@ -15,5 +15,6 @@ class EntityEnemyBlob(EntityEnemy):
         self.height = self.sprites_left[0].get_size()[1]
         self.health = 10
         self.collision_rect_solid = pygame.Rect(-44, 10, 90, 29)
-        self.collision_rect_trigger = pygame.Rect(-(self.width/2), -(self.height/2),
-                                             self.width, self.height)
+        self.collision_rect_trigger = pygame.Rect(-(self.width/2),
+                                                  -(self.height/2),
+                                                  self.width, self.height)

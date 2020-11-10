@@ -28,7 +28,7 @@ class ScreenMenu(Screen):
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 self.app.set_screen(screen_game.ScreenGame(self.app))
 
-    def update(self, delta_time):
+    def update(self, delta_time, screen_width, screen_height):
         pass
 
     def render(self, surface):

@@ -28,7 +28,7 @@ class EntityEnemy(Entity):
         self.x = 50
         self.y = 50
 
-    def update(self, delta_time):
+    def update(self, delta_time, screen_width, screen_height):
         # animation, used in render():
         self.animation_length -= delta_time
         if self.animation_length <= 0:

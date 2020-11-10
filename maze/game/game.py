@@ -7,9 +7,9 @@ class Game:
         self.entity_queue = []
         self.debugging = False
 
-    def update(self, delta_time):
+    def update(self, delta_time, screen_width, screen_height):
         for entity1 in self.entities:
-            entity1.update(delta_time)
+            entity1.update(delta_time, screen_width, screen_height)
 
         # check for collisions:
         for entity1 in self.entities:
@@ -20,8 +20,8 @@ class Game:
                                          entity2.collision_rect_solid)
                 if entity1 != entity2 and entity1.trigger and entity2.trigger:
                     self.find_collisions(entity1, entity2,
-                                         entity1.coll_rect_trigger,
-                                         entity2.coll_rect_trigger)
+                                         entity1.collision_rect_trigger,
+                                         entity2.collision_rect_trigger)
 
         self.initialize_entities()
 

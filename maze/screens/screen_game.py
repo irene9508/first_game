@@ -23,8 +23,8 @@ class ScreenGame(Screen):
             if event.key == pygame.K_COMMA:
                 self.game.show_debug_info()
 
-    def update(self, delta_time):
-        self.game.update(delta_time)
+    def update(self, delta_time, screen_width, screen_height):
+        self.game.update(delta_time, screen_width, screen_height)
 
     def render(self, surface):
         surface.blit(self.background, [0, 0])
