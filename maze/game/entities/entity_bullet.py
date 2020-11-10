@@ -7,7 +7,10 @@ class EntityBullet(Entity):
         super().__init__(game)
         self.sprite = pygame.image.load("data/images/bullet.png")
         self.collision_group = collision_group
-        self.collision_rect_trigger = pygame.Rect(-25, -25, 50, 50)
+        self.width = self.sprite.get_size()[0]
+        self.height = self.sprite.get_size()[1]
+        self.coll_rect_trigger = pygame.Rect(-(self.width/2), -(self.height/2),
+                                             self.width, self.height)
         self.rotation = rotation
         self.trigger = True
         self.x = x
@@ -15,7 +18,7 @@ class EntityBullet(Entity):
 
     def update(self, delta_time):
         # movement direction:
-        speed = 500
+        speed = 100
         if self.rotation == 0:
             self.y -= speed * delta_time
         if self.rotation == 90:
@@ -26,7 +29,7 @@ class EntityBullet(Entity):
             self.x += speed * delta_time
 
         # destruction:
-        if self.x < 0 or self.x > 800 or self.y < 0 or self.y > 600:
+        if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:
             self.marked_for_destroy = True
 
     def render(self, surface):

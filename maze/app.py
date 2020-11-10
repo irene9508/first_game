@@ -12,7 +12,7 @@ class App:
 
     def run(self):
         pygame.init()
-        self.surface = pygame.display.set_mode((800, 600))
+        self.surface = pygame.display.set_mode((1280, 720))
         self.current_screen = ScreenMenu(self)
         tic = 0
 

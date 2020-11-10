@@ -14,15 +14,14 @@ class Game:
         # check for collisions:
         for entity1 in self.entities:
             for entity2 in self.entities:
-                if entity1 != entity2:
-                    if entity1.solid and entity2.solid:
-                        self.find_collisions(entity1, entity2,
-                                             entity1.collision_rect_solid,
-                                             entity2.collision_rect_solid)
-                    if entity1.trigger and entity2.trigger:
-                        self.find_collisions(entity1, entity2,
-                                             entity1.collision_rect_trigger,
-                                             entity2.collision_rect_trigger)
+                if entity1 != entity2 and entity1.solid and entity2.solid:
+                    self.find_collisions(entity1, entity2,
+                                         entity1.collision_rect_solid,
+                                         entity2.collision_rect_solid)
+                if entity1 != entity2 and entity1.trigger and entity2.trigger:
+                    self.find_collisions(entity1, entity2,
+                                         entity1.coll_rect_trigger,
+                                         entity2.coll_rect_trigger)
 
         self.initialize_entities()
 
@@ -43,10 +42,11 @@ class Game:
                 self.solve_solid_collision(entity1, entity2, diff1, diff2,
                                            diff3, diff4)
             # trigger a reaction:
-            if entity1.trigger and entity2.trigger:
+            if entity1.collision_group != 0 and entity2.collision_group != 0:
                 if entity1.collision_group != entity2.collision_group:
-                    entity1.solve_trigger_collision(entity2)
-                    entity2.solve_trigger_collision(entity1)
+                    if entity1.trigger and entity2.trigger:
+                        entity1.solve_trigger_collision(entity2)
+                        entity2.solve_trigger_collision(entity1)
 
     @staticmethod
     def solve_solid_collision(entity1, entity2, diff1, diff2, diff3, diff4):
@@ -76,10 +76,8 @@ class Game:
         # remove dead entities:
         new_entities = []
         for entity in self.entities:
-            if entity.marked_for_destroy:
-                entity.destroy()
-            else:
-                new_entities.append(entity)
+            entity.destroy() if entity.marked_for_destroy \
+                else new_entities.append(entity)
         self.entities = new_entities
 
         # add queued entities:

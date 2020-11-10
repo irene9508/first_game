@@ -18,7 +18,8 @@ class EntityCharacter(Entity):
 
         self.animation_length = 0.12  # controls speed of sprite animation
         self.collision_group = 1
-        self.collision_rect_solid = pygame.Rect(-100, 20, 200, 80)
+        self.collision_rect_solid = pygame.Rect(-44, 10, 90, 29)
+
         self.shooting_timer = 0.2  # prevents the bullets from rapid firing
         self.solid = True
         self.sound_shot = mixer.Sound('data/sounds/laser.wav')
@@ -62,7 +63,7 @@ class EntityCharacter(Entity):
                 self.sound_shot.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(EntityBullet(self.game, self.x, 1,
-                                                  self.y - 100, self.rotation))
+                                                  self.y - 52, self.rotation))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.sprites_left
             self.rotation = 90
@@ -70,7 +71,7 @@ class EntityCharacter(Entity):
                 pygame.mixer.stop()
                 self.sound_shot.play()
                 self.shooting_timer = shot_speed
-                self.game.add_entity(EntityBullet(self.game, self.x - 100, 1,
+                self.game.add_entity(EntityBullet(self.game, self.x - 52, 1,
                                                   self.y, self.rotation))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.sprites_down
@@ -80,7 +81,7 @@ class EntityCharacter(Entity):
                 self.sound_shot.play()
                 self.shooting_timer = shot_speed
                 self.game.add_entity(EntityBullet(self.game, self.x, 1,
-                                                  self.y + 100, self.rotation))
+                                                  self.y + 52, self.rotation))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.sprites_right
             self.rotation = 270
@@ -88,7 +89,7 @@ class EntityCharacter(Entity):
                 pygame.mixer.stop()
                 self.sound_shot.play()
                 self.shooting_timer = shot_speed
-                self.game.add_entity(EntityBullet(self.game, self.x + 100, 1,
+                self.game.add_entity(EntityBullet(self.game, self.x + 52, 1,
                                                   self.y, self.rotation))
 
     def render(self, surface):
