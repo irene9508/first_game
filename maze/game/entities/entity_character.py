@@ -15,10 +15,12 @@ class EntityCharacter(Entity):
 
         self.sprites_index = 0  # needed to iterate through the list of sprites
         self.sprites = self.sprites_down
+        self.width = self.sprites_left[0].get_size()[0]
+        self.height = self.sprites_left[0].get_size()[1]
 
         self.animation_length = 0.12  # controls speed of sprite animation
         self.collision_group = 1
-        self.collision_rect_solid = pygame.Rect(-44, 10, 90, 29)
+        # self.collision_rect_solid = (-(self.width/2), 15, self.width, 30)
 
         self.shooting_timer = 0.2  # prevents the bullets from rapid firing
         self.solid = True
@@ -26,7 +28,7 @@ class EntityCharacter(Entity):
         self.x = 280
         self.y = 300
 
-    def update(self, delta_time, screen_width, screen_height):
+    def update(self, delta_time):
         keys = pygame.key.get_pressed()
 
         # animating, used in render()

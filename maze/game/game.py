@@ -3,13 +3,14 @@ import pygame
 
 class Game:
     def __init__(self):
+        self.background = pygame.image.load("data/images/background.jpg")
         self.entities = []
         self.entity_queue = []
         self.debugging = False
 
-    def update(self, delta_time, screen_width, screen_height):
+    def update(self, delta_time):
         for entity1 in self.entities:
-            entity1.update(delta_time, screen_width, screen_height)
+            entity1.update(delta_time)
 
         # check for collisions:
         for entity1 in self.entities:
@@ -45,8 +46,8 @@ class Game:
             if entity1.collision_group != 0 and entity2.collision_group != 0:
                 if entity1.collision_group != entity2.collision_group:
                     if entity1.trigger and entity2.trigger:
-                        entity1.solve_trigger_collision(entity2)
-                        entity2.solve_trigger_collision(entity1)
+                        entity1.trigger_collision_reaction(entity2)
+                        entity2.trigger_collision_reaction(entity1)
 
     @staticmethod
     def solve_solid_collision(entity1, entity2, diff1, diff2, diff3, diff4):
@@ -65,6 +66,7 @@ class Game:
             entity2.y -= diff4 * 0.5
 
     def render(self, surface):
+        surface.blit(self.background, [0, 0])
         self.entities.sort(key=lambda e: e.y)
         for entity in self.entities:
             entity.render(surface)

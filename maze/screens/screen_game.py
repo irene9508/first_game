@@ -10,7 +10,6 @@ class ScreenGame(Screen):
     def __init__(self, app):
         super().__init__(app)
         self.game = Game()
-        self.background = pygame.image.load("data/images/background.jpg")
         self.character = EntityCharacter(self.game)
         self.enemy = EntityEnemyBlob(self.game)
         self.game.add_entity(self.character)
@@ -23,9 +22,11 @@ class ScreenGame(Screen):
             if event.key == pygame.K_COMMA:
                 self.game.show_debug_info()
 
-    def update(self, delta_time, screen_width, screen_height):
-        self.game.update(delta_time, screen_width, screen_height)
+        if self.game.debugging:
+            print(self.app.fps)
+
+    def update(self, delta_time):
+        self.game.update(delta_time)
 
     def render(self, surface):
-        surface.blit(self.background, [0, 0])
         self.game.render(surface)

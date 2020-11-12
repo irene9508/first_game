@@ -17,7 +17,7 @@ class EntityBullet(Entity):
         self.x = x
         self.y = y
 
-    def update(self, delta_time, screen_width, screen_height):
+    def update(self, delta_time):
         # movement direction:
         speed = 100
         if self.rotation == 0:
@@ -30,8 +30,7 @@ class EntityBullet(Entity):
             self.x += speed * delta_time
 
         # destruction:
-        if self.x < 0 or self.x > screen_width or self.y < 0 \
-                or self.y > screen_height:
+        if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:
             self.marked_for_destroy = True
 
     def render(self, surface):
@@ -41,6 +40,6 @@ class EntityBullet(Entity):
                               int(self.y - height / 2)))
         super().render(surface)
 
-    def solve_trigger_collision(self, enemy):
+    def trigger_collision_reaction(self, enemy):
         self.marked_for_destroy = True
         enemy.health -= 1

@@ -17,7 +17,7 @@ class Entity:
     def destroy(self):
         pass
 
-    def update(self, delta_time, screen_width, screen_height):
+    def update(self, delta_time):
         pass
 
     def render(self, surface):
@@ -35,5 +35,5 @@ class Entity:
                                   self.collision_rect_trigger.width,
                                   self.collision_rect_trigger.height), 1)
 
-    def solve_trigger_collision(self, entity):
+    def trigger_collision_reaction(self, entity):
         pass
