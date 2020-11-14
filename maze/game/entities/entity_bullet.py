@@ -2,20 +2,22 @@ from maze.game.entities.entity import Entity
 import pygame
 
 
-class EntityBullet(Entity):
+class EntityBullet(Entity):  # 25x25
     def __init__(self, game, x, collision_group, y, rotation):
         super().__init__(game)
-        self.sprite = pygame.image.load("data/images/bullet.png").convert_alpha()
-        self.collision_group = collision_group
-        self.width = self.sprite.get_size()[0]
-        self.height = self.sprite.get_size()[1]
-        self.collision_rect_trigger = pygame.Rect(-(self.width / 2),
-                                                  -(self.height / 2),
-                                                  self.width, self.height)
+
+        # properties:
         self.rotation = rotation
-        self.trigger = True
         self.x = x
         self.y = y
+
+        # collisions:
+        self.trigger = True
+        self.collision_group = collision_group
+        self.trigger_collision_box = pygame.Rect(-12, -12, 25, 25)
+
+        # other:
+        self.sprite = pygame.image.load("data/images/bullet.png").convert_alpha()
 
     def update(self, delta_time):
         # movement direction:

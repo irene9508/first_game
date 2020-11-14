@@ -4,24 +4,26 @@ from maze.screens.screen_menu import ScreenMenu
 
 class App:
     def __init__(self):
-        self.running = True
-        self.surface = None
         self.current_screen = None
-        self.next_screen = None
         self.delta_time = 0
-        self.screen_width = 1280
-        self.screen_height = 720
         self.fps = 0
+        self.next_screen = None
+        self.running = True
+        self.screen_height = 720
+        self.screen_width = 1280
+        self.surface = None
 
     def run(self):
         pygame.init()
         self.surface = pygame.display.set_mode((self.screen_width,
                                                 self.screen_height))
         self.current_screen = ScreenMenu(self)
+
         fps_start_time = 0
         delta_start_time = 0
         fps_counter = 0
 
+        # game loop:
         while self.running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -43,7 +45,7 @@ class App:
                 fps_counter = 0
                 fps_start_time = current_time
 
-            self.surface.fill((0, 0, 0))
+            # self.surface.fill((0, 0, 0))  # -30fps when active
             self.current_screen.render(self.surface)
             pygame.display.flip()
 

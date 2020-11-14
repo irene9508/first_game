@@ -7,26 +7,26 @@ class EntityEnemy(Entity):
     def __init__(self, game):
         super().__init__(game)
 
+        # properties:
+        self.health = 0
+        self.x = 100
+        self.y = 100
+
+        # animation:
         self.sprites_left = [pygame.image.load("data/images/bullet.png").convert_alpha()]
         self.sprites_right = [pygame.image.load("data/images/bullet.png").convert_alpha()]
         self.sprites_up = [pygame.image.load("data/images/bullet.png").convert_alpha()]
         self.sprites_down = [pygame.image.load("data/images/bullet.png").convert_alpha()]
-
         self.sprites = self.sprites_down
         self.sprites_index = 0  # needed to iterate through the list of sprites
-
         self.animation_length = 0.12  # controls speed of sprite animation
 
+        # collisions:
         self.collision_group = 2
-        self.collision_rect_solid = pygame.Rect(0, 0, 0, 0)
-        self.collision_rect_trigger = pygame.Rect(0, 0, 0, 0)
-        self.health = 0
-        self.height = self.sprites[-1].get_size()
         self.solid = True
+        self.solid_collision_box = pygame.Rect(0, 0, 0, 0)
         self.trigger = True
-        self.width = self.sprites[-1].get_size()
-        self.x = 100
-        self.y = 100
+        self.trigger_collision_box = pygame.Rect(0, 0, 0, 0)
 
     def update(self, delta_time):
         # animation, used in render():

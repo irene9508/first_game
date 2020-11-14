@@ -32,7 +32,7 @@ class ScreenMenu(Screen):
         pass
 
     def render(self, surface):
-        surface.blit(self.background, [0, 0])
+        surface.blit(self.background, (0, 0))
 
         surface.blit(self.title_shadow, (27, 570))  # (horizontal, vertical)
         surface.blit(self.title, (25, 570))

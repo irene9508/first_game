@@ -4,29 +4,31 @@ from pygame import mixer
 import pygame
 
 
-class EntityCharacter(Entity):
+class EntityCharacter(Entity):  # 109x93
     def __init__(self, game):
         super().__init__(game)
 
+        # properties:
+        self.x = 280
+        self.y = 300
+
+        # animation:
         self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
         self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png").convert_alpha()]
         self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png").convert_alpha()]
         self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png").convert_alpha()]
-
         self.sprites_index = 0  # needed to iterate through the list of sprites
         self.sprites = self.sprites_down
-        self.width = self.sprites_left[0].get_size()[0]
-        self.height = self.sprites_left[0].get_size()[1]
-
         self.animation_length = 0.12  # controls speed of sprite animation
-        self.collision_group = 1
-        self.collision_rect_solid = pygame.Rect(-(self.width/2), 15, self.width, 30)
 
-        self.shooting_timer = 0.2  # prevents the bullets from rapid firing
+        # collisions:
+        self.collision_group = 1
+        self.solid_collision_box = pygame.Rect(-55, 15, 109, 30)
         self.solid = True
-        self.sound_shot = mixer.Sound('data/sounds/laser.wav')
-        self.x = 280
-        self.y = 300
+
+        # other:
+        self.shot_timer = 0.2  # prevents the bullets from rapid firing
+        self.shot_sound = mixer.Sound('data/sounds/laser.wav')
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
@@ -55,42 +57,42 @@ class EntityCharacter(Entity):
             self.x += sprite_speed * delta_time
 
         # shooting:
-        self.shooting_timer -= delta_time
+        self.shot_timer -= delta_time
         shot_speed = 0.2
         if keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
             self.sprites = self.sprites_up
             self.rotation = 0
-            if self.shooting_timer <= 0:
+            if self.shot_timer <= 0:
                 pygame.mixer.stop()
-                self.sound_shot.play()
-                self.shooting_timer = shot_speed
+                self.shot_sound.play()
+                self.shot_timer = shot_speed
                 self.game.add_entity(EntityBullet(self.game, self.x, 1,
                                                   self.y - 52, self.rotation))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.sprites_left
             self.rotation = 90
-            if self.shooting_timer <= 0:
+            if self.shot_timer <= 0:
                 pygame.mixer.stop()
-                self.sound_shot.play()
-                self.shooting_timer = shot_speed
+                self.shot_sound.play()
+                self.shot_timer = shot_speed
                 self.game.add_entity(EntityBullet(self.game, self.x - 52, 1,
                                                   self.y, self.rotation))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.sprites_down
             self.rotation = 180
-            if self.shooting_timer <= 0:
+            if self.shot_timer <= 0:
                 pygame.mixer.stop()
-                self.sound_shot.play()
-                self.shooting_timer = shot_speed
+                self.shot_sound.play()
+                self.shot_timer = shot_speed
                 self.game.add_entity(EntityBullet(self.game, self.x, 1,
                                                   self.y + 52, self.rotation))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.sprites_right
             self.rotation = 270
-            if self.shooting_timer <= 0:
+            if self.shot_timer <= 0:
                 pygame.mixer.stop()
-                self.sound_shot.play()
-                self.shooting_timer = shot_speed
+                self.shot_sound.play()
+                self.shot_timer = shot_speed
                 self.game.add_entity(EntityBullet(self.game, self.x + 52, 1,
                                                   self.y, self.rotation))
 
