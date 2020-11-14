@@ -7,10 +7,10 @@ class EntityEnemy(Entity):
     def __init__(self, game):
         super().__init__(game)
 
-        self.sprites_left = [pygame.image.load("data/images/bullet.png")]
-        self.sprites_right = [pygame.image.load("data/images/bullet.png")]
-        self.sprites_up = [pygame.image.load("data/images/bullet.png")]
-        self.sprites_down = [pygame.image.load("data/images/bullet.png")]
+        self.sprites_left = [pygame.image.load("data/images/bullet.png").convert_alpha()]
+        self.sprites_right = [pygame.image.load("data/images/bullet.png").convert_alpha()]
+        self.sprites_up = [pygame.image.load("data/images/bullet.png").convert_alpha()]
+        self.sprites_down = [pygame.image.load("data/images/bullet.png").convert_alpha()]
 
         self.sprites = self.sprites_down
         self.sprites_index = 0  # needed to iterate through the list of sprites
@@ -25,8 +25,8 @@ class EntityEnemy(Entity):
         self.solid = True
         self.trigger = True
         self.width = self.sprites[-1].get_size()
-        self.x = 50
-        self.y = 50
+        self.x = 100
+        self.y = 100
 
     def update(self, delta_time):
         # animation, used in render():

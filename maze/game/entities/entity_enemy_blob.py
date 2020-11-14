@@ -6,10 +6,10 @@ class EntityEnemyBlob(EntityEnemy):
     def __init__(self, game):
         super().__init__(game)
 
-        self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png")]
-        self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png")]
-        self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png")]
-        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png")]
+        self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png").convert_alpha()]
+        self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png").convert_alpha()]
+        self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png").convert_alpha()]
+        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
 
         self.width = self.sprites_left[0].get_size()[0]
         self.height = self.sprites_left[0].get_size()[1]

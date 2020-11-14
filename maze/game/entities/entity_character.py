@@ -8,10 +8,10 @@ class EntityCharacter(Entity):
     def __init__(self, game):
         super().__init__(game)
 
-        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png")]
-        self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png")]
-        self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png")]
-        self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png")]
+        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
+        self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png").convert_alpha()]
+        self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png").convert_alpha()]
+        self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png").convert_alpha()]
 
         self.sprites_index = 0  # needed to iterate through the list of sprites
         self.sprites = self.sprites_down
@@ -20,7 +20,7 @@ class EntityCharacter(Entity):
 
         self.animation_length = 0.12  # controls speed of sprite animation
         self.collision_group = 1
-        # self.collision_rect_solid = (-(self.width/2), 15, self.width, 30)
+        self.collision_rect_solid = pygame.Rect(-(self.width/2), 15, self.width, 30)
 
         self.shooting_timer = 0.2  # prevents the bullets from rapid firing
         self.solid = True

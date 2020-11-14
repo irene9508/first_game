@@ -5,7 +5,7 @@ import pygame
 class EntityBullet(Entity):
     def __init__(self, game, x, collision_group, y, rotation):
         super().__init__(game)
-        self.sprite = pygame.image.load("data/images/bullet.png")
+        self.sprite = pygame.image.load("data/images/bullet.png").convert_alpha()
         self.collision_group = collision_group
         self.width = self.sprite.get_size()[0]
         self.height = self.sprite.get_size()[1]
@@ -43,3 +43,4 @@ class EntityBullet(Entity):
     def trigger_collision_reaction(self, enemy):
         self.marked_for_destroy = True
         enemy.health -= 1
+        print(enemy.health)

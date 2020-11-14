@@ -10,6 +10,7 @@ class ScreenGame(Screen):
     def __init__(self, app):
         super().__init__(app)
         self.game = Game()
+        self.game.load()
         self.character = EntityCharacter(self.game)
         self.enemy = EntityEnemyBlob(self.game)
         self.game.add_entity(self.character)
@@ -22,11 +23,10 @@ class ScreenGame(Screen):
             if event.key == pygame.K_COMMA:
                 self.game.show_debug_info()
 
-        if self.game.debugging:
-            print(self.app.fps)
-
     def update(self, delta_time):
         self.game.update(delta_time)
+        if self.game.debugging:
+            print(self.app.fps)
 
     def render(self, surface):
         self.game.render(surface)
