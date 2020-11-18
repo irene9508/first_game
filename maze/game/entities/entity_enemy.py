@@ -29,6 +29,7 @@ class EntityEnemy(Entity):
         self.trigger_collision_box = pygame.Rect(0, 0, 0, 0)
 
     def update(self, delta_time):
+
         # animation, used in render():
         self.animation_length -= delta_time
         if self.animation_length <= 0:

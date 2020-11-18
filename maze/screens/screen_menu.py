@@ -6,7 +6,7 @@ import pygame
 class ScreenMenu(Screen):
     def __init__(self, app):
         super().__init__(app)
-        self.background = pygame.image.load("data/images/background.jpg")
+        self.background = pygame.image.load("data/images/bg.jpg")
         self.letter = (255, 255, 255)
         self.shadow = (0, 0, 0)
 

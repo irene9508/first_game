@@ -1,19 +1,94 @@
 import pygame
 from pytmx.util_pygame import load_pygame
+from math import sqrt
+from operator import attrgetter
+
+
+class Node:
+    def __init__(self, parent, position):
+        self.g = 0  # start to node
+        self.h = 0  # node to end
+        self.f = 0  # start to end
+
+        self.parent = parent
+        self.pos = position  # tile index
 
 
 class Game:
     def __init__(self):
-        self.background = pygame.image.load("data/images/background.jpg").convert()
+        self.background = pygame.image.load("data/images/bg.jpg").convert()
         self.debugging = False
         self.entities = []
         self.entity_queue = []
         self.map = None
 
+    def find_path(self, startxy, endxy):  # params are tuple of entity position
+
+        opened = []
+        closed = []
+        existing = {}  # use "x_y" as key
+        tile_width = self.map.tilewidth
+        tile_height = self.map.tileheight
+
+        # create start and end node:
+        start = Node(None, (startxy[0] / tile_width, startxy[1] / tile_height))
+        end = Node(None, (endxy[0] / tile_width, endxy[1] / tile_height))
+        existing[start.pos[0] + "_" + start.pos[1]] = start
+        existing[end.pos[0] + "_" + end.pos[1]] = end
+        opened.append(start)
+
+        while opened:
+            # create current node (sort by f then by h):
+            current = min(opened, key=attrgetter('f', 'h'))
+            opened.remove(current)
+            closed.append(current)
+
+            if current == end:
+                path = []
+                current_node = current
+                while current_node is not None:
+                    path.append(current_node.pos)
+                    current_node = current_node.parent
+                return path[::-1]  # return reversed path
+
+            # for every adjacent tile:
+            for adj_x in range(current.pos[0] - 1, current.pos[0] + 2):
+                for adj_y in range(current.pos[1] - 1, current.pos[1] + 2):
+
+                    # check if their node exists:
+                    adj = None
+                    key = str(adj_x) + "_" + str(adj_y)
+                    if key not in existing:
+                        adj = Node(current, (adj_x, adj_y))
+                        existing[key] = adj
+                    else:
+                        adj = existing[key]
+
+                    # check if we can skip the updating part below:
+                    tile_values = self.map.get_tile_properties(adj_x, adj_y, 0)
+                    if tile_values['type'] == 'wall' or adj in closed:
+                        continue
+
+                    # update some parameters and lists:
+                    extra_g = sqrt(abs(current.pos[0] - adj.pos[0]) ** 2 +
+                                   abs(current.pos[1] - adj.pos[1]) ** 2)
+                    new_g = current.g + extra_g
+                    if new_g < adj.g or adj not in opened:
+                        adj.g = new_g
+                        adj.h = sqrt(abs(adj.pos[0] - end.pos[0]) ** 2 +
+                                     abs(adj.pos[1] - end.pos[1]) ** 2)
+                        adj.f = adj.g + adj.h
+                        adj.parent = current
+
+                        if adj not in opened:
+                            opened.append(adj)
+        # if loop is exited and no path has been found: return None
+
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
     def find_entity_collisions(self, entity1, entity2, coll_box1, coll_box2):
+
         # define collision box position relative to the screen:
         box1 = pygame.Rect(entity1.x + coll_box1.x, entity1.y + coll_box1.y,
                            coll_box1.width, coll_box1.height)
@@ -29,8 +104,9 @@ class Game:
         if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
             # solve for entities bumping into each other:
             if entity1.solid and entity2.solid:
-                self.solve_solid_collision(entity1, entity2, diff1, diff2,
-                                           diff3, diff4)
+                self.solve_solid_collision(entity1, entity2,
+                                           diff1, diff2, diff3, diff4)
+
             # trigger a reaction:
             if entity1.collision_group != 0 and entity2.collision_group != 0:
                 if entity1.collision_group != entity2.collision_group:
@@ -47,10 +123,10 @@ class Game:
                 if 0 <= x < self.map.width and 0 <= y < self.map.height:
                     tile_properties = self.map.get_tile_properties(x, y, 0)
                     if tile_properties['type'] == 'wall':
-                        coll_box_tile = pygame.Rect(x * int(tile_properties['width']),
-                                                    y * int(tile_properties['height']),
-                                                    int(tile_properties['width']),
-                                                    int(tile_properties['height']))
+                        width = int(tile_properties['width'])
+                        height = int(tile_properties['height'])
+                        coll_box_tile = pygame.Rect(x * width, y * height,
+                                                    width, height)
                         self.find_wall_collisions(coll_box_entity,
                                                   coll_box_tile, entity)
 
@@ -67,7 +143,6 @@ class Game:
 
         if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
             self.solve_wall_collision(entity, diff1, diff2, diff3, diff4)
-        # solve collision between the rect and the entity solid rect
 
     def get_entity_of_category(self, category):
         for entity in self.entities:
@@ -88,7 +163,8 @@ class Game:
         self.entity_queue.clear()
 
     def load(self):
-        self.map = load_pygame('data/Tiled/trial_room.tmx')
+        # self.map = load_pygame('data/Tiled/trial_room.tmx')
+        self.map = load_pygame('data/Tiled/room_with_corridors.tmx')
 
     def render(self, surface):
         # background:

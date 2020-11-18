@@ -35,7 +35,7 @@ class Entity:
                                   self.solid_collision_box.width,
                                   self.solid_collision_box.height), 1)
             if self.trigger:
-                pygame.draw.rect(surface, (255, 0, 255),
+                pygame.draw.rect(surface, (0, 0, 0),
                                  (int(self.x + self.trigger_collision_box.x),
                                   int(self.y + self.trigger_collision_box.y),
                                   self.trigger_collision_box.width,

@@ -22,6 +22,8 @@ class ScreenGame(Screen):
                 self.app.set_screen(screen_menu.ScreenMenu(self.app))
             if event.key == pygame.K_COMMA:
                 self.game.show_debug_info()
+            if event.key == pygame.K_r:
+                self.app.set_screen(ScreenGame(self.app))
 
     def update(self, delta_time):
         self.game.update(delta_time)
