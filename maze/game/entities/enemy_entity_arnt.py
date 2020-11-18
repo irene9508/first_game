@@ -14,3 +14,4 @@ class EnemyEntityArnt(EnemyEntity):
         self.sprites_right = [pygame.image.load("data/images/enemy1/e3r1.png").convert_alpha()]
         self.sprites_up = [pygame.image.load("data/images/enemy1/e3r1.png").convert_alpha()]
         self.sprites_down = [pygame.image.load("data/images/enemy1/e3r1.png").convert_alpha()]
+        self.sprites = self.sprites_down

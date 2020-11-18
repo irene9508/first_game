@@ -31,10 +31,12 @@ class Game:
         tile_height = self.map.tileheight
 
         # create start and end node:
-        start = Node(None, (startxy[0] / tile_width, startxy[1] / tile_height))
-        end = Node(None, (endxy[0] / tile_width, endxy[1] / tile_height))
-        existing[start.pos[0] + "_" + start.pos[1]] = start
-        existing[end.pos[0] + "_" + end.pos[1]] = end
+        start = Node(None, (int(startxy[0] / tile_width),
+                            int(startxy[1] / tile_height)))
+        end = Node(None, (int(endxy[0] / tile_width),
+                          int(endxy[1] / tile_height)))
+        existing[str(start.pos[0]) + "_" + str(start.pos[1])] = start
+        existing[str(end.pos[0]) + "_" + str(end.pos[1])] = end
         opened.append(start)
 
         while opened:
@@ -54,35 +56,38 @@ class Game:
             # for every adjacent tile:
             for adj_x in range(current.pos[0] - 1, current.pos[0] + 2):
                 for adj_y in range(current.pos[1] - 1, current.pos[1] + 2):
+                    if 0 <= adj_x < self.map.width and 0 <= adj_y < self.map.height:
 
-                    # check if their node exists:
-                    adj = None
-                    key = str(adj_x) + "_" + str(adj_y)
-                    if key not in existing:
-                        adj = Node(current, (adj_x, adj_y))
-                        existing[key] = adj
-                    else:
-                        adj = existing[key]
+                        # check if their node exists:
+                        adj = None
+                        key = str(adj_x) + "_" + str(adj_y)
+                        if key not in existing:
+                            adj = Node(current, (adj_x, adj_y))
+                            existing[key] = adj
+                        else:
+                            adj = existing[key]
 
-                    # check if we can skip the updating part below:
-                    tile_values = self.map.get_tile_properties(adj_x, adj_y, 0)
-                    if tile_values['type'] == 'wall' or adj in closed:
-                        continue
+                        # check if we can skip the updating part below:
+                        tile_info = self.map.get_tile_properties(adj_x, adj_y, 0)
+                        if tile_info['type'] == 'wall' or adj in closed:
+                            continue
 
-                    # update some parameters and lists:
-                    extra_g = sqrt(abs(current.pos[0] - adj.pos[0]) ** 2 +
-                                   abs(current.pos[1] - adj.pos[1]) ** 2)
-                    new_g = current.g + extra_g
-                    if new_g < adj.g or adj not in opened:
-                        adj.g = new_g
-                        adj.h = sqrt(abs(adj.pos[0] - end.pos[0]) ** 2 +
-                                     abs(adj.pos[1] - end.pos[1]) ** 2)
-                        adj.f = adj.g + adj.h
-                        adj.parent = current
+                        # update some parameters and lists:
+                        extra_g = sqrt(abs(current.pos[0] - adj.pos[0]) ** 2 +
+                                       abs(current.pos[1] - adj.pos[1]) ** 2)
+                        new_g = current.g + extra_g
+                        if new_g < adj.g or adj not in opened:
+                            adj.g = new_g
+                            adj.h = sqrt(abs(adj.pos[0] - end.pos[0]) ** 2 +
+                                         abs(adj.pos[1] - end.pos[1]) ** 2)
+                            adj.f = adj.g + adj.h
+                            adj.parent = current
 
-                        if adj not in opened:
-                            opened.append(adj)
-        # if loop is exited and no path has been found: return None
+                            if adj not in opened:
+                                opened.append(adj)
+
+        # if loop is exited and no path has been found: return None:
+        return None
 
     def add_entity(self, entity):
         self.entity_queue.append(entity)
