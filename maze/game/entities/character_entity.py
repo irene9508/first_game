@@ -1,10 +1,10 @@
-from maze.game.entities.entity_bullet import EntityBullet
+from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
 from pygame import mixer
 import pygame
 
 
-class EntityCharacter(Entity):  # 109x93
+class CharacterEntity(Entity):  # 109x93
     def __init__(self, game):
         super().__init__(game)
 
@@ -66,7 +66,7 @@ class EntityCharacter(Entity):  # 109x93
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(EntityBullet(self.game, self.x, 1,
+                self.game.add_entity(BulletEntity(self.game, self.x, 1,
                                                   self.y - 52, self.rotation))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.sprites_left
@@ -75,7 +75,7 @@ class EntityCharacter(Entity):  # 109x93
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(EntityBullet(self.game, self.x - 52, 1,
+                self.game.add_entity(BulletEntity(self.game, self.x - 52, 1,
                                                   self.y, self.rotation))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.sprites_down
@@ -84,7 +84,7 @@ class EntityCharacter(Entity):  # 109x93
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(EntityBullet(self.game, self.x, 1,
+                self.game.add_entity(BulletEntity(self.game, self.x, 1,
                                                   self.y + 52, self.rotation))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.sprites_right
@@ -93,7 +93,7 @@ class EntityCharacter(Entity):  # 109x93
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(EntityBullet(self.game, self.x + 52, 1,
+                self.game.add_entity(BulletEntity(self.game, self.x + 52, 1,
                                                   self.y, self.rotation))
 
     def render(self, surface):

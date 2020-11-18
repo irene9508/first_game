@@ -1,8 +1,8 @@
-from maze.game.entities.entity_enemy import EntityEnemy
+from maze.game.entities.enemy_entity import EnemyEntity
 import pygame
 
 
-class EntityEnemyBlob(EntityEnemy):  # 109x93
+class EnemyEntityBlob(EnemyEntity):  # 109x93
     def __init__(self, game):
         super().__init__(game)
 

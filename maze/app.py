@@ -1,5 +1,5 @@
 import pygame
-from maze.screens.screen_menu import ScreenMenu
+from maze.screens.menu_screen import MenuScreen
 
 
 class App:
@@ -17,7 +17,7 @@ class App:
         pygame.init()
         self.surface = pygame.display.set_mode((self.screen_width,
                                                 self.screen_height))
-        self.current_screen = ScreenMenu(self)
+        self.current_screen = MenuScreen(self)
 
         fps_start_time = 0
         delta_start_time = 0

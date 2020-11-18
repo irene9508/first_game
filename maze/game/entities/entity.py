@@ -18,8 +18,6 @@ class Entity:
         self.trigger = False
         self.trigger_collision_box = pygame.Rect(0, 0, 0, 0)
 
-
-
     def destroy(self):
         pass
 

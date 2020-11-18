@@ -1,8 +1,8 @@
-from maze.game.entities.entity_enemy import EntityEnemy
+from maze.game.entities.enemy_entity import EnemyEntity
 import pygame
 
 
-class EntityEnemyArnt(EntityEnemy):
+class EnemyEntityJorn(EnemyEntity):
     def __init__(self, game):
         super().__init__(game)
 

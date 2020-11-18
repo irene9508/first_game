@@ -1,9 +1,9 @@
 from maze.game.entities.entity import Entity
-from maze.game.entities.entity_character import EntityCharacter
+from maze.game.entities.character_entity import CharacterEntity
 import pygame
 
 
-class EntityEnemy(Entity):
+class EnemyEntity(Entity):
     def __init__(self, game):
         super().__init__(game)
 
@@ -44,7 +44,7 @@ class EntityEnemy(Entity):
 
         # movement:
         speed = 50
-        character = self.game.get_entity_of_category(EntityCharacter)
+        character = self.game.get_entity_of_category(CharacterEntity)
         if character is not None:
             # moving towards player:
             x_distance = self.x - character.x

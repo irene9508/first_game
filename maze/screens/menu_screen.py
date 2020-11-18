@@ -1,9 +1,9 @@
 from maze.screens.screen import Screen
-from maze.screens import screen_game
+from maze.screens import game_screen
 import pygame
 
 
-class ScreenMenu(Screen):
+class MenuScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
         self.background = pygame.image.load("data/images/bg.jpg")
@@ -26,7 +26,7 @@ class ScreenMenu(Screen):
             if event.key == pygame.K_ESCAPE:
                 self.app.running = False
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
-                self.app.set_screen(screen_game.ScreenGame(self.app))
+                self.app.set_screen(game_screen.GameScreen(self.app))
 
     def update(self, delta_time):
         pass

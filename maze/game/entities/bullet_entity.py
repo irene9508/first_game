@@ -2,7 +2,7 @@ from maze.game.entities.entity import Entity
 import pygame
 
 
-class EntityBullet(Entity):  # 25x25
+class BulletEntity(Entity):  # 25x25
     def __init__(self, game, x, collision_group, y, rotation):
         super().__init__(game)
 
