@@ -17,9 +17,9 @@ class MenuScreen(Screen):
 
         self.menu_font = 'data/fonts/font2.ttf'
         self.menu_size = pygame.font.Font(self.menu_font, 32)
-        self.menu_text = 'Press Enter to Start'
-        self.menu_shadow = self.menu_size.render(self.menu_text, True, self.shadow)
-        self.menu = self.menu_size.render(self.menu_text, True, self.letter)
+        self.text = 'Press Enter to Start'
+        self.menu_shadow = self.menu_size.render(self.text, True, self.shadow)
+        self.menu = self.menu_size.render(self.text, True, self.letter)
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:

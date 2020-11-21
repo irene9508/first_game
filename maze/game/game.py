@@ -53,9 +53,12 @@ class Game:
                     current_node = current_node.parent
                 return path[::-1]  # return reversed path
 
+            cur_x = current.pos[0]
+            cur_y = current.pos[1]
+
             # for every adjacent tile:
-            for adj_x in range(current.pos[0] - 1, current.pos[0] + 2):
-                for adj_y in range(current.pos[1] - 1, current.pos[1] + 2):
+            for adj_x in range(cur_x - 1, cur_x + 2):
+                for adj_y in range(cur_y - 1, cur_y + 2):
                     if 0 <= adj_x < self.map.width and 0 <= adj_y < self.map.height:
 
                         # check if their node exists:
@@ -67,10 +70,21 @@ class Game:
                         else:
                             adj = existing[key]
 
-                        # check if we can skip the updating part below:
-                        tile_info = self.map.get_tile_properties(adj_x, adj_y, 0)
+                        # check if the node is walkable:
+                        tile_info = self.map.get_tile_properties(adj_x, adj_y,
+                                                                 0)
                         if tile_info['type'] == 'wall' or adj in closed:
                             continue
+
+                        # check if diagonal jumps are valid:
+                        if adj_x != cur_x and adj_y != cur_y:
+                            tile_info1 = self.map.get_tile_properties(cur_x,
+                                                                      adj_y, 0)
+                            tile_info2 = self.map.get_tile_properties(adj_x,
+                                                                      cur_y, 0)
+                            if tile_info1['type'] == 'wall' \
+                                    or tile_info2['type'] == 'wall':
+                                continue
 
                         # update some parameters and lists:
                         extra_g = sqrt(abs(current.pos[0] - adj.pos[0]) ** 2 +
@@ -86,7 +100,7 @@ class Game:
                             if adj not in opened:
                                 opened.append(adj)
 
-        # if loop is exited and no path has been found: return None:
+        # if no path:
         return None
 
     def add_entity(self, entity):

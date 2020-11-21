@@ -32,6 +32,7 @@ class App:
                     self.current_screen.process_event(event)
 
             self.current_screen.update(self.delta_time)
+
             current_time = pygame.time.get_ticks()
 
             # calculate delta time:
@@ -45,7 +46,6 @@ class App:
                 fps_counter = 0
                 fps_start_time = current_time
 
-            # self.surface.fill((0, 0, 0))  # -30fps when active
             self.current_screen.render(self.surface)
             pygame.display.flip()
 

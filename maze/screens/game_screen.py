@@ -30,7 +30,6 @@ class GameScreen(Screen):
                 self.path = self.game.find_path((self.character.x + self.character.solid_collision_box.centerx,
                                                  self.character.y + self.character.solid_collision_box.centery),
                                                 pygame.mouse.get_pos())
-                print(self.path)  # [(9, 2), (10, 3), (11, 3), (12, 4)]
 
     def update(self, delta_time):
         self.game.update(delta_time)

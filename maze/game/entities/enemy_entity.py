@@ -43,35 +43,36 @@ class EnemyEntity(Entity):
             self.marked_for_destroy = True
 
         # movement:
-        speed = 50
+        speed = 100
         character = self.game.get_entity_of_category(CharacterEntity)
         if character is not None:
+            # find the path
             self.path = self.game.find_path((self.x + self.solid_collision_box.centerx,
-                                        self.y + self.solid_collision_box.centery),
-                                       (character.x + character.solid_collision_box.centerx,
-                                        character.y + character.solid_collision_box.centery))
+                                             self.y + self.solid_collision_box.centery),
+                                            (character.x + character.solid_collision_box.centerx,
+                                             character.y + character.solid_collision_box.centery))
 
             # moving towards next node:
             node_position = (self.path[1][0] * self.game.map.tilewidth + self.game.map.tilewidth / 2,
                              self.path[1][1] * self.game.map.tileheight + self.game.map.tileheight / 2)
-
-            # moving towards player:
             x_distance = self.x + self.solid_collision_box.centerx - node_position[0]
             y_distance = self.y + self.solid_collision_box.centery - node_position[1]
+
             if abs(y_distance) < 1:
+                # snap to node:
                 self.y = node_position[1] - self.solid_collision_box.centery
-            if y_distance > 0:
+            elif y_distance > 0:
                 self.y -= speed * delta_time
             elif y_distance < 0:
                 self.y += speed * delta_time
             if abs(x_distance) < 1:
                 self.x = node_position[0] - self.solid_collision_box.centerx
-            if x_distance < 0:
+            elif x_distance < 0:
                 self.x += speed * delta_time
             elif x_distance > 0:
                 self.x -= speed * delta_time
 
-            # facing towards player
+            # facing towards player:
             if abs(y_distance) > abs(x_distance):
                 if y_distance < 0:
                     self.sprites = self.sprites_down
