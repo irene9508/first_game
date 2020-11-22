@@ -56,28 +56,24 @@ class Game:
                 path = path[::-1]
 
                 # skip unnecessary nodes:
+
+                # start at first node:
                 checkpoint = path[0]
-                current_index = 2
-                current_point = path[current_index]
-                for point in path:
-                    if current_point != checkpoint and current_index < len(path) - 1:
-                        walkable = self.check_if_walkable(checkpoint, current_point)
+                # for every following node:
+                for index, point in enumerate(path[1:], start=1):
+                    if index < len(path) - 1:
+                        # check if path from checkpoint to point is walkable:
+                        walkable = self.check_if_walkable(checkpoint, point)
                         # if path from eg. point 0 to point 2 is walkable:
-                        if walkable and current_index < len(path):
+                        if walkable and index < len(path) - 1:
                             # temporarily store point 1:
-                            temp = path[current_index - 1]
-                            # update params for the next loop:
-                            current_index += 1
-                            current_point = path[current_index]
+                            temp = path[index - 1]
                             # remove point 1 from list:
                             path.remove(temp)
                         # if path is not walkable:
                         else:
                             # make point 1 the checkpoint:
-                            checkpoint = path[current_index - 1]
-                            # and point 3 current_point, so we can check if
-                            # point 2 is necessary:
-                            current_index += 1
+                            checkpoint = path[index]
                 return path
 
             cur_x, cur_y = current.xy[0], current.xy[1]
@@ -129,9 +125,9 @@ class Game:
         # if no path:
         return None
 
-    def check_if_walkable(self, checkpoint, current_point):
+    def check_if_walkable(self, checkpoint, point):
         x1, y1 = checkpoint[0], checkpoint[1]
-        x2, y2 = current_point[0], current_point[1]
+        x2, y2 = point[0], point[1]
         slope = (y1 - y2) / (x1 - x2)
         y_intercept = (x1 * y2 - x2 * y1) / (x1 - x2)
 
