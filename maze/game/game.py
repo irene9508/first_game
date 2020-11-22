@@ -128,10 +128,10 @@ class Game:
         length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
         v_norm = (vector[0] / length, vector[1] / length)
 
-        for distance in range(0, int(length), int(self.map.tilewidth/5)):
+        for distance in range(0, int(length), int(tile_width/5)):
             x = p1[0] + v_norm[0] * distance
             y = p1[1] + v_norm[1] * distance
-            tile_info = self.map.get_tile_properties(x/80, y/80, 0)
+            tile_info = self.map.get_tile_properties(x/tile_width, y/tile_height, 0)
             if tile_info['type'] == 'wall':
                 return False
         # if no wall tile was found, return True:
@@ -168,8 +168,8 @@ class Game:
                         entity2.trigger_collision_reaction(entity1)
 
     def find_neighbouring_walls(self, entity, coll_box_entity):
-        entity_tile_index_x = int(entity.x / 80)
-        entity_tile_index_y = int(entity.y / 80)
+        entity_tile_index_x = int(entity.x / self.map.tilewidth)
+        entity_tile_index_y = int(entity.y / self.map.tileheight)
 
         for x in range(entity_tile_index_x - 1, entity_tile_index_x + 2):
             for y in range(entity_tile_index_y - 1, entity_tile_index_y + 2):

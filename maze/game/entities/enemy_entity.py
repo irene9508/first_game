@@ -57,13 +57,11 @@ class EnemyEntity(Entity):
 
             # moving towards next node:
             node_xy = (self.path[1][0] * self.game.map.tilewidth +
-                       self.game.map.tilewidth/2,
+                       self.game.map.tilewidth / 2,
                        self.path[1][1] * self.game.map.tileheight +
-                       self.game.map.tileheight/2)
+                       self.game.map.tileheight / 2)
             x_distance = self.x + self.solid_collision_box.centerx - node_xy[0]
             y_distance = self.y + self.solid_collision_box.centery - node_xy[1]
-
-
 
             if abs(y_distance) < 1:
                 # snap to node:
