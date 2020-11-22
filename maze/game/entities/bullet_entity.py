@@ -1,5 +1,6 @@
-from maze.game.entities.entity import Entity
 import pygame
+
+from maze.game.entities.entity import Entity
 
 
 class BulletEntity(Entity):  # 25x25
@@ -17,7 +18,8 @@ class BulletEntity(Entity):  # 25x25
         self.trigger_collision_box = pygame.Rect(-12, -12, 25, 25)
 
         # other:
-        self.sprite = pygame.image.load("data/images/bullet.png").convert_alpha()
+        self.sprite = pygame.image.load(
+            "data/images/bullet.png").convert_alpha()
 
     def update(self, delta_time):
         # movement direction:

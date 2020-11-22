@@ -1,6 +1,7 @@
-from maze.game.entities.entity import Entity
-from maze.game.entities.character_entity import CharacterEntity
 import pygame
+
+from maze.game.entities.character_entity import CharacterEntity
+from maze.game.entities.entity import Entity
 
 
 class EnemyEntity(Entity):
@@ -46,27 +47,35 @@ class EnemyEntity(Entity):
         speed = 100
         character = self.game.get_entity_of_category(CharacterEntity)
         if character is not None:
-            # find the path
-            self.path = self.game.find_path((self.x + self.solid_collision_box.centerx,
-                                             self.y + self.solid_collision_box.centery),
-                                            (character.x + character.solid_collision_box.centerx,
-                                             character.y + character.solid_collision_box.centery))
+
+
+
+            # find the path:
+            self.path = self.game.find_path(
+                (self.x + self.solid_collision_box.centerx,
+                 self.y + self.solid_collision_box.centery),
+                (character.x + character.solid_collision_box.centerx,
+                 character.y + character.solid_collision_box.centery))
 
             # moving towards next node:
-            node_position = (self.path[1][0] * self.game.map.tilewidth + self.game.map.tilewidth / 2,
-                             self.path[1][1] * self.game.map.tileheight + self.game.map.tileheight / 2)
-            x_distance = self.x + self.solid_collision_box.centerx - node_position[0]
-            y_distance = self.y + self.solid_collision_box.centery - node_position[1]
+            node_xy = (self.path[1][0] * self.game.map.tilewidth +
+                       self.game.map.tilewidth/2,
+                       self.path[1][1] * self.game.map.tileheight +
+                       self.game.map.tileheight/2)
+            x_distance = self.x + self.solid_collision_box.centerx - node_xy[0]
+            y_distance = self.y + self.solid_collision_box.centery - node_xy[1]
+
+
 
             if abs(y_distance) < 1:
                 # snap to node:
-                self.y = node_position[1] - self.solid_collision_box.centery
+                self.y = node_xy[1] - self.solid_collision_box.centery
             elif y_distance > 0:
                 self.y -= speed * delta_time
             elif y_distance < 0:
                 self.y += speed * delta_time
             if abs(x_distance) < 1:
-                self.x = node_position[0] - self.solid_collision_box.centerx
+                self.x = node_xy[0] - self.solid_collision_box.centerx
             elif x_distance < 0:
                 self.x += speed * delta_time
             elif x_distance > 0:
@@ -90,11 +99,16 @@ class EnemyEntity(Entity):
         surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
         super().render(surface)
 
-        if self.game.debugging:
-            if self.path is not None:
-                for index in range(len(self.path) - 1):
-                    pygame.draw.line(surface, (0, 0, 255),
-                                     (self.path[index][0] * self.game.map.tilewidth + self.game.map.tilewidth / 2,
-                                      self.path[index][1] * self.game.map.tileheight + self.game.map.tileheight / 2),
-                                     (self.path[index + 1][0] * self.game.map.tilewidth + self.game.map.tilewidth / 2,
-                                      self.path[index + 1][1] * self.game.map.tileheight + self.game.map.tileheight / 2))
+        if self.game.debugging and self.path is not None:
+            for index in range(len(self.path) - 1):
+                pygame.draw.line(surface, (0, 0, 255),
+                                 (self.path[index][0] * self.game.map.tilewidth
+                                  + self.game.map.tilewidth / 2,
+                                  self.path[index][1] * self.game.map.tileheight
+                                  + self.game.map.tileheight / 2),
+                                 (self.path[index + 1][0]
+                                  * self.game.map.tilewidth
+                                  + self.game.map.tilewidth / 2,
+                                  self.path[index + 1][1]
+                                  * self.game.map.tileheight
+                                  + self.game.map.tileheight / 2))

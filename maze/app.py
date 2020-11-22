@@ -1,4 +1,5 @@
 import pygame
+
 from maze.screens.menu_screen import MenuScreen
 
 

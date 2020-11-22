@@ -1,7 +1,8 @@
+import pygame
+from pygame import mixer
+
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
-from pygame import mixer
-import pygame
 
 
 class CharacterEntity(Entity):  # 109x93
@@ -13,10 +14,14 @@ class CharacterEntity(Entity):  # 109x93
         self.y = 300
 
         # animation:
-        self.sprites_down = [pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
-        self.sprites_left = [pygame.image.load("data/images/enemy1/e1l1.png").convert_alpha()]
-        self.sprites_right = [pygame.image.load("data/images/enemy1/e1r1.png").convert_alpha()]
-        self.sprites_up = [pygame.image.load("data/images/enemy1/e1u1.png").convert_alpha()]
+        self.sprites_down = [
+            pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
+        self.sprites_left = [
+            pygame.image.load("data/images/enemy1/e1l1.png").convert_alpha()]
+        self.sprites_right = [
+            pygame.image.load("data/images/enemy1/e1r1.png").convert_alpha()]
+        self.sprites_up = [
+            pygame.image.load("data/images/enemy1/e1u1.png").convert_alpha()]
         self.sprites_index = 0  # needed to iterate through the list of sprites
         self.sprites = self.sprites_down
         self.animation_length = 0.12  # controls speed of sprite animation
@@ -99,5 +104,6 @@ class CharacterEntity(Entity):  # 109x93
     def render(self, surface):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
+        surface.blit(sprite,
+                     (int(self.x - width / 2), int(self.y - height / 2)))
         super().render(surface)

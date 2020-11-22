@@ -1,6 +1,7 @@
-from maze.screens.screen import Screen
-from maze.screens import game_screen
 import pygame
+
+from maze.screens import game_screen
+from maze.screens.screen import Screen
 
 
 class MenuScreen(Screen):

@@ -1,7 +1,8 @@
-import pygame
-from pytmx.util_pygame import load_pygame
 from math import sqrt
 from operator import attrgetter
+
+import pygame
+from pytmx.util_pygame import load_pygame
 
 
 class Node:
@@ -11,7 +12,7 @@ class Node:
         self.f = 0  # start to end
 
         self.parent = parent
-        self.pos = position  # tile index
+        self.xy = position  # tile index
 
 
 class Game:
@@ -27,16 +28,16 @@ class Game:
         opened = []
         closed = []
         existing = {}  # use "x_y" as key
-        tile_width = self.map.tilewidth
-        tile_height = self.map.tileheight
+        tile_width, tile_height = self.map.tilewidth, self.map.tileheight
+        map_width, map_height = self.map.width, self.map.height
 
         # create start and end node:
         start = Node(None, (int(startxy[0] / tile_width),
                             int(startxy[1] / tile_height)))
         end = Node(None, (int(endxy[0] / tile_width),
                           int(endxy[1] / tile_height)))
-        existing[str(start.pos[0]) + "_" + str(start.pos[1])] = start
-        existing[str(end.pos[0]) + "_" + str(end.pos[1])] = end
+        existing[str(start.xy[0]) + "_" + str(start.xy[1])] = start
+        existing[str(end.xy[0]) + "_" + str(end.xy[1])] = end
         opened.append(start)
 
         while opened:
@@ -45,30 +46,55 @@ class Game:
             opened.remove(current)
             closed.append(current)
 
+            # make path:
             if current == end:
                 path = []
                 current_node = current
                 while current_node is not None:
-                    path.append(current_node.pos)
+                    path.append(current_node.xy)
                     current_node = current_node.parent
-                return path[::-1]  # return reversed path
+                path = path[::-1]
 
-            cur_x = current.pos[0]
-            cur_y = current.pos[1]
+                # skip unnecessary nodes:
+                checkpoint = path[0]
+                current_index = 2
+                current_point = path[current_index]
+                for point in path:
+                    if current_point != checkpoint and current_index < len(path) - 1:
+                        walkable = self.check_if_walkable(checkpoint, current_point)
+                        # if path from eg. point 0 to point 2 is walkable:
+                        if walkable and current_index < len(path):
+                            # temporarily store point 1:
+                            temp = path[current_index - 1]
+                            # update params for the next loop:
+                            current_index += 1
+                            current_point = path[current_index]
+                            # remove point 1 from list:
+                            path.remove(temp)
+                        # if path is not walkable:
+                        else:
+                            # make point 1 the checkpoint:
+                            checkpoint = path[current_index - 1]
+                            # and point 3 current_point, so we can check if
+                            # point 2 is necessary:
+                            current_index += 1
+                return path
+
+            cur_x, cur_y = current.xy[0], current.xy[1]
 
             # for every adjacent tile:
             for adj_x in range(cur_x - 1, cur_x + 2):
                 for adj_y in range(cur_y - 1, cur_y + 2):
-                    if 0 <= adj_x < self.map.width and 0 <= adj_y < self.map.height:
+                    if 0 <= adj_x < map_width and 0 <= adj_y < map_height:
 
-                        # check if their node exists:
+                        # check if the node exists:
                         adj = None
                         key = str(adj_x) + "_" + str(adj_y)
                         if key not in existing:
                             adj = Node(current, (adj_x, adj_y))
                             existing[key] = adj
                         else:
-                            adj = existing[key]
+                            adj = existing.get(key)
 
                         # check if the node is walkable:
                         tile_info = self.map.get_tile_properties(adj_x, adj_y,
@@ -87,13 +113,13 @@ class Game:
                                 continue
 
                         # update some parameters and lists:
-                        extra_g = sqrt(abs(current.pos[0] - adj.pos[0]) ** 2 +
-                                       abs(current.pos[1] - adj.pos[1]) ** 2)
+                        extra_g = sqrt(abs(current.xy[0] - adj.xy[0]) ** 2 +
+                                       abs(current.xy[1] - adj.xy[1]) ** 2)
                         new_g = current.g + extra_g
                         if new_g < adj.g or adj not in opened:
                             adj.g = new_g
-                            adj.h = sqrt(abs(adj.pos[0] - end.pos[0]) ** 2 +
-                                         abs(adj.pos[1] - end.pos[1]) ** 2)
+                            adj.h = sqrt(abs(adj.xy[0] - end.xy[0]) ** 2 +
+                                         abs(adj.xy[1] - end.xy[1]) ** 2)
                             adj.f = adj.g + adj.h
                             adj.parent = current
 
@@ -102,6 +128,75 @@ class Game:
 
         # if no path:
         return None
+
+    def check_if_walkable(self, checkpoint, current_point):
+        x1, y1 = checkpoint[0], checkpoint[1]
+        x2, y2 = current_point[0], current_point[1]
+        slope = (y1 - y2) / (x1 - x2)
+        y_intercept = (x1 * y2 - x2 * y1) / (x1 - x2)
+
+        # if slope is more horizontal, or exactly diagonal:
+        if -45 <= slope <= 45:
+            # make sure the for-loop knows whether to add or subtract interval:
+            if slope < 0:
+                sign = -1
+            else:
+                sign = 1
+            # for every xth coordinate on x-axis:
+            for x in range(x1, x2, sign * int(self.map.tilewidth / 5)):
+                # get the corresponding y coordinate:
+                y = int(slope * x + y_intercept)
+                # get the tile info for these coordinates:
+                tile_info = self.map.get_tile_properties(x, y, 0)
+                # if tile is wall, path is not walkable, return False:
+                if tile_info['type'] == 'wall':
+                    return False
+                # else, continue checking the next point in the path:
+                else:
+                    continue
+            # if no wall tile was found, return True:
+            return True
+
+        # if slope is more vertical:
+        if slope < -45 or slope > 45:
+            # make sure the for-loop knows whether to add or subtract interval:
+            if slope < 0:
+                sign = -1
+            else:
+                sign = 1
+            # for every xth coordinate on y-axis:
+            for y in range(y1, y2, sign * (self.map.tilewidth / 5)):
+                # get the corresponding x coordinate:
+                x = (y - y_intercept) / slope
+                # get the tile info for these coordinates:
+                tile_info = self.map.get_tile_properties(x, y, 0)
+                # if tile is wall, path is not walkable, return False:
+                if tile_info['type'] == 'wall':
+                    return False
+                # else, continue checking the next point in the path:
+                else:
+                    continue
+            # if no wall tile was found, return True:
+            return True
+
+
+        # find the line from checkpoint to current_point
+        # find out if the line is more horizontal or more vertical
+        # if more horizontal: use x-axis; if more vertical: use y-axis
+        # if exactly diagonal, it doesn't matter: use x-axis
+        # every so many coordinates (1/5th of tile width), get x/y coordinates
+        # use the coordinates to get tile info, and check if tile is wall
+        # if not: check next point in path, until end is reached. Return True.
+        # as soon as a tile is a wall: return False
+
+        # The algorithm makes use of a function Walkable(pointA, pointB),
+        # which samples points along a line from point A to point B at a
+        # certain granularity (typically we use one-fifth of a tile width),
+        # checking at each point whether the unit overlaps any neighboring
+        # blocked tile. (Using the width of the unit, it checks the four
+        # points in a diamond pattern around the unit's center.) The function
+        # returns true if it encounters no blocked tiles and false otherwise.
+        # See Figure 3 for an illustration, and Listing 1 for pseudocode.
 
     def add_entity(self, entity):
         self.entity_queue.append(entity)
