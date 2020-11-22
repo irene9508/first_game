@@ -28,7 +28,7 @@ class GameScreen(Screen):
                 self.app.set_screen(GameScreen(self.app))
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
-                self.path = self.game.find_path((
+                self.path = self.game.check_if_walkable((
                     self.char.x + self.char.solid_collision_box.centerx,
                     self.char.y + self.char.solid_collision_box.centery),
                     pygame.mouse.get_pos())

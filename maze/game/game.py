@@ -56,25 +56,17 @@ class Game:
                 path = path[::-1]
 
                 # skip unnecessary nodes:
-
-                # start at first node:
+                new_path = []
                 checkpoint = path[0]
-                # for every following node:
-                for index, point in enumerate(path[1:], start=1):
-                    if index < len(path) - 1:
-                        # check if path from checkpoint to point is walkable:
-                        walkable = self.check_if_walkable(checkpoint, point)
-                        # if path from eg. point 0 to point 2 is walkable:
-                        if walkable and index < len(path) - 1:
-                            # temporarily store point 1:
-                            temp = path[index - 1]
-                            # remove point 1 from list:
-                            path.remove(temp)
-                        # if path is not walkable:
-                        else:
-                            # make point 1 the checkpoint:
-                            checkpoint = path[index]
-                return path
+                new_path.append(checkpoint)
+                for index in range(1, len(path) - 1):
+                    walkable = self.check_if_walkable(checkpoint,
+                                                      path[index + 1])
+                    if not walkable:
+                        checkpoint = path[index]
+                        new_path.append(path[index])
+                new_path.append(path[-1])
+                return new_path
 
             cur_x, cur_y = current.xy[0], current.xy[1]
 
@@ -125,74 +117,25 @@ class Game:
         # if no path:
         return None
 
-    def check_if_walkable(self, checkpoint, point):
-        x1, y1 = checkpoint[0], checkpoint[1]
-        x2, y2 = point[0], point[1]
-        slope = (y1 - y2) / (x1 - x2)
-        y_intercept = (x1 * y2 - x2 * y1) / (x1 - x2)
+    def check_if_walkable(self, point1, point2):
+        tile_width = self.map.tilewidth
+        tile_height = self.map.tileheight
+        p1 = (point1[0] * tile_width + tile_width / 2,
+              point1[1] * tile_height + tile_height / 2)
+        p2 = (point2[0] * tile_width + tile_width / 2,
+              point2[1] * tile_height + tile_height / 2)
+        vector = (p2[0] - p1[0], p2[1] - p1[1])
+        length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+        v_norm = (vector[0] / length, vector[1] / length)
 
-        # if slope is more horizontal, or exactly diagonal:
-        if -45 <= slope <= 45:
-            # make sure the for-loop knows whether to add or subtract interval:
-            if slope < 0:
-                sign = -1
-            else:
-                sign = 1
-            # for every xth coordinate on x-axis:
-            for x in range(x1, x2, sign * int(self.map.tilewidth / 5)):
-                # get the corresponding y coordinate:
-                y = int(slope * x + y_intercept)
-                # get the tile info for these coordinates:
-                tile_info = self.map.get_tile_properties(x, y, 0)
-                # if tile is wall, path is not walkable, return False:
-                if tile_info['type'] == 'wall':
-                    return False
-                # else, continue checking the next point in the path:
-                else:
-                    continue
-            # if no wall tile was found, return True:
-            return True
-
-        # if slope is more vertical:
-        if slope < -45 or slope > 45:
-            # make sure the for-loop knows whether to add or subtract interval:
-            if slope < 0:
-                sign = -1
-            else:
-                sign = 1
-            # for every xth coordinate on y-axis:
-            for y in range(y1, y2, sign * (self.map.tilewidth / 5)):
-                # get the corresponding x coordinate:
-                x = (y - y_intercept) / slope
-                # get the tile info for these coordinates:
-                tile_info = self.map.get_tile_properties(x, y, 0)
-                # if tile is wall, path is not walkable, return False:
-                if tile_info['type'] == 'wall':
-                    return False
-                # else, continue checking the next point in the path:
-                else:
-                    continue
-            # if no wall tile was found, return True:
-            return True
-
-
-        # find the line from checkpoint to current_point
-        # find out if the line is more horizontal or more vertical
-        # if more horizontal: use x-axis; if more vertical: use y-axis
-        # if exactly diagonal, it doesn't matter: use x-axis
-        # every so many coordinates (1/5th of tile width), get x/y coordinates
-        # use the coordinates to get tile info, and check if tile is wall
-        # if not: check next point in path, until end is reached. Return True.
-        # as soon as a tile is a wall: return False
-
-        # The algorithm makes use of a function Walkable(pointA, pointB),
-        # which samples points along a line from point A to point B at a
-        # certain granularity (typically we use one-fifth of a tile width),
-        # checking at each point whether the unit overlaps any neighboring
-        # blocked tile. (Using the width of the unit, it checks the four
-        # points in a diamond pattern around the unit's center.) The function
-        # returns true if it encounters no blocked tiles and false otherwise.
-        # See Figure 3 for an illustration, and Listing 1 for pseudocode.
+        for distance in range(0, int(length), int(self.map.tilewidth/5)):
+            x = p1[0] + v_norm[0] * distance
+            y = p1[1] + v_norm[1] * distance
+            tile_info = self.map.get_tile_properties(x/80, y/80, 0)
+            if tile_info['type'] == 'wall':
+                return False
+        # if no wall tile was found, return True:
+        return True
 
     def add_entity(self, entity):
         self.entity_queue.append(entity)

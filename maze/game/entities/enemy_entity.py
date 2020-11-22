@@ -44,11 +44,9 @@ class EnemyEntity(Entity):
             self.marked_for_destroy = True
 
         # movement:
-        speed = 100
+        speed = 50
         character = self.game.get_entity_of_category(CharacterEntity)
         if character is not None:
-
-
 
             # find the path:
             self.path = self.game.find_path(
