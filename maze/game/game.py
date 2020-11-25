@@ -124,15 +124,23 @@ class Game:
               point1[1] * tile_height + tile_height / 2)
         p2 = (point2[0] * tile_width + tile_width / 2,
               point2[1] * tile_height + tile_height / 2)
-        vector = (p2[0] - p1[0], p2[1] - p1[1])
-        length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
-        v_norm = (vector[0] / length, vector[1] / length)
+        vector1 = (p2[0] - p1[0], p2[1] - p1[1])
+        length1 = sqrt(vector1[0] * vector1[0] + vector1[1] * vector1[1])
+        v_norm1 = (vector1[0] / length1, vector1[1] / length1)
 
-        for distance in range(0, int(length), int(tile_width/5)):
-            x = p1[0] + v_norm[0] * distance
-            y = p1[1] + v_norm[1] * distance
-            tile_info = self.map.get_tile_properties(x/tile_width, y/tile_height, 0)
-            if tile_info['type'] == 'wall':
+        for distance in range(0, int(length1), int(tile_width / 5)):
+            x1 = p1[0] + v_norm1[0] * distance
+            y1 = p1[1] + v_norm1[1] * distance
+
+            tile_info1 = self.map.get_tile_properties(x1 / tile_width,
+                                                      y1 / tile_height, 0)
+            tile_info2 = self.map.get_tile_properties(x1 / tile_width + 0.5,
+                                                      y1 / tile_height + 0.5, 0)
+            tile_info3 = self.map.get_tile_properties(x1 / tile_width - 0.5,
+                                                      y1 / tile_height - 0.5, 0)
+
+            if tile_info1['type'] == 'wall' or tile_info2['type'] == 'wall' \
+                    or tile_info3['type'] == 'wall':
                 return False
         # if no wall tile was found, return True:
         return True

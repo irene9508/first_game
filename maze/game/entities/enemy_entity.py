@@ -2,6 +2,7 @@ import pygame
 
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
+from math import sqrt
 
 
 class EnemyEntity(Entity):
@@ -14,6 +15,7 @@ class EnemyEntity(Entity):
         self.y = 100
 
         # animation:
+        self.current_tile_pos_enemy = None
         self.sprites_left = None
         self.sprites_right = None
         self.sprites_up = None
@@ -24,6 +26,7 @@ class EnemyEntity(Entity):
 
         # collisions:
         self.collision_group = 2
+        self.path = None
         self.solid = True
         self.solid_collision_box = pygame.Rect(0, 0, 0, 0)
         self.trigger = True
@@ -44,47 +47,46 @@ class EnemyEntity(Entity):
             self.marked_for_destroy = True
 
         # movement:
-        speed = 50
+        speed = 150
         character = self.game.get_entity_of_category(CharacterEntity)
+        tile_width = self.game.map.tilewidth
+        tile_height = self.game.map.tileheight
+        p1 = (self.x + self.solid_collision_box.centerx,
+              self.y + self.solid_collision_box.centery)
+        new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
+        new_tile_pos_char = (character.x + character.solid_collision_box.centery)
+
         if character is not None:
 
-            # find the path:
-            self.path = self.game.find_path(
-                (self.x + self.solid_collision_box.centerx,
-                 self.y + self.solid_collision_box.centery),
-                (character.x + character.solid_collision_box.centerx,
-                 character.y + character.solid_collision_box.centery))
+            if self.current_tile_pos_enemy != new_tile_pos_enemy:
+                self.current_tile_pos_enemy = new_tile_pos_enemy
 
-            # moving towards next node:
-            node_xy = (self.path[1][0] * self.game.map.tilewidth +
-                       self.game.map.tilewidth / 2,
-                       self.path[1][1] * self.game.map.tileheight +
-                       self.game.map.tileheight / 2)
-            x_distance = self.x + self.solid_collision_box.centerx - node_xy[0]
-            y_distance = self.y + self.solid_collision_box.centery - node_xy[1]
+                # find path to character:
+                self.path = self.game.find_path(p1,
+                    (character.x + character.solid_collision_box.centerx,
+                     character.y + character.solid_collision_box.centery))
 
-            if abs(y_distance) < 1:
-                # snap to node:
-                self.y = node_xy[1] - self.solid_collision_box.centery
-            elif y_distance > 0:
-                self.y -= speed * delta_time
-            elif y_distance < 0:
-                self.y += speed * delta_time
-            if abs(x_distance) < 1:
-                self.x = node_xy[0] - self.solid_collision_box.centerx
-            elif x_distance < 0:
-                self.x += speed * delta_time
-            elif x_distance > 0:
-                self.x -= speed * delta_time
+            # move towards next node:
+            p2 = (self.path[1][0] * tile_width + tile_width / 2,
+                  self.path[1][1] * tile_height + tile_height / 2)
+
+            vector = (p2[0] - p1[0], p2[1] - p1[1])
+            length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+            v_norm = (vector[0] / length, vector[1] / length)
+
+            movement = (v_norm[0] * speed, v_norm[1] * speed)
+
+            self.x += movement[0] * delta_time
+            self.y += movement[1] * delta_time
 
             # facing towards player:
-            if abs(y_distance) > abs(x_distance):
-                if y_distance < 0:
-                    self.sprites = self.sprites_down
-                else:
+            if abs(vector[1]) > abs(vector[0]):
+                if vector[0] < 0:
                     self.sprites = self.sprites_up
+                else:
+                    self.sprites = self.sprites_down
             else:
-                if x_distance < 0:
+                if vector[1] < 0:
                     self.sprites = self.sprites_right
                 else:
                     self.sprites = self.sprites_left
