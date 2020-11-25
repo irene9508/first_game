@@ -13,9 +13,10 @@ class EnemyEntity(Entity):
         self.health = 0
         self.x = 100
         self.y = 100
+        self.centerx = self.solid_collision_box.centerx
+        self.centery = self.solid_collision_box.centery
 
         # animation:
-        self.current_tile_pos_enemy = None
         self.sprites_left = None
         self.sprites_right = None
         self.sprites_up = None
@@ -31,6 +32,10 @@ class EnemyEntity(Entity):
         self.solid_collision_box = pygame.Rect(0, 0, 0, 0)
         self.trigger = True
         self.trigger_collision_box = pygame.Rect(0, 0, 0, 0)
+
+        # movement:
+        self.current_tile_pos_char = None
+        self.current_tile_pos_enemy = None
 
     def update(self, delta_time):
 
@@ -48,23 +53,23 @@ class EnemyEntity(Entity):
 
         # movement:
         speed = 150
-        character = self.game.get_entity_of_category(CharacterEntity)
+        char = self.game.get_entity_of_category(CharacterEntity)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
-        p1 = (self.x + self.solid_collision_box.centerx,
-              self.y + self.solid_collision_box.centery)
+        p1 = (self.x + self.centerx, self.y + self.centery)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (character.x + character.solid_collision_box.centery)
+        new_tile_pos_char = (((char.x + char.centerx) / tile_width),
+                             (char.y + char.centery / tile_height))
 
-        if character is not None:
-
-            if self.current_tile_pos_enemy != new_tile_pos_enemy:
+        if char is not None:
+            if self.current_tile_pos_enemy != new_tile_pos_enemy \
+                    or self.current_tile_pos_char != new_tile_pos_char:
                 self.current_tile_pos_enemy = new_tile_pos_enemy
+                self.current_tile_pos_char = new_tile_pos_char
 
-                # find path to character:
-                self.path = self.game.find_path(p1,
-                    (character.x + character.solid_collision_box.centerx,
-                     character.y + character.solid_collision_box.centery))
+                # find path to char:
+                self.path = self.game.find_path(p1, (char.x + char.centerx,
+                                                     char.y + char.centery))
 
             # move towards next node:
             p2 = (self.path[1][0] * tile_width + tile_width / 2,

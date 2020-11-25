@@ -9,10 +9,6 @@ class CharacterEntity(Entity):  # 109x93
     def __init__(self, game):
         super().__init__(game)
 
-        # properties:
-        self.x = 280
-        self.y = 300
-
         # animation:
         self.sprites_down = [
             pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
@@ -30,6 +26,12 @@ class CharacterEntity(Entity):  # 109x93
         self.collision_group = 1
         self.solid_collision_box = pygame.Rect(-55, 15, 109, 30)
         self.solid = True
+
+        # properties:
+        self.x = 280
+        self.y = 300
+        self.centerx = self.solid_collision_box.centerx
+        self.centery = self.solid_collision_box.centery
 
         # other:
         self.shot_timer = 0.2  # prevents the bullets from rapid firing
