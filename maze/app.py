@@ -1,6 +1,7 @@
 import pygame
 
 from maze.screens.menu_screen import MenuScreen
+from os import environ
 
 
 class App:
@@ -15,6 +16,7 @@ class App:
         self.surface = None
 
     def run(self):
+        environ["SDL_VIDEO_CENTERED"] = "1"
         pygame.init()
         self.surface = pygame.display.set_mode((self.screen_width,
                                                 self.screen_height))

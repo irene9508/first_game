@@ -30,8 +30,6 @@ class CharacterEntity(Entity):  # 109x93
         # properties:
         self.x = 280
         self.y = 300
-        self.centerx = self.solid_collision_box.centerx
-        self.centery = self.solid_collision_box.centery
 
         # other:
         self.shot_timer = 0.2  # prevents the bullets from rapid firing
