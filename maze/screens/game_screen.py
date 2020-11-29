@@ -29,8 +29,8 @@ class GameScreen(Screen):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
                 self.path = self.game.find_path((
-                    self.char.x + self.char.solid_collision_box.centerx,
-                    self.char.y + self.char.solid_collision_box.centery),
+                    self.char.x + self.char.collision_box.centerx,
+                    self.char.y + self.char.collision_box.centery),
                     pygame.mouse.get_pos())
 
     def update(self, delta_time):
@@ -39,7 +39,7 @@ class GameScreen(Screen):
             print(self.app.fps)
 
     def render(self, surface, scale):
-        self.game.render(surface, self.app, scale)
+        self.game.render(surface, scale)
         if self.game.debugging and self.path is not None:
             for index in range(len(self.path) - 1):
                 pygame.draw.line(surface, (0, 0, 255),

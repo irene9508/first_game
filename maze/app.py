@@ -53,7 +53,7 @@ class App:
 
             scale = (self.surface.get_size()[0] / self.ref_res[0],
                      self.surface.get_size()[1] / self.ref_res[1])
-            print(scale)
+
             self.current_screen.render(self.surface, scale)
             pygame.display.flip()
 

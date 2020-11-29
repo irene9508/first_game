@@ -27,9 +27,9 @@ class EnemyEntity(Entity):
         self.collision_group = 2
         self.path = None
         self.solid = True
-        self.solid_collision_box = pygame.Rect(0, 0, 0, 0)
+        self.collision_box = pygame.Rect(0, 0, 0, 0)
         self.trigger = True
-        self.trigger_collision_box = pygame.Rect(0, 0, 0, 0)
+        self.hitbox = pygame.Rect(0, 0, 0, 0)
 
         self.body = self.game.world.CreateDynamicBody(position=(100, 100))
 
@@ -56,12 +56,12 @@ class EnemyEntity(Entity):
         char = self.game.get_entity_of_category(CharacterEntity)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
-        p1 = (self.x + self.solid_collision_box.centerx, self.y +
-              self.solid_collision_box.centery)
+        p1 = (self.x + self.collision_box.centerx, self.y +
+              self.collision_box.centery)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (((char.x + char.solid_collision_box.centerx)
+        new_tile_pos_char = (((char.x + char.collision_box.centerx)
                               / tile_width),
-                             (char.y + char.solid_collision_box.centery
+                             (char.y + char.collision_box.centery
                               / tile_height))
 
         if char is not None:
@@ -71,8 +71,8 @@ class EnemyEntity(Entity):
                 self.current_tile_pos_char = new_tile_pos_char
 
                 # find path to char:
-                self.path = self.game.find_path(p1, (char.x + char.solid_collision_box.centerx,
-                                                     char.y + char.solid_collision_box.centery))
+                self.path = self.game.find_path(p1, (char.x + char.collision_box.centerx,
+                                                     char.y + char.collision_box.centery))
 
             # move towards next node:
             p2 = (self.path[1][0] * tile_width + tile_width / 2,
@@ -99,11 +99,15 @@ class EnemyEntity(Entity):
                 else:
                     self.sprites = self.sprites_left
 
-    def render(self, surface, app, scale):
+    def render(self, surface, scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
-        super().render(surface, app, scale)
+        sprite = pygame.transform.smoothscale(sprite, (int(width * scale[0]),
+                                                       int(height * scale[1])))
+        surface.blit(sprite, (int(((self.x - width / 2) * scale[0])),
+                              int((self.y - height / 2) * scale[1])))
+
+        super().render(surface, scale)
 
         if self.game.debugging and self.path is not None:
             for index in range(len(self.path) - 1):
