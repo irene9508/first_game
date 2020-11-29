@@ -99,11 +99,11 @@ class EnemyEntity(Entity):
                 else:
                     self.sprites = self.sprites_left
 
-    def render(self, surface):
+    def render(self, surface, app, scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         surface.blit(sprite, (int(self.x - width/2), int(self.y - height/2)))
-        super().render(surface)
+        super().render(surface, app, scale)
 
         if self.game.debugging and self.path is not None:
             for index in range(len(self.path) - 1):

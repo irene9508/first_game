@@ -24,7 +24,7 @@ class Entity:
     def update(self, delta_time):
         pass
 
-    def render(self, surface):
+    def render(self, surface, app, scale):
         if self.game.debugging:
             if self.solid:
                 pygame.draw.rect(surface, (255, 255, 255),

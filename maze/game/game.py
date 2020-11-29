@@ -61,18 +61,18 @@ class Game:
                     current_node = current_node.parent
                 path = path[::-1]
 
-                # # skip unnecessary nodes:
-                # new_path = []
-                # checkpoint = path[0]
-                # new_path.append(checkpoint)
-                # for index in range(1, len(path) - 1):
-                #     walkable = self.check_if_walkable(checkpoint,
-                #                                       path[index + 1])
-                #     if not walkable:
-                #         checkpoint = path[index]
-                #         new_path.append(path[index])
-                # new_path.append(path[-1])
-                return path
+                # skip unnecessary nodes:
+                new_path = []
+                checkpoint = path[0]
+                new_path.append(checkpoint)
+                for index in range(1, len(path) - 1):
+                    walkable = self.check_if_walkable(checkpoint,
+                                                      path[index + 1])
+                    if not walkable:
+                        checkpoint = path[index]
+                        new_path.append(path[index])
+                new_path.append(path[-1])
+                return new_path
 
             cur_x, cur_y = current.xy[0], current.xy[1]
 
@@ -233,7 +233,7 @@ class Game:
         # self.map = load_pygame('data/Tiled/trial_room.tmx')
         self.map = load_pygame('data/Tiled/room_with_corridors.tmx')
 
-    def render(self, surface, app):
+    def render(self, surface, app, scale):
         # background:
         # surface.blit(self.background, [0, 0])  # -70fps when active
 
@@ -248,7 +248,7 @@ class Game:
         # entities:
         self.entities.sort(key=lambda e: e.y)
         for entity in self.entities:
-            entity.render(surface)
+            entity.render(surface, app, scale)
 
     def show_debug_info(self):
         self.debugging = not self.debugging
@@ -285,22 +285,22 @@ class Game:
         for entity in self.entities:
             entity.update(delta_time)
 
-        # # activate check for collisions between entities:
-        # for index1, entity1 in enumerate(self.entities):
-        #     for entity2 in self.entities[index1 + 1:]:
-        #         if entity1.solid and entity2.solid:
-        #             self.find_entity_collisions(entity1, entity2,
-        #                                         entity1.solid_collision_box,
-        #                                         entity2.solid_collision_box)
-        #         if entity1.trigger and entity2.trigger:
-        #             self.find_entity_collisions(entity1, entity2,
-        #                                         entity1.trigger_collision_box,
-        #                                         entity2.trigger_collision_box)
-        #
-        # # activate check for collisions between entities and walls:
-        # for entity in self.entities:
-        #     if entity.solid:
-        #         self.find_neighbouring_walls(entity, entity.solid_collision_box)
+        # activate check for collisions between entities:
+        for index1, entity1 in enumerate(self.entities):
+            for entity2 in self.entities[index1 + 1:]:
+                if entity1.solid and entity2.solid:
+                    self.find_entity_collisions(entity1, entity2,
+                                                entity1.solid_collision_box,
+                                                entity2.solid_collision_box)
+                if entity1.trigger and entity2.trigger:
+                    self.find_entity_collisions(entity1, entity2,
+                                                entity1.trigger_collision_box,
+                                                entity2.trigger_collision_box)
+
+        # activate check for collisions between entities and walls:
+        for entity in self.entities:
+            if entity.solid:
+                self.find_neighbouring_walls(entity, entity.solid_collision_box)
 
         self.world.Step(delta_time, 6, 2)
 

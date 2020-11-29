@@ -10,6 +10,7 @@ class App:
         self.delta_time = 0
         self.fps = 0
         self.next_screen = None
+        self.ref_res = (1280, 720)  # reference resolution
         self.running = True
         self.surface = None
 
@@ -33,7 +34,6 @@ class App:
                 elif event.type == pygame.VIDEORESIZE:
                     self.surface = pygame.display.set_mode((event.w, event.h),
                                                            flags=pygame.RESIZABLE)
-                    print(self.surface.get_size())
                 else:
                     self.current_screen.process_event(event)
 
@@ -51,7 +51,10 @@ class App:
                 fps_counter = 0
                 fps_start_time = current_time
 
-            self.current_screen.render(self.surface)
+            scale = (self.surface.get_size()[0] / self.ref_res[0],
+                     self.surface.get_size()[1] / self.ref_res[1])
+            print(scale)
+            self.current_screen.render(self.surface, scale)
             pygame.display.flip()
 
             self.process_screen_change()

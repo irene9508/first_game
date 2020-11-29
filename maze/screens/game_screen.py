@@ -10,7 +10,6 @@ from maze.screens.screen import Screen
 class GameScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
-        self.app = app
         self.game = Game()
         self.game.load()
         self.char = CharacterEntity(self.game)
@@ -39,8 +38,8 @@ class GameScreen(Screen):
         if self.game.debugging:
             print(self.app.fps)
 
-    def render(self, surface):
-        self.game.render(surface, self.app)
+    def render(self, surface, scale):
+        self.game.render(surface, self.app, scale)
         if self.game.debugging and self.path is not None:
             for index in range(len(self.path) - 1):
                 pygame.draw.line(surface, (0, 0, 255),
