@@ -17,10 +17,11 @@ class App:
     def run(self):
         environ["SDL_VIDEO_CENTERED"] = "1"
         pygame.init()
-        self.surface = pygame.display.set_mode((1280,
-                                                720),
+        self.surface = pygame.display.set_mode((1280, 720),
                                                flags=pygame.RESIZABLE)
         self.current_screen = MenuScreen(self)
+        fullscreen = False
+        monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
 
         fps_start_time = 0
         delta_start_time = 0
@@ -32,8 +33,17 @@ class App:
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.VIDEORESIZE:
-                    self.surface = pygame.display.set_mode((event.w, event.h),
-                                                           flags=pygame.RESIZABLE)
+                    if not fullscreen:
+                        self.surface = pygame.display.set_mode((event.w, event.h),
+                                                               flags=pygame.RESIZABLE)
+                elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
+                    fullscreen = not fullscreen
+                    if fullscreen:
+                        self.surface = pygame.display.set_mode(monitor_size,
+                                                       flags=pygame.FULLSCREEN)
+                    else:
+                        self.surface = pygame.display.set_mode(monitor_size,
+                                                       flags=pygame.RESIZABLE)
                 else:
                     self.current_screen.process_event(event)
 

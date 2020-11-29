@@ -41,6 +41,7 @@ class GameScreen(Screen):
     def render(self, surface, scale):
         self.game.render(surface, scale)
         if self.game.debugging and self.path is not None:
+            # draw the path from character to mouse click:
             for index in range(len(self.path) - 1):
                 pygame.draw.line(surface, (0, 0, 255),
                                  (self.path[index][0] * self.game.map.tilewidth

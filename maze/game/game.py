@@ -3,17 +3,17 @@ from operator import attrgetter
 
 import pygame
 from pytmx.util_pygame import load_pygame
-from Box2D import *
+from Box2D import *  # pip install Box2D
 
 
 class Node:
-    def __init__(self, parent, position):
+    def __init__(self, parent, tile_index_position):
         self.g = 0  # start to node
         self.h = 0  # node to end
         self.f = 0  # start to end
 
         self.parent = parent
-        self.xy = position  # tile index
+        self.xy = tile_index_position
 
 
 class Game:
