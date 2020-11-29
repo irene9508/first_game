@@ -10,6 +10,7 @@ from maze.screens.screen import Screen
 class GameScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
+        self.app = app
         self.game = Game()
         self.game.load()
         self.char = CharacterEntity(self.game)
@@ -29,8 +30,8 @@ class GameScreen(Screen):
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
                 self.path = self.game.find_path((
-                    self.char.x + self.char.centerx,
-                    self.char.y + self.char.centery),
+                    self.char.x + self.char.solid_collision_box.centerx,
+                    self.char.y + self.char.solid_collision_box.centery),
                     pygame.mouse.get_pos())
 
     def update(self, delta_time):
@@ -39,7 +40,7 @@ class GameScreen(Screen):
             print(self.app.fps)
 
     def render(self, surface):
-        self.game.render(surface)
+        self.game.render(surface, self.app)
         if self.game.debugging and self.path is not None:
             for index in range(len(self.path) - 1):
                 pygame.draw.line(surface, (0, 0, 255),

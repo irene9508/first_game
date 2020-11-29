@@ -27,6 +27,8 @@ class CharacterEntity(Entity):  # 109x93
         self.solid_collision_box = pygame.Rect(-55, 15, 109, 30)
         self.solid = True
 
+        self.body = self.game.world.CreateDynamicBody(position=(280, 300))
+
         # properties:
         self.x = 280
         self.y = 300

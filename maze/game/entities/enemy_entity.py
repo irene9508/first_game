@@ -31,6 +31,8 @@ class EnemyEntity(Entity):
         self.trigger = True
         self.trigger_collision_box = pygame.Rect(0, 0, 0, 0)
 
+        self.body = self.game.world.CreateDynamicBody(position=(100, 100))
+
         # movement:
         self.current_tile_pos_char = None
         self.current_tile_pos_enemy = None

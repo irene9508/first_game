@@ -11,15 +11,14 @@ class App:
         self.fps = 0
         self.next_screen = None
         self.running = True
-        self.screen_height = 720
-        self.screen_width = 1280
         self.surface = None
 
     def run(self):
         environ["SDL_VIDEO_CENTERED"] = "1"
         pygame.init()
-        self.surface = pygame.display.set_mode((self.screen_width,
-                                                self.screen_height))
+        self.surface = pygame.display.set_mode((1280,
+                                                720),
+                                               flags=pygame.RESIZABLE)
         self.current_screen = MenuScreen(self)
 
         fps_start_time = 0
@@ -31,11 +30,14 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+                elif event.type == pygame.VIDEORESIZE:
+                    self.surface = pygame.display.set_mode((event.w, event.h),
+                                                           flags=pygame.RESIZABLE)
+                    print(self.surface.get_size())
                 else:
                     self.current_screen.process_event(event)
 
             self.current_screen.update(self.delta_time)
-
             current_time = pygame.time.get_ticks()
 
             # calculate delta time:
