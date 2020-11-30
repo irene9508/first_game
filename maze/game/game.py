@@ -91,19 +91,19 @@ class Game:
                             adj = existing.get(key)
 
                         # check if the node is walkable:
-                        tile_info = self.map.get_tile_properties(adj_x, adj_y,
-                                                                 0)
+                        tile_info = self.map.get_tile_properties(
+                            adj_x, adj_y, 0)
                         if tile_info['type'] == 'wall' or adj in closed:
                             continue
 
                         # check if diagonal jumps are valid:
                         if adj_x != cur_x and adj_y != cur_y:
-                            tile_info1 = self.map.get_tile_properties(cur_x,
-                                                                      adj_y, 0)
-                            tile_info2 = self.map.get_tile_properties(adj_x,
-                                                                      cur_y, 0)
-                            if tile_info1['type'] == 'wall' \
-                                    or tile_info2['type'] == 'wall':
+                            tile_info1 = self.map.get_tile_properties(
+                                cur_x, adj_y, 0)
+                            tile_info2 = self.map.get_tile_properties(
+                                adj_x,cur_y, 0)
+                            if 'wall' in [
+                                    tile_info1['type'], tile_info2['type']]:
                                 continue
 
                         # update some parameters and lists:
@@ -138,16 +138,17 @@ class Game:
             x1 = p1[0] + v_norm1[0] * distance
             y1 = p1[1] + v_norm1[1] * distance
 
-            tile_info1 = self.map.get_tile_properties(x1 / tile_width,
-                                                      y1 / tile_height, 0)
-            tile_info2 = self.map.get_tile_properties(x1 / tile_width + 0.5,
-                                                      y1 / tile_height + 0.5, 0)
-            tile_info3 = self.map.get_tile_properties(x1 / tile_width - 0.5,
-                                                      y1 / tile_height - 0.5, 0)
+            tile_info1 = self.map.get_tile_properties(
+                x1 / tile_width, y1 / tile_height, 0)
+            tile_info2 = self.map.get_tile_properties(
+                x1 / tile_width + 0.5, y1 / tile_height + 0.5, 0)
+            tile_info3 = self.map.get_tile_properties(
+                x1 / tile_width - 0.5, y1 / tile_height - 0.5, 0)
 
-            if tile_info1['type'] == 'wall' or tile_info2['type'] == 'wall' \
-                    or tile_info3['type'] == 'wall':
+            if 'wall' in [
+                    tile_info1['type'], tile_info2['type'], tile_info3['type']]:
                 return False
+
         # if no wall tile was found, return True:
         return True
 
@@ -171,8 +172,8 @@ class Game:
         if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
             # solve for entities bumping into each other:
             if entity1.solid and entity2.solid:
-                self.solve_solid_collision(entity1, entity2,
-                                           diff1, diff2, diff3, diff4)
+                self.solve_solid_collision(
+                    entity1, entity2, diff1, diff2, diff3, diff4)
 
             # trigger a reaction:
             if entity1.collision_group != 0 and entity2.collision_group != 0:
@@ -192,16 +193,15 @@ class Game:
                     if tile_properties['type'] == 'wall':
                         width = int(tile_properties['width'])
                         height = int(tile_properties['height'])
-                        coll_box_tile = pygame.Rect(x * width, y * height,
-                                                    width, height)
-                        self.find_wall_collisions(coll_box_entity,
-                                                  coll_box_tile, entity)
+                        coll_box_tile = pygame.Rect(
+                            x * width, y * height, width, height)
+                        self.find_wall_collisions(
+                            coll_box_entity, coll_box_tile, entity)
 
     def find_wall_collisions(self, coll_box_entity, tile_box, entity):
-        entity_box = pygame.Rect(entity.x + coll_box_entity.x,
-                                 entity.y + coll_box_entity.y,
-                                 coll_box_entity.width,
-                                 coll_box_entity.height)
+        entity_box = pygame.Rect(
+            entity.x + coll_box_entity.x, entity.y + coll_box_entity.y,
+            coll_box_entity.width, coll_box_entity.height)
 
         diff1 = entity_box.left - tile_box.right
         diff2 = tile_box.left - entity_box.right
@@ -218,11 +218,14 @@ class Game:
         return None
 
     def initialize_entities(self):
+
         # remove dead entities:
         new_entities = []
+
         for entity in self.entities:
             entity.destroy() if entity.marked_for_destroy \
                 else new_entities.append(entity)
+
         self.entities = new_entities
 
         # add queued entities:
@@ -241,9 +244,8 @@ class Game:
         for layer in self.map.layers:
             for x, y, image in layer.tiles():
                 width, height = image.get_size()[0], image.get_size()[1]
-                image = pygame.transform.smoothscale(image,
-                                                     (int(width * scale[0]),
-                                                      int(height * scale[1])))
+                image = pygame.transform.smoothscale(
+                    image, (int(width * scale[0]), int(height * scale[1])))
                 surface.blit(image, (int(self.map.tilewidth * x * scale[0]),
                                      int(self.map.tileheight * y * scale[1])))
 

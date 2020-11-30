@@ -106,9 +106,8 @@ class CharacterEntity(Entity):  # 109x93
     def render(self, surface, scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        sprite = pygame.transform.smoothscale(sprite, (int(width * scale[0]),
-                                                       int(height * scale[1])))
-        surface.blit(sprite,
-                     (int(((self.x - width / 2) * scale[0])),
-                      int((self.y - height / 2) * scale[1])))
+        sprite = pygame.transform.smoothscale(
+            sprite, (int(width * scale[0]), int(height * scale[1])))
+        surface.blit(sprite, (int(((self.x - width / 2) * scale[0])),
+                              int((self.y - height / 2) * scale[1])))
         super().render(surface, scale)

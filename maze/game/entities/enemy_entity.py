@@ -59,10 +59,9 @@ class EnemyEntity(Entity):
         p1 = (self.x + self.collision_box.centerx, self.y +
               self.collision_box.centery)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (((char.x + char.collision_box.centerx)
-                              / tile_width),
-                             (char.y + char.collision_box.centery
-                              / tile_height))
+        new_tile_pos_char = (
+            ((char.x + char.collision_box.centerx) / tile_width),
+            (char.y + char.collision_box.centery / tile_height))
 
         if char is not None:
             if self.current_tile_pos_enemy != new_tile_pos_enemy \
@@ -71,8 +70,9 @@ class EnemyEntity(Entity):
                 self.current_tile_pos_char = new_tile_pos_char
 
                 # find path to char:
-                self.path = self.game.find_path(p1, (char.x + char.collision_box.centerx,
-                                                     char.y + char.collision_box.centery))
+                self.path = self.game.find_path(
+                    p1, (char.x + char.collision_box.centerx,
+                         char.y + char.collision_box.centery))
 
             # move towards next node:
             p2 = (self.path[1][0] * tile_width + tile_width / 2,
@@ -102,8 +102,9 @@ class EnemyEntity(Entity):
     def render(self, surface, scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        sprite = pygame.transform.smoothscale(sprite, (int(width * scale[0]),
-                                                       int(height * scale[1])))
+        tile_width, tile_height = self.game.map.tilewidth, self.game.map.tileheight
+        sprite = pygame.transform.smoothscale(
+            sprite, (int(width * scale[0]), int(height * scale[1])))
         surface.blit(sprite, (int(((self.x - width / 2) * scale[0])),
                               int((self.y - height / 2) * scale[1])))
 
@@ -112,14 +113,9 @@ class EnemyEntity(Entity):
         if self.game.debugging and self.path is not None:
             # draw the enemy path:
             for index in range(len(self.path) - 1):
-                pygame.draw.line(surface, (0, 0, 255),
-                                 (self.path[index][0] * self.game.map.tilewidth
-                                  + self.game.map.tilewidth / 2,
-                                  self.path[index][1] * self.game.map.tileheight
-                                  + self.game.map.tileheight / 2),
-                                 (self.path[index + 1][0]
-                                  * self.game.map.tilewidth
-                                  + self.game.map.tilewidth / 2,
-                                  self.path[index + 1][1]
-                                  * self.game.map.tileheight
-                                  + self.game.map.tileheight / 2))
+                pygame.draw.line(
+                    surface, (0, 0, 255),
+                    (self.path[index][0] * tile_width + tile_width / 2,
+                     self.path[index][1] * tile_height + tile_height / 2),
+                    (self.path[index + 1][0] * tile_width + tile_width / 2,
+                     self.path[index + 1][1] * tile_height + tile_height / 2))

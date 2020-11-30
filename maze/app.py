@@ -1,4 +1,7 @@
 import pygame
+import sys
+if sys.platform == "win32":
+    import ctypes
 
 from maze.screens.menu_screen import MenuScreen
 from os import environ
@@ -15,13 +18,16 @@ class App:
         self.surface = None
 
     def run(self):
+        if sys.platform == "win32":
+            ctypes.windll.shcore.SetProcessDpiAwareness(2)
         environ["SDL_VIDEO_CENTERED"] = "1"
         pygame.init()
-        self.surface = pygame.display.set_mode((1280, 720),
-                                               flags=pygame.RESIZABLE)
+        monitor_size = [pygame.display.Info().current_w,
+                        pygame.display.Info().current_h]
+        self.surface = pygame.display.set_mode(
+            (1280, 720), flags=pygame.RESIZABLE)
         self.current_screen = MenuScreen(self)
         fullscreen = False
-        monitor_size = [pygame.display.Info().current_w, pygame.display.Info().current_h]
 
         fps_start_time = 0
         delta_start_time = 0
@@ -32,18 +38,21 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
+
                 elif event.type == pygame.VIDEORESIZE:
                     if not fullscreen:
-                        self.surface = pygame.display.set_mode((event.w, event.h),
-                                                               flags=pygame.RESIZABLE)
+                        self.surface = pygame.display.set_mode(
+                            (event.w, event.h), flags=pygame.RESIZABLE)
+
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
                     fullscreen = not fullscreen
                     if fullscreen:
-                        self.surface = pygame.display.set_mode(monitor_size,
-                                                       flags=pygame.FULLSCREEN)
+                        self.surface = pygame.display.set_mode(
+                            monitor_size, flags=pygame.FULLSCREEN)
                     else:
-                        self.surface = pygame.display.set_mode(monitor_size,
-                                                       flags=pygame.RESIZABLE)
+                        self.surface = pygame.display.set_mode(
+                            monitor_size,flags=pygame.RESIZABLE)
+
                 else:
                     self.current_screen.process_event(event)
 

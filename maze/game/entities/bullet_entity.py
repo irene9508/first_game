@@ -40,8 +40,8 @@ class BulletEntity(Entity):  # 25x25
     def render(self, surface, scale):
         bullet = pygame.transform.rotate(self.sprite, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
-        bullet = pygame.transform.smoothscale(bullet, (int(width * scale[0]),
-                                                       int(height * scale[1])))
+        bullet = pygame.transform.smoothscale(
+            bullet, (int(width * scale[0]), int(height * scale[1])))
         surface.blit(bullet, (int((self.x - width / 2) * scale[0]),
                               int((self.y - height / 2) * scale[1])))
         super().render(surface, scale)

@@ -28,9 +28,9 @@ class GameScreen(Screen):
                 self.app.set_screen(GameScreen(self.app))
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
-                self.path = self.game.find_path((
-                    self.char.x + self.char.collision_box.centerx,
-                    self.char.y + self.char.collision_box.centery),
+                self.path = self.game.find_path(
+                    (self.char.x + self.char.collision_box.centerx,
+                     self.char.y + self.char.collision_box.centery),
                     pygame.mouse.get_pos())
 
     def update(self, delta_time):
@@ -40,15 +40,14 @@ class GameScreen(Screen):
 
     def render(self, surface, scale):
         self.game.render(surface, scale)
+        tile_width = self.game.map.tilewidth
+        tile_height = self.game.map.tileheight
         if self.game.debugging and self.path is not None:
             # draw the path from character to mouse click:
             for index in range(len(self.path) - 1):
-                pygame.draw.line(surface, (0, 0, 255),
-                                 (self.path[index][0] * self.game.map.tilewidth
-                                  + self.game.map.tilewidth / 2,
-                                  self.path[index][1] * self.game.map.tileheight
-                                  + self.game.map.tileheight / 2),
-                                 (self.path[index + 1][0] * self.game.map.
-                                  tilewidth + self.game.map.tilewidth / 2,
-                                  self.path[index + 1][1] * self.game.map.
-                                  tileheight + self.game.map.tileheight / 2))
+                pygame.draw.line(
+                    surface, (0, 0, 255),
+                    (self.path[index][0] * tile_width + tile_width / 2,
+                     self.path[index][1] * tile_height + tile_height / 2),
+                    (self.path[index + 1][0] * tile_width + tile_width / 2,
+                     self.path[index + 1][1] * tile_height + tile_height / 2))
