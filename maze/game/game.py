@@ -25,10 +25,7 @@ class Game:
         self.map = None
 
         # collisions:
-        self.ref_size = None
         self.world = b2World(gravity=None)
-        self.enemy_body = self.world.CreateDynamicBody(position=(100, 100))
-        self.char_body = self.world.CreateDynamicBody(position=(280, 300))
         self.scale = 1/80
 
     def find_path(self, startxy, endxy):  # params are tuple of entity position
