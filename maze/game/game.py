@@ -25,9 +25,11 @@ class Game:
         self.map = None
 
         # collisions:
-        self.world = b2World()
+        self.ref_size = None
+        self.world = b2World(gravity=None)
         self.enemy_body = self.world.CreateDynamicBody(position=(100, 100))
         self.char_body = self.world.CreateDynamicBody(position=(280, 300))
+        self.scale = 1/80
 
     def find_path(self, startxy, endxy):  # params are tuple of entity position
 
@@ -236,6 +238,19 @@ class Game:
         # self.map = load_pygame('data/Tiled/trial_room.tmx')
         self.map = load_pygame('data/Tiled/room_with_corridors.tmx')
 
+        # create collision boxes:
+        for layer in self.map.layers:
+            for x, y, image in layer.tiles():
+                tile_properties = self.map.get_tile_properties(x, y, 0)
+                if tile_properties['type'] == 'wall':
+                    tile_body = self.world.CreateStaticBody(
+                        position=(x * self.map.tilewidth * self.scale,
+                                  y * self.map.tileheight * self.scale))
+                    tile_body.CreatePolygonFixture(
+                        box=(self.map.tilewidth * self.scale,
+                             self.map.tileheight * self.scale),
+                        friction=0.2, density=1.0)
+
     def render(self, surface, scale):
         # background:
         # surface.blit(self.background, [0, 0])  # -70fps when active
@@ -291,23 +306,29 @@ class Game:
         for entity in self.entities:
             entity.update(delta_time)
 
-        # activate check for collisions between entities:
-        for index1, entity1 in enumerate(self.entities):
-            for entity2 in self.entities[index1 + 1:]:
-                if entity1.solid and entity2.solid:
-                    self.find_entity_collisions(entity1, entity2,
-                                                entity1.collision_box,
-                                                entity2.collision_box)
-                if entity1.trigger and entity2.trigger:
-                    self.find_entity_collisions(entity1, entity2,
-                                                entity1.hitbox,
-                                                entity2.hitbox)
+        # # activate check for collisions between entities:
+        # for index1, entity1 in enumerate(self.entities):
+        #     for entity2 in self.entities[index1 + 1:]:
+        #         if entity1.solid and entity2.solid:
+        #             self.find_entity_collisions(entity1, entity2,
+        #                                         entity1.collision_box,
+        #                                         entity2.collision_box)
+        #         if entity1.trigger and entity2.trigger:
+        #             self.find_entity_collisions(entity1, entity2,
+        #                                         entity1.hitbox,
+        #                                         entity2.hitbox)
+        #
+        # # activate check for collisions between entities and walls:
+        # for entity in self.entities:
+        #     if entity.solid:
+        #         self.find_neighbouring_walls(entity, entity.collision_box)
 
-        # activate check for collisions between entities and walls:
         for entity in self.entities:
-            if entity.solid:
-                self.find_neighbouring_walls(entity, entity.collision_box)
+            entity.synchronize_body()
 
         self.world.Step(delta_time, 6, 2)
+
+        for entity in self.entities:
+            entity.synchronize_entity()
 
         self.initialize_entities()

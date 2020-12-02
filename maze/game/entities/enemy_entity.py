@@ -75,6 +75,7 @@ class EnemyEntity(Entity):
                          char.y + char.collision_box.centery))
 
             # move towards next node:
+            print(self.path)
             p2 = (self.path[1][0] * tile_width + tile_width / 2,
                   self.path[1][1] * tile_height + tile_height / 2)
 

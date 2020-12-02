@@ -28,6 +28,8 @@ class CharacterEntity(Entity):  # 109x93
         self.solid = True
 
         self.body = self.game.world.CreateDynamicBody(position=(280, 300))
+        self.fixture = self.body.CreateCircleFixture(
+            radius=0.25, friction=0.2, density=1.0)
 
         # properties:
         self.x = 280
@@ -36,6 +38,9 @@ class CharacterEntity(Entity):  # 109x93
         # other:
         self.shot_timer = 0.2  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+
+    def destroy(self):
+        self.game.world.DestroyBody(self.body)
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
@@ -111,3 +116,11 @@ class CharacterEntity(Entity):  # 109x93
         surface.blit(sprite, (int(((self.x - width / 2) * scale[0])),
                               int((self.y - height / 2) * scale[1])))
         super().render(surface, scale)
+
+    def synchronize_body(self):  # entity gives new info to body
+        self.body.position = (self.x * self.game.scale,
+                              self.y * self.game.scale)
+
+    def synchronize_entity(self):  # body gives new info to entity
+        self.x = self.body.position[0] / self.game.scale
+        self.y = self.body.position[1] / self.game.scale

@@ -25,6 +25,7 @@ class Entity:
         pass
 
     def render(self, surface, scale):
+
         if self.game.debugging:
             if self.solid:
                 pygame.draw.rect(
@@ -40,6 +41,12 @@ class Entity:
                      int((self.y + self.hitbox.y) * scale[1]),
                      self.hitbox.width * scale[0],
                      self.hitbox.height * scale[1]), 1)
+
+    def synchronize_body(self):
+        pass
+
+    def synchronize_entity(self):
+        pass
 
     def trigger_collision_reaction(self, entity):
         pass

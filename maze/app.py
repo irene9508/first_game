@@ -51,7 +51,7 @@ class App:
                             monitor_size, flags=pygame.FULLSCREEN)
                     else:
                         self.surface = pygame.display.set_mode(
-                            monitor_size,flags=pygame.RESIZABLE)
+                            (1280, 720), flags=pygame.RESIZABLE)
 
                 else:
                     self.current_screen.process_event(event)

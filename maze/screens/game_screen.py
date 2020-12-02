@@ -13,9 +13,9 @@ class GameScreen(Screen):
         self.game = Game()
         self.game.load()
         self.char = CharacterEntity(self.game)
-        self.enemy = EnemyEntityBlob(self.game)
+        # self.enemy = EnemyEntityBlob(self.game)
         self.game.add_entity(self.char)
-        self.game.add_entity(self.enemy)
+        # self.game.add_entity(self.enemy)
         self.path = None
 
     def process_event(self, event):
