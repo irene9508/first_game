@@ -13,11 +13,11 @@ class Draw(b2Draw):
 		radius, axis of orientation and color.  """
 		pygame.draw.circle(self.app.surface, color, center_xy, radius)
 
-	def draw_point(self, color, point_xy, size=1):
+	def draw_point(self, point_xy, size, color):
 		""" Draw a single point at point p given a pixel size and color.  """
-		pygame.PixelArray(self.app.surface)[point_xy[0]][point_xy[1]] = color
+		pygame.Surface.set_at(point_xy, color)
 
-	def draw_polygon(self, color, corner_xy):
+	def draw_polygon(self, corner_xy, color):
 		""" Draw a wireframe polygon given the screen vertices
 		(tuples) with the specified color.  """
 		pygame.draw.polygon(self.app.surface, color, corner_xy)

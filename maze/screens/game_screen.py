@@ -10,7 +10,7 @@ from maze.screens.screen import Screen
 class GameScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
-        self.game = Game()
+        self.game = Game(self.app)
         self.game.load()
         self.char = CharacterEntity(self.game)
         # self.enemy = EnemyEntityBlob(self.game)
