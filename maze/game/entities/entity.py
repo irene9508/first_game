@@ -25,22 +25,22 @@ class Entity:
         pass
 
     def render(self, surface, scale):
-
-        if self.game.debugging:
-            if self.solid:
-                pygame.draw.rect(
-                    surface, (255, 255, 255),
-                    (int((self.x + self.collision_box.x) * scale[0]),
-                     int((self.y + self.collision_box.y) * scale[1]),
-                     self.collision_box.width * scale[0],
-                     self.collision_box.height * scale[1]), 1)
-            if self.trigger:
-                pygame.draw.rect(
-                    surface, (0, 0, 0),
-                    (int((self.x + self.hitbox.x) * scale[0]),
-                     int((self.y + self.hitbox.y) * scale[1]),
-                     self.hitbox.width * scale[0],
-                     self.hitbox.height * scale[1]), 1)
+        pass
+        # if self.game.debugging:
+        #     if self.solid:
+        #         self.game.draw.draw_polygon(
+        #             (int((self.x + self.collision_box.x) * scale[0]),
+        #              int((self.y + self.collision_box.y) * scale[1]),
+        #              self.collision_box.width * scale[0],
+        #              self.collision_box.height * scale[1]),
+        #             surface, (255, 255, 255))
+        #     if self.trigger:
+        #         self.game.draw.draw_polygon(
+        #             (int((self.x + self.hitbox.x) * scale[0]),
+        #              int((self.y + self.hitbox.y) * scale[1]),
+        #              self.hitbox.width * scale[0],
+        #              self.hitbox.height * scale[1]),
+        #             surface, (0, 0, 0))
 
     def synchronize_body(self):
         pass

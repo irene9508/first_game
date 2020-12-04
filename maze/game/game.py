@@ -2,7 +2,7 @@ from math import sqrt
 from operator import attrgetter
 
 import pygame
-from maze.game.draw import Draw
+from maze.game.mydraw import MyDraw
 from pytmx.util_pygame import load_pygame
 from Box2D import *  # pip install Box2D
 
@@ -27,8 +27,8 @@ class Game:
 
         # collisions:
         self.world = b2World(gravity=None)
-        self.draw = Draw(app)
-        self.renderer = self.world.renderer = self.draw
+        self.world.renderer = MyDraw(app)
+        self.world.renderer.flags = dict(drawShapes=True)
         self.scale = 1/80
 
     def find_path(self, startxy, endxy):  # params are tuple of entity position
@@ -271,6 +271,9 @@ class Game:
         for entity in self.entities:
             entity.render(surface, scale)
 
+        if self.debugging:
+            self.world.DrawDebugData()
+
     def show_debug_info(self):
         self.debugging = not self.debugging
 
@@ -327,6 +330,7 @@ class Game:
             entity.synchronize_body()
 
         self.world.Step(delta_time, 6, 2)
+        self.world.DrawDebugData()
 
         for entity in self.entities:
             entity.synchronize_entity()
