@@ -12,7 +12,7 @@ class GameScreen(Screen):
         super().__init__(app)
         self.game = Game(self.app)
         self.game.load()
-        self.char = CharacterEntity(self.game, self.game.world)
+        self.char = CharacterEntity(self.game)
         # self.enemy = EnemyEntityBlob(self.game)
         self.game.add_entity(self.char)
         # self.game.add_entity(self.enemy)

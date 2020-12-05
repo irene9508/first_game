@@ -26,25 +26,7 @@ class Entity:
         pass
 
     def render(self, surface, render_scale):
-        if self.game.debugging:
-            if self.solid:
-                pass
-            if self.trigger:
-                pass
-
-        # for layer in self.map.layers:
-        #     for x, y, image in layer.tiles():
-        #         tile_properties = self.map.get_tile_properties(x, y, 0)
-        #         if tile_properties['type'] == 'wall':
-        #             tile_body = self.world.CreateStaticBody(
-        #                 position=((
-        #                                       x * self.map.tilewidth + 0.5 * self.map.tilewidth) * self.physics_scale,
-        #                           (
-        #                                       y * self.map.tileheight + 0.5 * self.map.tileheight) * self.physics_scale))
-        #             tile_body.CreatePolygonFixture(
-        #                 box=(0.5 * self.map.tilewidth * self.physics_scale,
-        #                      0.5 * self.map.tileheight * self.physics_scale),
-        #                 friction=0.2, density=1.0)
+        pass
 
         # if self.game.debugging:
         #     if self.solid:
@@ -58,7 +40,7 @@ class Entity:
         #         self.game.draw.draw_polygon(
         #             (int((self.x + self.hitbox.x) * scale[0]),
         #              int((self.y + self.hitbox.y) * scale[1]),
-        #              self.hitbox.width * scale[0],
+        #              selfj.hitbox.width * scale[0],
         #              self.hitbox.height * scale[1]),
         #             surface, (0, 0, 0))
 

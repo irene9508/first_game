@@ -1,11 +1,12 @@
 import pygame
+from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.entities.entity import Entity
 
 
 class BulletEntity(Entity):  # 25x25
     def __init__(self, game, x, collision_group, y, rotation):
-        super().__init__(game)
+        super().__init__(game, game.world)
 
         # properties:
         self.rotation = rotation
@@ -16,6 +17,9 @@ class BulletEntity(Entity):  # 25x25
         self.trigger = True
         self.collision_group = collision_group
         self.hitbox = pygame.Rect(-12, -12, 25, 25)
+        self.body = self.game.world.CreateDynamicBody()
+        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=1), isSensor=True)
+        fixture = self.body.CreateFixture(fixture_def)
 
         # other:
         self.sprite = pygame.image.load(

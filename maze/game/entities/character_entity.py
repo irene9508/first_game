@@ -6,8 +6,8 @@ from maze.game.entities.entity import Entity
 
 
 class CharacterEntity(Entity):  # 109x93
-    def __init__(self, game, world):
-        super().__init__(game, world)
+    def __init__(self, game):
+        super().__init__(game, game.world)
 
         # animation:
         self.sprites_down = [
@@ -28,8 +28,8 @@ class CharacterEntity(Entity):  # 109x93
         self.solid = True
 
         self.body = self.game.world.CreateDynamicBody(position=(280, 300))
-        self.fixture = self.body.CreateCircleFixture(
-            radius=0.25, friction=0.2, density=1.0)
+        fixture = self.body.CreateCircleFixture(radius=0.25,
+                                                friction=0.2, density=1.0)
 
         # properties:
         self.x = 280

@@ -18,7 +18,7 @@ class MenuScreen(Screen):
 
         self.menu_font = 'data/fonts/font2.ttf'
         self.menu_size = pygame.font.Font(self.menu_font, 32)
-        self.text = 'Press Enter to Start'
+        self.text = 'Press Enter to Start; hoi Jorn'
         self.menu_shadow = self.menu_size.render(self.text, True, self.shadow)
         self.menu = self.menu_size.render(self.text, True, self.letter)
 

@@ -252,8 +252,6 @@ class Game:
                         friction=0.2, density=1.0)
 
     def render(self, surface, render_scale):
-        # background:
-        # surface.blit(self.background, [0, 0])  # -70fps when active
 
         # tiles:
         for layer in self.map.layers:
@@ -263,8 +261,6 @@ class Game:
                     image, (int(width * render_scale[0]), int(height * render_scale[1])))
                 surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
                                      int(self.map.tileheight * y * render_scale[1])))
-
-        # isinstance(layer, TiledTileLayer) is needed here later
 
         # entities:
         self.entities.sort(key=lambda e: e.y)

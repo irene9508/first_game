@@ -17,7 +17,7 @@ class MyDraw(b2Draw):
                             int(color[2] * 255)),
                            (int(center[0] / self.physics_scale),
                             int(center[1] / self.physics_scale)),
-                           int(radius * self.physics_scale))
+                           int(radius / self.physics_scale))
 
     # noinspection PyPep8Naming
     def DrawSolidCircle(self, center, radius, axis, color):
