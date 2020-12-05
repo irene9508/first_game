@@ -28,7 +28,7 @@ class Entity:
     def render(self, surface, render_scale):
         if self.game.debugging:
             if self.solid:
-
+                pass
             if self.trigger:
                 pass
 
