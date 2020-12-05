@@ -32,7 +32,7 @@ class MenuScreen(Screen):
     def update(self, delta_time):
         pass
 
-    def render(self, surface, scale):
+    def render(self, surface, render_scale):
         surface.blit(self.background, (0, 0))
 
         surface.blit(self.title_shadow, (27, 570))  # (horizontal, vertical)

@@ -27,9 +27,9 @@ class Game:
 
         # collisions:
         self.world = b2World(gravity=None)
-        self.world.renderer = MyDraw(app)
+        self.physics_scale = 1 / 80
+        self.world.renderer = MyDraw(app, self.physics_scale)
         self.world.renderer.flags = dict(drawShapes=True)
-        self.scale = 1/80
 
     def find_path(self, startxy, endxy):  # params are tuple of entity position
 
@@ -244,14 +244,14 @@ class Game:
                 tile_properties = self.map.get_tile_properties(x, y, 0)
                 if tile_properties['type'] == 'wall':
                     tile_body = self.world.CreateStaticBody(
-                        position=(x * self.map.tilewidth * self.scale,
-                                  y * self.map.tileheight * self.scale))
+                        position=((x * self.map.tilewidth + 0.5 * self.map.tilewidth) * self.physics_scale,
+                                  (y * self.map.tileheight + 0.5 * self.map.tileheight) * self.physics_scale))
                     tile_body.CreatePolygonFixture(
-                        box=(self.map.tilewidth * self.scale,
-                             self.map.tileheight * self.scale),
+                        box=(0.5 * self.map.tilewidth * self.physics_scale,
+                             0.5 * self.map.tileheight * self.physics_scale),
                         friction=0.2, density=1.0)
 
-    def render(self, surface, scale):
+    def render(self, surface, render_scale):
         # background:
         # surface.blit(self.background, [0, 0])  # -70fps when active
 
@@ -260,16 +260,16 @@ class Game:
             for x, y, image in layer.tiles():
                 width, height = image.get_size()[0], image.get_size()[1]
                 image = pygame.transform.smoothscale(
-                    image, (int(width * scale[0]), int(height * scale[1])))
-                surface.blit(image, (int(self.map.tilewidth * x * scale[0]),
-                                     int(self.map.tileheight * y * scale[1])))
+                    image, (int(width * render_scale[0]), int(height * render_scale[1])))
+                surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
+                                     int(self.map.tileheight * y * render_scale[1])))
 
         # isinstance(layer, TiledTileLayer) is needed here later
 
         # entities:
         self.entities.sort(key=lambda e: e.y)
         for entity in self.entities:
-            entity.render(surface, scale)
+            entity.render(surface, render_scale)
 
         if self.debugging:
             self.world.DrawDebugData()

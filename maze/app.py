@@ -15,6 +15,7 @@ class App:
         self.next_screen = None
         self.ref_res = (1280, 720)  # reference resolution
         self.running = True
+        self.render_scale = None
         self.surface = None
 
     def run(self):
@@ -70,10 +71,10 @@ class App:
                 fps_counter = 0
                 fps_start_time = current_time
 
-            scale = (self.surface.get_size()[0] / self.ref_res[0],
-                     self.surface.get_size()[1] / self.ref_res[1])
+            self.render_scale = (self.surface.get_size()[0] / self.ref_res[0],
+                                 self.surface.get_size()[1] / self.ref_res[1])
 
-            self.current_screen.render(self.surface, scale)
+            self.current_screen.render(self.surface, self.render_scale)
             pygame.display.flip()
 
             self.process_screen_change()

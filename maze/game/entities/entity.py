@@ -2,12 +2,13 @@ import pygame
 
 
 class Entity:
-    def __init__(self, game):
+    def __init__(self, game, world):
 
         # properties:
         self.game = game
         self.marked_for_destroy = False
         self.rotation = 0.0
+        self.world = world
         self.x = 0
         self.y = 0
 
@@ -24,8 +25,27 @@ class Entity:
     def update(self, delta_time):
         pass
 
-    def render(self, surface, scale):
-        pass
+    def render(self, surface, render_scale):
+        if self.game.debugging:
+            if self.solid:
+
+            if self.trigger:
+                pass
+
+        # for layer in self.map.layers:
+        #     for x, y, image in layer.tiles():
+        #         tile_properties = self.map.get_tile_properties(x, y, 0)
+        #         if tile_properties['type'] == 'wall':
+        #             tile_body = self.world.CreateStaticBody(
+        #                 position=((
+        #                                       x * self.map.tilewidth + 0.5 * self.map.tilewidth) * self.physics_scale,
+        #                           (
+        #                                       y * self.map.tileheight + 0.5 * self.map.tileheight) * self.physics_scale))
+        #             tile_body.CreatePolygonFixture(
+        #                 box=(0.5 * self.map.tilewidth * self.physics_scale,
+        #                      0.5 * self.map.tileheight * self.physics_scale),
+        #                 friction=0.2, density=1.0)
+
         # if self.game.debugging:
         #     if self.solid:
         #         self.game.draw.draw_polygon(

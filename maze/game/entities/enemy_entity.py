@@ -6,8 +6,8 @@ from math import sqrt
 
 
 class EnemyEntity(Entity):
-    def __init__(self, game):
-        super().__init__(game)
+    def __init__(self, game, world):
+        super().__init__(game, world)
 
         # properties:
         self.health = 0
@@ -100,16 +100,16 @@ class EnemyEntity(Entity):
                 else:
                     self.sprites = self.sprites_left
 
-    def render(self, surface, scale):
+    def render(self, surface, render_scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         tile_width, tile_height = self.game.map.tilewidth, self.game.map.tileheight
         sprite = pygame.transform.smoothscale(
-            sprite, (int(width * scale[0]), int(height * scale[1])))
-        surface.blit(sprite, (int(((self.x - width / 2) * scale[0])),
-                              int((self.y - height / 2) * scale[1])))
+            sprite, (int(width * render_scale[0]), int(height * render_scale[1])))
+        surface.blit(sprite, (int(((self.x - width / 2) * render_scale[0])),
+                              int((self.y - height / 2) * render_scale[1])))
 
-        super().render(surface, scale)
+        super().render(surface, render_scale)
 
         if self.game.debugging and self.path is not None:
             # draw the enemy path:

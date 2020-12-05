@@ -37,14 +37,14 @@ class BulletEntity(Entity):  # 25x25
         if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:
             self.marked_for_destroy = True
 
-    def render(self, surface, scale):
+    def render(self, surface, render_scale):
         bullet = pygame.transform.rotate(self.sprite, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
         bullet = pygame.transform.smoothscale(
-            bullet, (int(width * scale[0]), int(height * scale[1])))
-        surface.blit(bullet, (int((self.x - width / 2) * scale[0]),
-                              int((self.y - height / 2) * scale[1])))
-        super().render(surface, scale)
+            bullet, (int(width * render_scale[0]), int(height * render_scale[1])))
+        surface.blit(bullet, (int((self.x - width / 2) * render_scale[0]),
+                              int((self.y - height / 2) * render_scale[1])))
+        super().render(surface, render_scale)
 
     def trigger_collision_reaction(self, enemy):
         self.marked_for_destroy = True

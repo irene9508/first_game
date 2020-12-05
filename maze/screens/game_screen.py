@@ -12,7 +12,7 @@ class GameScreen(Screen):
         super().__init__(app)
         self.game = Game(self.app)
         self.game.load()
-        self.char = CharacterEntity(self.game)
+        self.char = CharacterEntity(self.game, self.game.world)
         # self.enemy = EnemyEntityBlob(self.game)
         self.game.add_entity(self.char)
         # self.game.add_entity(self.enemy)
@@ -38,8 +38,8 @@ class GameScreen(Screen):
         if self.game.debugging:
             print(self.app.fps)
 
-    def render(self, surface, scale):
-        self.game.render(surface, scale)
+    def render(self, surface, render_scale):
+        self.game.render(surface, render_scale)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
         if self.game.debugging and self.path is not None:
