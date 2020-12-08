@@ -2,13 +2,12 @@ import pygame
 
 
 class Entity:
-    def __init__(self, game, world):
+    def __init__(self, game):
 
         # properties:
         self.game = game
         self.marked_for_destroy = False
         self.rotation = 0.0
-        self.world = world
         self.x = 0
         self.y = 0
 

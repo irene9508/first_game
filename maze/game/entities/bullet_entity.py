@@ -6,7 +6,7 @@ from maze.game.entities.entity import Entity
 
 class BulletEntity(Entity):  # 25x25
     def __init__(self, game, x, collision_group, y, rotation):
-        super().__init__(game, game.world)
+        super().__init__(game)
 
         # properties:
         self.rotation = rotation
@@ -18,7 +18,7 @@ class BulletEntity(Entity):  # 25x25
         self.collision_group = collision_group
         self.hitbox = pygame.Rect(-12, -12, 25, 25)
         self.body = self.game.world.CreateDynamicBody()
-        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=1), isSensor=True)
+        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True)
         fixture = self.body.CreateFixture(fixture_def)
 
         # other:
@@ -54,3 +54,11 @@ class BulletEntity(Entity):  # 25x25
         self.marked_for_destroy = True
         enemy.health -= 1
         print(enemy.health)
+
+    def synchronize_body(self):  # entity gives new info to body
+        self.body.position = (self.x * self.game.physics_scale,
+                              self.y * self.game.physics_scale)
+
+    def synchronize_entity(self):  # body gives new info to entity
+        self.x = self.body.position[0] / self.game.physics_scale
+        self.y = self.body.position[1] / self.game.physics_scale
