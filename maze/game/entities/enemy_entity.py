@@ -12,8 +12,9 @@ class EnemyEntity(Entity):
 
         # properties:
         self.health = 0
-        self.x = 100
-        self.y = 100
+        self.spawn = self.game.map.get_object_by_name("enemy spawn point")
+        self.x = self.spawn.x
+        self.y = self.spawn.y
         self.velocity = [0, 0]
 
         # animation:
@@ -110,6 +111,7 @@ class EnemyEntity(Entity):
                         self.sprites = self.sprites_right
 
     def render(self, surface, render_scale):
+
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         tile_width, tile_height = self.game.map.tilewidth, self.game.map.tileheight

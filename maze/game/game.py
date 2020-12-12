@@ -242,7 +242,7 @@ class Game:
 
         # create collision boxes:
         tile_layer = self.map.get_layer_by_name('tile layer')
-        for x, y, image in tile_layer:
+        for x, y, image in tile_layer.tiles():
             tile_properties = self.map.get_tile_properties(x, y, 0)
             if tile_properties['type'] == 'wall':
                 tile_body = self.world.CreateStaticBody(
@@ -257,12 +257,12 @@ class Game:
 
         # tiles:
         tile_layer = self.map.get_layer_by_name('tile layer')
-        for x, y, image in tile_layer:
-            width, height = image.get_size()[0], image.get_size()[1]
-            image = pygame.transform.smoothscale(
-                image, (ceil(width * render_scale[0]), ceil(height * render_scale[1])))
-            surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
-                                 int(self.map.tileheight * y * render_scale[1])))
+        for x, y, image in tile_layer.tiles():
+                width, height = image.get_size()[0], image.get_size()[1]
+                image = pygame.transform.smoothscale(
+                    image, (ceil(width * render_scale[0]), ceil(height * render_scale[1])))
+                surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
+                                     int(self.map.tileheight * y * render_scale[1])))
 
         # entities:
         self.entities.sort(key=lambda e: e.y)
