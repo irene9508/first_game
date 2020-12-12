@@ -28,10 +28,8 @@ class GameScreen(Screen):
                 self.app.set_screen(GameScreen(self.app))
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
-                self.path = self.game.find_path(
-                    (self.char.x + self.char.collision_box.centerx,
-                     self.char.y + self.char.collision_box.centery),
-                    pygame.mouse.get_pos())
+                self.path = self.game.find_path((self.char.x,self.char.y),
+                                                pygame.mouse.get_pos())
 
     def update(self, delta_time):
         self.game.update(delta_time)

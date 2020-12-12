@@ -27,13 +27,6 @@ class EnemyEntity(Entity):
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.collision_group = 2
-        self.path = None
-        self.solid = True
-        self.collision_box = pygame.Rect(0, 0, 0, 0)
-        self.trigger = True
-        self.hitbox = pygame.Rect(0, 0, 0, 0)
-
         self.body = self.game.world.CreateDynamicBody(
             position=(self.x * self.game.physics_scale,
                       self.y * self.game.physics_scale), userData=self)
@@ -45,6 +38,7 @@ class EnemyEntity(Entity):
         # movement:
         self.current_tile_pos_char = None
         self.current_tile_pos_enemy = None
+        self.path = None
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -68,12 +62,9 @@ class EnemyEntity(Entity):
         char = self.game.get_entity_of_category(CharacterEntity)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
-        p1 = (self.x + self.collision_box.centerx, self.y +
-              self.collision_box.centery)
+        p1 = (self.x, self.y)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (
-            ((char.x + char.collision_box.centerx) / tile_width),
-            (char.y + char.collision_box.centery / tile_height))
+        new_tile_pos_char = (char.x / tile_width, char.y)
 
         if char is not None:
             if self.current_tile_pos_enemy != new_tile_pos_enemy \
@@ -83,8 +74,7 @@ class EnemyEntity(Entity):
 
                 # find path to char:
                 self.path = self.game.find_path(
-                    p1, (char.x + char.collision_box.centerx,
-                         char.y + char.collision_box.centery))
+                    p1, (char.x, char.y))
 
             if self.path is not None:
                 # move towards next node:

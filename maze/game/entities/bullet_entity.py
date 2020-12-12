@@ -14,9 +14,6 @@ class BulletEntity(Entity):  # 25x25
         self.y = y
 
         # collisions:
-        self.trigger = True
-        self.collision_group = collision_group
-        self.hitbox = pygame.Rect(-12, -12, 25, 25)
         self.body = self.game.world.CreateDynamicBody(position=(self.x * self.game.physics_scale,
                                                                 self.y * self.game.physics_scale), userData=self)
         fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True)

@@ -24,9 +24,6 @@ class CharacterEntity(Entity):  # 109x93
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.collision_group = 1
-        self.collision_box = pygame.Rect(-55, 15, 109, 30)
-        self.solid = True
         self.body = self.game.world.CreateDynamicBody(position=(self.x * self.game.physics_scale,
                                                                 self.y * self.game.physics_scale), userData=self)
         fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2, density=1.0)

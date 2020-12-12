@@ -159,62 +159,6 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
-    def find_entity_collisions(self, entity1, entity2, coll_box1, coll_box2):
-
-        # define collision box position relative to the screen:
-        box1 = pygame.Rect(entity1.x + coll_box1.x, entity1.y + coll_box1.y,
-                           coll_box1.width, coll_box1.height)
-        box2 = pygame.Rect(entity2.x + coll_box2.x, entity2.y + coll_box2.y,
-                           coll_box2.width, coll_box2.height)
-
-        # calculate differences in position:
-        diff1 = box1.left - box2.right
-        diff2 = box2.left - box1.right
-        diff3 = box1.top - box2.bottom
-        diff4 = box2.top - box1.bottom
-
-        if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
-            # solve for entities bumping into each other:
-            if entity1.solid and entity2.solid:
-                self.solve_solid_collision(
-                    entity1, entity2, diff1, diff2, diff3, diff4)
-
-            # trigger a reaction:
-            if entity1.collision_group != 0 and entity2.collision_group != 0:
-                if entity1.collision_group != entity2.collision_group:
-                    if entity1.trigger and entity2.trigger:
-                        entity1.trigger_collision_reaction(entity2)
-                        entity2.trigger_collision_reaction(entity1)
-
-    def find_neighbouring_walls(self, entity, coll_box_entity):
-        entity_tile_index_x = int(entity.x / self.map.tilewidth)
-        entity_tile_index_y = int(entity.y / self.map.tileheight)
-
-        for x in range(entity_tile_index_x - 1, entity_tile_index_x + 2):
-            for y in range(entity_tile_index_y - 1, entity_tile_index_y + 2):
-                if 0 <= x < self.map.width and 0 <= y < self.map.height:
-                    tile_properties = self.map.get_tile_properties(x, y, 0)
-                    if tile_properties['type'] == 'wall':
-                        width = int(tile_properties['width'])
-                        height = int(tile_properties['height'])
-                        coll_box_tile = pygame.Rect(
-                            x * width, y * height, width, height)
-                        self.find_wall_collisions(
-                            coll_box_entity, coll_box_tile, entity)
-
-    def find_wall_collisions(self, coll_box_entity, tile_box, entity):
-        entity_box = pygame.Rect(
-            entity.x + coll_box_entity.x, entity.y + coll_box_entity.y,
-            coll_box_entity.width, coll_box_entity.height)
-
-        diff1 = entity_box.left - tile_box.right
-        diff2 = tile_box.left - entity_box.right
-        diff3 = entity_box.top - tile_box.bottom
-        diff4 = tile_box.top - entity_box.bottom
-
-        if diff1 < 0 and diff2 < 0 and diff3 < 0 and diff4 < 0:
-            self.solve_wall_collision(entity, diff1, diff2, diff3, diff4)
-
     def get_entity_of_category(self, category):
         for entity in self.entities:
             if isinstance(entity, category):
@@ -275,60 +219,14 @@ class Game:
     def show_debug_info(self):
         self.debugging = not self.debugging
 
-    @staticmethod
-    def solve_solid_collision(entity1, entity2, diff1, diff2, diff3, diff4):
-        least_difference = min(abs(diff1), abs(diff2), abs(diff3), abs(diff4))
-        if least_difference == abs(diff1):
-            entity1.x -= diff1 * 0.5
-            entity2.x += diff1 * 0.5
-        elif least_difference == abs(diff2):
-            entity1.x += diff2 * 0.5
-            entity2.x -= diff2 * 0.5
-        elif least_difference == abs(diff3):
-            entity1.y -= diff3 * 0.5
-            entity2.y += diff3 * 0.5
-        elif least_difference == abs(diff4):
-            entity1.y += diff4 * 0.5
-            entity2.y -= diff4 * 0.5
-
-    @staticmethod
-    def solve_wall_collision(entity, diff1, diff2, diff3, diff4):
-        least_difference = min(abs(diff1), abs(diff2), abs(diff3), abs(diff4))
-        if least_difference == abs(diff1):
-            entity.x -= diff1
-        elif least_difference == abs(diff2):
-            entity.x += diff2
-        elif least_difference == abs(diff3):
-            entity.y -= diff3
-        elif least_difference == abs(diff4):
-            entity.y += diff4
-
     def update(self, delta_time):
         for entity in self.entities:
             entity.update(delta_time)
-
-        # # activate check for collisions between entities:
-        # for index1, entity1 in enumerate(self.entities):
-        #     for entity2 in self.entities[index1 + 1:]:
-        #         if entity1.solid and entity2.solid:
-        #             self.find_entity_collisions(entity1, entity2,
-        #                                         entity1.collision_box,
-        #                                         entity2.collision_box)
-        #         if entity1.trigger and entity2.trigger:
-        #             self.find_entity_collisions(entity1, entity2,
-        #                                         entity1.hitbox,
-        #                                         entity2.hitbox)
-        #
-        # # activate check for collisions between entities and walls:
-        # for entity in self.entities:
-        #     if entity.solid:
-        #         self.find_neighbouring_walls(entity, entity.collision_box)
 
         for entity in self.entities:
             entity.synchronize_body()
 
         self.world.Step(delta_time, 6, 2)
-        self.world.DrawDebugData()
 
         for entity in self.entities:
             entity.synchronize_entity()

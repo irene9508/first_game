@@ -20,7 +20,3 @@ class EnemyEntityBlob(EnemyEntity):  # 109x93
         self.sprites_down = [
             pygame.image.load("data/images/enemy1/e1d1.png").convert_alpha()]
         self.sprites = self.sprites_down
-
-        # collisions:
-        self.solid_collision_box = pygame.Rect(-40, 15, 80, 30)
-        self.trigger_collision_box = pygame.Rect(-55, -46, 109, 93)
