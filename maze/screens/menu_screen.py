@@ -18,7 +18,7 @@ class MenuScreen(Screen):
 
         self.menu_font = 'data/fonts/font2.ttf'
         self.menu_size = pygame.font.Font(self.menu_font, 32)
-        self.text = 'Press Enter to Start; hoi Jorn'
+        self.text = 'Press Enter to Start'
         self.menu_shadow = self.menu_size.render(self.text, True, self.shadow)
         self.menu = self.menu_size.render(self.text, True, self.letter)
 
@@ -33,10 +33,16 @@ class MenuScreen(Screen):
         pass
 
     def render(self, surface, render_scale):
-        surface.blit(self.background, (0, 0))
+        width, height = self.background.get_size()[0], self.background.get_size()[1]
+        background = pygame.transform.smoothscale(
+            self.background,
+            (int(width * render_scale[0]), int(height * render_scale[1])))
+        surface.blit(background, (0, 0))
 
-        surface.blit(self.title_shadow, (27, 570))  # (horizontal, vertical)
-        surface.blit(self.title, (25, 570))
+        surface_width = surface.get_size()[0]
+        surface_height = surface.get_size()[1]
+        surface.blit(self.title_shadow, (10, surface_height - 150))  # (horizontal, vertical)
+        surface.blit(self.title, (5, surface_height - 155))
 
         surface.blit(self.menu_shadow, (202, 660))
         surface.blit(self.menu, (200, 660))

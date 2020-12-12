@@ -17,25 +17,41 @@ class BulletEntity(Entity):  # 25x25
         self.trigger = True
         self.collision_group = collision_group
         self.hitbox = pygame.Rect(-12, -12, 25, 25)
-        self.body = self.game.world.CreateDynamicBody()
+        self.body = self.game.world.CreateDynamicBody(position=(self.x * self.game.physics_scale,
+                                                                self.y * self.game.physics_scale), userData=self)
         fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True)
+        fixture_def.filter.groupIndex = collision_group
         fixture = self.body.CreateFixture(fixture_def)
 
         # other:
         self.sprite = pygame.image.load(
             "data/images/bullet.png").convert_alpha()
+        self.velocity = [0, 0]
+
+    def contact(self, fixture, other_fixture, contact):
+        from maze.game.entities.enemy_entity import EnemyEntity
+
+        self.marked_for_destroy = True
+        if isinstance(other_fixture.body.userData, EnemyEntity):
+            enemy = other_fixture.body.userData
+            enemy.health -= 1
+            print(enemy.health)
+
+    def destroy(self):
+        self.game.world.DestroyBody(self.body)
 
     def update(self, delta_time):
         # movement direction:
         speed = 100
-        if self.rotation == 0:
-            self.y -= speed * delta_time
+        self.velocity = [0, 0]
         if self.rotation == 90:
-            self.x -= speed * delta_time
+            self.velocity[1] = -speed
         if self.rotation == 180:
-            self.y += speed * delta_time
+            self.velocity[0] = -speed
         if self.rotation == 270:
-            self.x += speed * delta_time
+            self.velocity[1] = speed
+        if self.rotation == 0:
+            self.velocity[0] = speed
 
         # destruction:
         if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:
@@ -58,7 +74,11 @@ class BulletEntity(Entity):  # 25x25
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
                               self.y * self.game.physics_scale)
+        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
+                                    self.velocity[1] * self.game.physics_scale)
 
     def synchronize_entity(self):  # body gives new info to entity
         self.x = self.body.position[0] / self.game.physics_scale
         self.y = self.body.position[1] / self.game.physics_scale
+        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
+                         self.body.linearVelocity[1] / self.game.physics_scale]

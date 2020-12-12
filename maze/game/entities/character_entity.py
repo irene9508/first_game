@@ -1,4 +1,5 @@
 import pygame
+from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer
 
 from maze.game.entities.bullet_entity import BulletEntity
@@ -26,13 +27,16 @@ class CharacterEntity(Entity):  # 109x93
         self.collision_group = 1
         self.collision_box = pygame.Rect(-55, 15, 109, 30)
         self.solid = True
-        self.body = self.game.world.CreateDynamicBody(position=(280, 300))
-        fixture = self.body.CreateCircleFixture(radius=0.5,
-                                                friction=0.2, density=1.0)
+        self.body = self.game.world.CreateDynamicBody(position=(self.x * self.game.physics_scale,
+                                                                self.y * self.game.physics_scale), userData=self)
+        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2, density=1.0)
+        fixture_def.filter.groupIndex = -1
+        fixture = self.body.CreateFixture(fixture_def)
 
         # properties:
         self.x = 280
         self.y = 300
+        self.velocity = [0, 0]
 
         # other:
         self.shot_timer = 0.2  # prevents the bullets from rapid firing
@@ -54,57 +58,58 @@ class CharacterEntity(Entity):  # 109x93
 
         # movement:
         sprite_speed = 600
+        self.velocity = [0, 0]
         if keys[pygame.K_w] and not keys[pygame.K_s]:
             self.sprites = self.sprites_up
-            self.y -= sprite_speed * delta_time
+            self.velocity[1] = -sprite_speed
         if keys[pygame.K_a] and not keys[pygame.K_d]:
             self.sprites = self.sprites_left
-            self.x -= sprite_speed * delta_time
+            self.velocity[0] = -sprite_speed
         if keys[pygame.K_s] and not keys[pygame.K_w]:
             self.sprites = self.sprites_down
-            self.y += sprite_speed * delta_time
+            self.velocity[1] = sprite_speed
         if keys[pygame.K_d] and not keys[pygame.K_a]:
             self.sprites = self.sprites_right
-            self.x += sprite_speed * delta_time
+            self.velocity[0] = sprite_speed
 
         # shooting:
         self.shot_timer -= delta_time
         shot_speed = 0.2
         if keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
             self.sprites = self.sprites_up
-            self.rotation = 0
-            if self.shot_timer <= 0:
-                pygame.mixer.stop()
-                self.shot_sound.play()
-                self.shot_timer = shot_speed
-                self.game.add_entity(BulletEntity(self.game, self.x, 1,
-                                                  self.y - 52, self.rotation))
-        if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
-            self.sprites = self.sprites_left
             self.rotation = 90
             if self.shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(BulletEntity(self.game, self.x - 52, 1,
-                                                  self.y, self.rotation))
-        if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
-            self.sprites = self.sprites_down
+                self.game.add_entity(BulletEntity(self.game, self.x, -1,
+                                                  self.y - 52, self.rotation))
+        if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+            self.sprites = self.sprites_left
             self.rotation = 180
             if self.shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(BulletEntity(self.game, self.x, 1,
-                                                  self.y + 52, self.rotation))
-        if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
-            self.sprites = self.sprites_right
+                self.game.add_entity(BulletEntity(self.game, self.x - 52, -1,
+                                                  self.y, self.rotation))
+        if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
+            self.sprites = self.sprites_down
             self.rotation = 270
             if self.shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
-                self.game.add_entity(BulletEntity(self.game, self.x + 52, 1,
+                self.game.add_entity(BulletEntity(self.game, self.x, -1,
+                                                  self.y + 52, self.rotation))
+        if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
+            self.sprites = self.sprites_right
+            self.rotation = 0
+            if self.shot_timer <= 0:
+                pygame.mixer.stop()
+                self.shot_sound.play()
+                self.shot_timer = shot_speed
+                self.game.add_entity(BulletEntity(self.game, self.x + 52, -1,
                                                   self.y, self.rotation))
 
     def render(self, surface, render_scale):
@@ -119,7 +124,11 @@ class CharacterEntity(Entity):  # 109x93
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
                               self.y * self.game.physics_scale)
+        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
+                                    self.velocity[1] * self.game.physics_scale)
 
     def synchronize_entity(self):  # body gives new info to entity
         self.x = self.body.position[0] / self.game.physics_scale
         self.y = self.body.position[1] / self.game.physics_scale
+        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
+                         self.body.linearVelocity[1] / self.game.physics_scale]

@@ -18,10 +18,10 @@ class Entity:
         self.trigger = False
         self.hitbox = pygame.Rect(0, 0, 0, 0)
 
-    def destroy(self):
+    def contact(self, fixture, other_fixture, contact):
         pass
 
-    def update(self, delta_time):
+    def destroy(self):
         pass
 
     def render(self, surface, render_scale):
@@ -50,4 +50,7 @@ class Entity:
         pass
 
     def trigger_collision_reaction(self, entity):
+        pass
+
+    def update(self, delta_time):
         pass

@@ -1,4 +1,5 @@
 import pygame
+from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
@@ -6,13 +7,14 @@ from math import sqrt
 
 
 class EnemyEntity(Entity):
-    def __init__(self, game, world):
-        super().__init__(game, world)
+    def __init__(self, game):
+        super().__init__(game)
 
         # properties:
         self.health = 0
         self.x = 100
         self.y = 100
+        self.velocity = [0, 0]
 
         # animation:
         self.sprites_left = None
@@ -31,11 +33,20 @@ class EnemyEntity(Entity):
         self.trigger = True
         self.hitbox = pygame.Rect(0, 0, 0, 0)
 
-        self.body = self.game.world.CreateDynamicBody(position=(100, 100))
+        self.body = self.game.world.CreateDynamicBody(
+            position=(self.x * self.game.physics_scale,
+                      self.y * self.game.physics_scale), userData=self)
+        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4),
+                                   friction=0.2, density=1.0)
+        fixture_def.filter.groupIndex = -2
+        fixture = self.body.CreateFixture(fixture_def)
 
         # movement:
         self.current_tile_pos_char = None
         self.current_tile_pos_enemy = None
+
+    def destroy(self):
+        self.game.world.DestroyBody(self.body)
 
     def update(self, delta_time):
 
@@ -52,7 +63,7 @@ class EnemyEntity(Entity):
             self.marked_for_destroy = True
 
         # movement:
-        speed = 50
+        speed = 150
         char = self.game.get_entity_of_category(CharacterEntity)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
@@ -74,31 +85,29 @@ class EnemyEntity(Entity):
                     p1, (char.x + char.collision_box.centerx,
                          char.y + char.collision_box.centery))
 
-            # move towards next node:
-            print(self.path)
-            p2 = (self.path[1][0] * tile_width + tile_width / 2,
-                  self.path[1][1] * tile_height + tile_height / 2)
+            if self.path is not None:
+                # move towards next node:
+                print(self.path)
+                p2 = (self.path[1][0] * tile_width + tile_width / 2,
+                      self.path[1][1] * tile_height + tile_height / 2)
 
-            vector = (p2[0] - p1[0], p2[1] - p1[1])
-            length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
-            v_norm = (vector[0] / length, vector[1] / length)
+                vector = (p2[0] - p1[0], p2[1] - p1[1])
+                length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+                v_norm = (vector[0] / length, vector[1] / length)
 
-            movement = (v_norm[0] * speed, v_norm[1] * speed)
+                self.velocity = [v_norm[0] * speed, v_norm[1] * speed]
 
-            self.x += movement[0] * delta_time
-            self.y += movement[1] * delta_time
-
-            # facing towards player:
-            if abs(vector[1]) > abs(vector[0]):
-                if vector[0] < 0:
-                    self.sprites = self.sprites_up
+                # facing towards player:
+                if abs(vector[1]) > abs(vector[0]):
+                    if vector[1] < 0:
+                        self.sprites = self.sprites_up
+                    else:
+                        self.sprites = self.sprites_down
                 else:
-                    self.sprites = self.sprites_down
-            else:
-                if vector[1] < 0:
-                    self.sprites = self.sprites_right
-                else:
-                    self.sprites = self.sprites_left
+                    if vector[0] < 0:
+                        self.sprites = self.sprites_left
+                    else:
+                        self.sprites = self.sprites_right
 
     def render(self, surface, render_scale):
         sprite = self.sprites[self.sprites_index]
@@ -120,3 +129,15 @@ class EnemyEntity(Entity):
                      self.path[index][1] * tile_height + tile_height / 2),
                     (self.path[index + 1][0] * tile_width + tile_width / 2,
                      self.path[index + 1][1] * tile_height + tile_height / 2))
+
+    def synchronize_body(self):  # entity gives new info to body
+        self.body.position = (self.x * self.game.physics_scale,
+                              self.y * self.game.physics_scale)
+        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
+                                    self.velocity[1] * self.game.physics_scale)
+
+    def synchronize_entity(self):  # body gives new info to entity
+        self.x = self.body.position[0] / self.game.physics_scale
+        self.y = self.body.position[1] / self.game.physics_scale
+        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
+                         self.body.linearVelocity[1] / self.game.physics_scale]
