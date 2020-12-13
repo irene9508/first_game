@@ -106,9 +106,9 @@ class Game:
                             tile_info1 = self.map.get_tile_properties(
                                 cur_x, adj_y, 0)
                             tile_info2 = self.map.get_tile_properties(
-                                adj_x,cur_y, 0)
+                                adj_x, cur_y, 0)
                             if 'wall' in [
-                                    tile_info1['type'], tile_info2['type']]:
+                                tile_info1['type'], tile_info2['type']]:
                                 continue
 
                         # update some parameters and lists:
@@ -151,7 +151,7 @@ class Game:
                 x1 / tile_width - 0.5, y1 / tile_height - 0.5, 0)
 
             if 'wall' in [
-                    tile_info1['type'], tile_info2['type'], tile_info3['type']]:
+                tile_info1['type'], tile_info2['type'], tile_info3['type']]:
                 return False
 
         # if no wall tile was found, return True:
@@ -197,8 +197,10 @@ class Game:
             tile_properties = self.map.get_tile_properties(x, y, 0)
             if tile_properties['type'] == 'wall':
                 tile_body = self.world.CreateStaticBody(
-                    position=((x * self.map.tilewidth + 0.5 * self.map.tilewidth) * self.physics_scale,
-                              (y * self.map.tileheight + 0.5 * self.map.tileheight) * self.physics_scale))
+                    position=((
+                                          x * self.map.tilewidth + 0.5 * self.map.tilewidth) * self.physics_scale,
+                              (
+                                          y * self.map.tileheight + 0.5 * self.map.tileheight) * self.physics_scale))
                 tile_body.CreatePolygonFixture(
                     box=(0.5 * self.map.tilewidth * self.physics_scale,
                          0.5 * self.map.tileheight * self.physics_scale),
@@ -209,11 +211,13 @@ class Game:
         # tiles:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
-                width, height = image.get_size()[0], image.get_size()[1]
-                image = pygame.transform.smoothscale(
-                    image, (ceil(width * render_scale[0]), ceil(height * render_scale[1])))
-                surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
-                                     int(self.map.tileheight * y * render_scale[1])))
+            width, height = image.get_size()[0], image.get_size()[1]
+            image = pygame.transform.smoothscale(
+                image,
+                (ceil(width * render_scale[0]), ceil(height * render_scale[1])))
+            surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
+                                 int(self.map.tileheight * y * render_scale[
+                                     1])))
 
         # entities:
         self.entities.sort(key=lambda e: e.y)

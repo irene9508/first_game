@@ -41,8 +41,8 @@ class MenuScreen(Screen):
 
         surface_width = surface.get_size()[0]
         surface_height = surface.get_size()[1]
-        surface.blit(self.title_shadow, (10, surface_height - 150))  # (horizontal, vertical)
-        surface.blit(self.title, (5, surface_height - 155))
+        surface.blit(self.title_shadow, (20, surface_height - 150))  # (horizontal, vertical)
+        surface.blit(self.title, (15, surface_height - 155))
 
-        surface.blit(self.menu_shadow, (202, 660))
-        surface.blit(self.menu, (200, 660))
+        surface.blit(self.menu_shadow, (202, surface_height - 65))
+        surface.blit(self.menu, (200, surface_height - 67))
