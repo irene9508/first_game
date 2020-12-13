@@ -7,14 +7,13 @@ from math import sqrt
 
 
 class EnemyEntity(Entity):
-    def __init__(self, game):
+    def __init__(self, game, spawn_x, spawn_y):
         super().__init__(game)
 
         # properties:
         self.health = 0
-        self.spawn = self.game.map.get_object_by_name("enemy spawn point")
-        self.x = self.spawn.x
-        self.y = self.spawn.y
+        self.x = spawn_x
+        self.y = spawn_y
         self.velocity = [0, 0]
 
         # animation:
@@ -32,7 +31,7 @@ class EnemyEntity(Entity):
                       self.y * self.game.physics_scale), userData=self)
         fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4),
                                    friction=0.2, density=1.0)
-        fixture_def.filter.groupIndex = -2
+        # fixture_def.filter.groupIndex = -2
         fixture = self.body.CreateFixture(fixture_def)
 
         # movement:

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="80" tileheight="80" infinite="0" nextlayerid="6" nextobjectid="6">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="80" tileheight="80" infinite="0" nextlayerid="6" nextobjectid="9">
  <tileset firstgid="1" source="trial_tileset.tsx"/>
  <layer id="1" name="tile layer" width="16" height="9">
   <data encoding="csv">
@@ -18,7 +18,7 @@
   <object id="4" name="enemy spawn point" type="enemy" x="597.333" y="361.333">
    <point/>
   </object>
-  <object id="5" x="650.667" y="-154.667">
+  <object id="6" name="enemy spawn point" type="enemy" x="1096" y="130.667">
    <point/>
   </object>
  </objectgroup>

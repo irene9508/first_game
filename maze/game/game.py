@@ -5,6 +5,7 @@ import pygame
 
 from maze.game.my_contact_listener import MyContactListener
 from maze.game.my_draw import MyDraw
+from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
 from Box2D import *  # pip install Box2D
 
@@ -183,6 +184,12 @@ class Game:
     def load(self):
         # self.map = load_pygame('data/Tiled/trial_room.tmx')
         self.map = load_pygame('data/Tiled/room_with_corridors.tmx')
+
+        # create enemies:
+        obj_layer = self.map.get_layer_by_name('object layer')
+        for obj in obj_layer:
+            if obj.type == 'enemy':
+                self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
 
         # create collision boxes:
         tile_layer = self.map.get_layer_by_name('tile layer')

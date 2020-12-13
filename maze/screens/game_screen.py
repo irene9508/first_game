@@ -1,7 +1,6 @@
 import pygame
 
 from maze.game.entities.character_entity import CharacterEntity
-from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from maze.game.game import Game
 from maze.screens import menu_screen
 from maze.screens.screen import Screen
@@ -13,9 +12,7 @@ class GameScreen(Screen):
         self.game = Game(self.app)
         self.game.load()
         self.char = CharacterEntity(self.game)
-        self.enemy = EnemyEntityBlob(self.game)
         self.game.add_entity(self.char)
-        self.game.add_entity(self.enemy)
         self.path = None
 
     def process_event(self, event):
@@ -28,7 +25,7 @@ class GameScreen(Screen):
                 self.app.set_screen(GameScreen(self.app))
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
-                self.path = self.game.find_path((self.char.x,self.char.y),
+                self.path = self.game.find_path((self.char.x, self.char.y),
                                                 pygame.mouse.get_pos())
 
     def update(self, delta_time):
