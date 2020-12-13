@@ -73,7 +73,7 @@ class EnemyEntity(Entity):
                 self.current_tile_pos_char = new_tile_pos_char
 
                 # find path to char:
-                self.path = PathFinder(self.game).find_path(p1, (char.x, char.y))
+                self.path = PathFinder(self.game.map).find_path(p1, (char.x, char.y))
 
             if self.path is not None:
                 # move towards next node:

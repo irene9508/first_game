@@ -13,15 +13,15 @@ class Node:
 
 
 class PathFinder:
-    def __init__(self, game):
-        self.game = game
+    def __init__(self, map):
+        self.map = map
 
     def find_path(self, startxy, endxy):  # params are tuple of entity position
         opened = []
         closed = []
         existing = {}  # use "x_y" as key
-        tile_width, tile_height = self.game.map.tilewidth, self.game.map.tileheight
-        map_width, map_height = self.game.map.width, self.game.map.height
+        tile_width, tile_height = self.map.tilewidth, self.map.tileheight
+        map_width, map_height = self.map.width, self.map.height
 
         # create start and end node:
         start = Node(None, (int(startxy[0] / tile_width),
@@ -78,16 +78,16 @@ class PathFinder:
                             adj = existing.get(key)
 
                         # check if the node is walkable:
-                        tile_info = self.game.map.get_tile_properties(
+                        tile_info = self.map.get_tile_properties(
                             adj_x, adj_y, 0)
                         if tile_info['type'] == 'wall' or adj in closed:
                             continue
 
                         # check if diagonal jumps are valid:
                         if adj_x != cur_x and adj_y != cur_y:
-                            tile_info1 = self.game.map.get_tile_properties(
+                            tile_info1 = self.map.get_tile_properties(
                                 cur_x, adj_y, 0)
-                            tile_info2 = self.game.map.get_tile_properties(
+                            tile_info2 = self.map.get_tile_properties(
                                 adj_x, cur_y, 0)
                             if 'wall' in [tile_info1['type'], tile_info2['type']]:
                                 continue
@@ -110,8 +110,8 @@ class PathFinder:
         return None
 
     def check_if_walkable(self, point1, point2):
-        tile_width = self.game.map.tilewidth
-        tile_height = self.game.map.tileheight
+        tile_width = self.map.tilewidth
+        tile_height = self.map.tileheight
         p1 = (point1[0] * tile_width + tile_width / 2,
               point1[1] * tile_height + tile_height / 2)
         p2 = (point2[0] * tile_width + tile_width / 2,
@@ -124,11 +124,11 @@ class PathFinder:
             x1 = p1[0] + v_norm1[0] * distance
             y1 = p1[1] + v_norm1[1] * distance
 
-            tile_info1 = self.game.map.get_tile_properties(
+            tile_info1 = self.map.get_tile_properties(
                 x1 / tile_width, y1 / tile_height, 0)
-            tile_info2 = self.game.map.get_tile_properties(
+            tile_info2 = self.map.get_tile_properties(
                 x1 / tile_width + 0.5, y1 / tile_height + 0.5, 0)
-            tile_info3 = self.game.map.get_tile_properties(
+            tile_info3 = self.map.get_tile_properties(
                 x1 / tile_width - 0.5, y1 / tile_height - 0.5, 0)
 
             if 'wall' in [tile_info1['type'], tile_info2['type'], tile_info3['type']]:
