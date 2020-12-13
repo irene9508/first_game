@@ -1,6 +1,7 @@
 import pygame
 
 from maze.game.entities.character_entity import CharacterEntity
+from maze.game.path_finder import PathFinder
 from maze.game.game import Game
 from maze.screens import menu_screen
 from maze.screens.screen import Screen
@@ -25,8 +26,8 @@ class GameScreen(Screen):
                 self.app.set_screen(GameScreen(self.app))
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
-                self.path = self.game.find_path((self.char.x, self.char.y),
-                                                pygame.mouse.get_pos())
+                self.path = PathFinder(self.game).find_path(
+                    (self.char.x, self.char.y), pygame.mouse.get_pos())
 
     def update(self, delta_time):
         self.game.update(delta_time)

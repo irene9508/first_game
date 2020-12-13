@@ -3,6 +3,7 @@ from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
+from maze.game.path_finder import PathFinder
 from math import sqrt
 
 
@@ -72,8 +73,7 @@ class EnemyEntity(Entity):
                 self.current_tile_pos_char = new_tile_pos_char
 
                 # find path to char:
-                self.path = self.game.find_path(
-                    p1, (char.x, char.y))
+                self.path = PathFinder(self.game).find_path(p1, (char.x, char.y))
 
             if self.path is not None:
                 # move towards next node:
