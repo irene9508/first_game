@@ -118,9 +118,10 @@ class PathFinder:
               point_1[1] * tile_height + tile_height / 2)
         p2 = (point_2[0] * tile_width + tile_width / 2,
               point_2[1] * tile_height + tile_height / 2)
-        vector1 = (p2[0] - p1[0], p2[1] - p1[1])
-        length1 = sqrt(vector1[0] * vector1[0] + vector1[1] * vector1[1])
-        v_norm1 = (vector1[0] / length1, vector1[1] / length1)
+
+        vector = (p2[0] - p1[0], p2[1] - p1[1])
+        length1 = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+        v_norm1 = (vector[0] / length1, vector[1] / length1)
 
         # check if full sprite can go from 1 to 2 without encountering wall:
         for distance in range(0, int(length1), int(tile_width / 10)):

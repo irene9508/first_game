@@ -1,10 +1,21 @@
 import pygame
-from Box2D import b2FixtureDef, b2CircleShape
+from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback
 
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
 from maze.game.path_finder import PathFinder
 from math import sqrt
+
+
+class RayCastCallback(b2RayCastCallback):
+
+    def __init__(self, **kwargs):
+        b2RayCastCallback.__init__(self)
+        self.fraction = None
+
+    def ReportFixture(self, fixture, point, normal, fraction):
+        self.fraction = fraction
+        return fraction
 
 
 class EnemyEntity(Entity):
@@ -28,10 +39,13 @@ class EnemyEntity(Entity):
 
         # collisions:
         self.body = self.game.world.CreateDynamicBody(
-            position=(self.x * self.game.physics_scale,
-                      self.y * self.game.physics_scale), userData=self)
-        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4),
-                                   friction=0.2, density=1.0)
+            position=(
+                self.x * self.game.physics_scale,
+                self.y * self.game.physics_scale), userData=self)
+        self.radius = 32
+        fixture_def = b2FixtureDef(shape=b2CircleShape(
+            radius=self.radius * self.game.physics_scale),
+            friction=0.2, density=1.0)
         # fixture_def.filter.groupIndex = -2
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
@@ -79,7 +93,6 @@ class EnemyEntity(Entity):
 
             if self.path is not None:
                 # move towards next node:
-                print(self.path)
                 p2 = (self.path[1][0] * tile_width + tile_width / 2,
                       self.path[1][1] * tile_height + tile_height / 2)
 
@@ -102,28 +115,76 @@ class EnemyEntity(Entity):
                         self.sprites = self.sprites_right
 
     def render(self, surface, render_scale):
-
         sprite = self.sprites[self.sprites_index]
-        width, height = sprite.get_size()[0], sprite.get_size()[1]
-        tile_width = self.game.map.tilewidth
-        tile_height = self.game.map.tileheight
-        sprite = pygame.transform.smoothscale(
-            sprite, (int(width * render_scale[0]),
-                     int(height * render_scale[1])))
-        surface.blit(sprite, (int(((self.x - width / 2) * render_scale[0])),
-                              int((self.y - height / 2) * render_scale[1])))
+        sprite_w, sprite_h = sprite.get_size()[0], sprite.get_size()[1]
+        tile_w, tile_h = self.game.map.tilewidth, self.game.map.tileheight
+        sprite = pygame.transform.smoothscale(sprite,
+                                              (int(sprite_w * render_scale[0]),
+                                               int(sprite_h * render_scale[1])))
+        surface.blit(sprite,
+                     (int(((self.x - sprite_w / 2) * render_scale[0])),
+                      int((self.y - sprite_h / 2) * render_scale[1])))
 
         super().render(surface, render_scale)
 
         if self.game.debugging and self.path is not None:
             # draw the enemy path:
             for index in range(len(self.path) - 1):
-                pygame.draw.line(
-                    surface, (0, 0, 255),
-                    (self.path[index][0] * tile_width + tile_width / 2,
-                     self.path[index][1] * tile_height + tile_height / 2),
-                    (self.path[index + 1][0] * tile_width + tile_width / 2,
-                     self.path[index + 1][1] * tile_height + tile_height / 2))
+                pygame.draw.line(surface, (0, 0, 255),
+                                 (self.path[index][0] * tile_w + tile_w / 2,
+                                  self.path[index][1] * tile_h + tile_h / 2),
+                                 (self.path[index + 1][0] * tile_w + tile_w / 2,
+                                  self.path[index + 1][1] * tile_h + tile_h / 2))
+
+            # calculate middle ray starting point and direction:
+            char = self.game.get_entity_of_category(CharacterEntity)
+            start2, finish = (self.x, self.y), (char.x, char.y)
+            vector = (finish[0] - start2[0], finish[1] - start2[1])
+            v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+            v_norm = (vector[0] / v_length, vector[1] / v_length)
+
+            # calculate the starting point of the two outer rays:
+            normal = (-v_norm[1], v_norm[0])
+            start1 = (start2[0] + normal[0] * self.radius,
+                      start2[1] + normal[1] * self.radius)
+            start3 = (start2[0] - normal[0] * self.radius,
+                      start2[1] - normal[1] * self.radius)
+
+            # perform ray cast 1 and draw:
+            callback = RayCastCallback()
+            self.game.world.RayCast(callback,
+                                    (start1[0] * self.game.physics_scale,
+                                     start1[1] * self.game.physics_scale),
+                                    (finish[0] * self.game.physics_scale,
+                                     finish[1] * self.game.physics_scale))
+            print('fraction 1 is ' + str(callback.fraction))
+            pygame.draw.line(surface, (0, 0, 255), start1,
+                             (start1[0] + v_norm[0] * v_length * callback.fraction,
+                              start1[1] + v_norm[1] * v_length * callback.fraction))
+
+            # perform ray cast 2 and draw:
+            callback = RayCastCallback()
+            self.game.world.RayCast(callback,
+                                    (start2[0] * self.game.physics_scale,
+                                     start2[1] * self.game.physics_scale),
+                                    (finish[0] * self.game.physics_scale,
+                                     finish[1] * self.game.physics_scale))
+            print('fraction 2 is ' + str(callback.fraction))
+            pygame.draw.line(surface, (0, 0, 255), start2,
+                             (start2[0] + v_norm[0] * v_length * callback.fraction,
+                              start2[1] + v_norm[1] * v_length * callback.fraction))
+
+            # perform ray cast 3 and draw:
+            callback = RayCastCallback()
+            self.game.world.RayCast(callback,
+                                    (start3[0] * self.game.physics_scale,
+                                     start3[1] * self.game.physics_scale),
+                                    (finish[0] * self.game.physics_scale,
+                                     finish[1] * self.game.physics_scale))
+            print('fraction 3 is ' + str(callback.fraction))
+            pygame.draw.line(surface, (0, 0, 255), start3,
+                             (start3[0] + v_norm[0] * v_length * callback.fraction,
+                              start3[1] + v_norm[1] * v_length * callback.fraction))
 
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
