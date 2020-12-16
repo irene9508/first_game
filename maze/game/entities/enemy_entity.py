@@ -33,6 +33,7 @@ class EnemyEntity(Entity):
         fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4),
                                    friction=0.2, density=1.0)
         # fixture_def.filter.groupIndex = -2
+        # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
         # movement:
@@ -73,7 +74,8 @@ class EnemyEntity(Entity):
                 self.current_tile_pos_char = new_tile_pos_char
 
                 # find path to char:
-                self.path = PathFinder(self.game.map).find_path(p1, (char.x, char.y))
+                self.path = PathFinder(self.game.map).find_path(p1, (char.x,
+                                                                     char.y))
 
             if self.path is not None:
                 # move towards next node:
@@ -103,9 +105,11 @@ class EnemyEntity(Entity):
 
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        tile_width, tile_height = self.game.map.tilewidth, self.game.map.tileheight
+        tile_width = self.game.map.tilewidth
+        tile_height = self.game.map.tileheight
         sprite = pygame.transform.smoothscale(
-            sprite, (int(width * render_scale[0]), int(height * render_scale[1])))
+            sprite, (int(width * render_scale[0]),
+                     int(height * render_scale[1])))
         surface.blit(sprite, (int(((self.x - width / 2) * render_scale[0])),
                               int((self.y - height / 2) * render_scale[1])))
 

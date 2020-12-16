@@ -13,8 +13,8 @@ class Node:
 
 
 class PathFinder:
-    def __init__(self, map):
-        self.map = map
+    def __init__(self, room_map):
+        self.map = room_map
 
     def find_path(self, startxy, endxy):  # params are tuple of entity position
         opened = []
@@ -46,19 +46,20 @@ class PathFinder:
                     path.append(current_node.xy)
                     current_node = current_node.parent
                 path = path[::-1]
+                return path
 
-                # skip unnecessary nodes:
-                new_path = []
-                checkpoint = path[0]
-                new_path.append(checkpoint)
-                for index in range(1, len(path) - 1):
-                    walkable = self.check_if_walkable(checkpoint,
-                                                      path[index + 1])
-                    if not walkable:
-                        checkpoint = path[index]
-                        new_path.append(path[index])
-                new_path.append(path[-1])
-                return new_path
+                # # skip unnecessary nodes:
+                # new_path = []
+                # checkpoint = path[0]
+                # new_path.append(checkpoint)
+                # for index in range(1, len(path) - 1):
+                #     walkable = self.check_if_walkable(checkpoint,
+                #                                       path[index + 1])
+                #     if not walkable:
+                #         checkpoint = path[index]
+                #         new_path.append(path[index])
+                # new_path.append(path[-1])
+                # return new_path
 
             cur_x, cur_y = current.xy[0], current.xy[1]
 
@@ -85,11 +86,11 @@ class PathFinder:
 
                         # check if diagonal jumps are valid:
                         if adj_x != cur_x and adj_y != cur_y:
-                            tile_info1 = self.map.get_tile_properties(
+                            tile1 = self.map.get_tile_properties(
                                 cur_x, adj_y, 0)
-                            tile_info2 = self.map.get_tile_properties(
+                            tile2 = self.map.get_tile_properties(
                                 adj_x, cur_y, 0)
-                            if 'wall' in [tile_info1['type'], tile_info2['type']]:
+                            if 'wall' in [tile1['type'], tile2['type']]:
                                 continue
 
                         # update some parameters and lists:
@@ -109,29 +110,36 @@ class PathFinder:
         # if no path:
         return None
 
-    def check_if_walkable(self, point1, point2):
-        tile_width = self.map.tilewidth
-        tile_height = self.map.tileheight
-        p1 = (point1[0] * tile_width + tile_width / 2,
-              point1[1] * tile_height + tile_height / 2)
-        p2 = (point2[0] * tile_width + tile_width / 2,
-              point2[1] * tile_height + tile_height / 2)
+    def check_if_walkable(self, point_1, point_2):
+        tile_width, tile_height = self.map.tilewidth, self.map.tileheight
+        map_width, map_height = self.map.width, self.map.height
+
+        p1 = (point_1[0] * tile_width + tile_width / 2,
+              point_1[1] * tile_height + tile_height / 2)
+        p2 = (point_2[0] * tile_width + tile_width / 2,
+              point_2[1] * tile_height + tile_height / 2)
         vector1 = (p2[0] - p1[0], p2[1] - p1[1])
         length1 = sqrt(vector1[0] * vector1[0] + vector1[1] * vector1[1])
         v_norm1 = (vector1[0] / length1, vector1[1] / length1)
 
-        for distance in range(0, int(length1), int(tile_width / 5)):
+        # check if full sprite can go from 1 to 2 without encountering wall:
+        for distance in range(0, int(length1), int(tile_width / 10)):
             x1 = p1[0] + v_norm1[0] * distance
             y1 = p1[1] + v_norm1[1] * distance
 
-            tile_info1 = self.map.get_tile_properties(
-                x1 / tile_width, y1 / tile_height, 0)
-            tile_info2 = self.map.get_tile_properties(
-                x1 / tile_width + 0.5, y1 / tile_height + 0.5, 0)
-            tile_info3 = self.map.get_tile_properties(
-                x1 / tile_width - 0.5, y1 / tile_height - 0.5, 0)
+            point1info = self.map.get_tile_properties(x1 / tile_width, y1 / tile_height, 0)
+            point2info, point3info = None, None
+            point2x, point2y = x1 / tile_width + 0.5, y1 / tile_height + 0.5
+            point3x, point3y = x1 / tile_width - 0.5, y1 / tile_height - 0.5
 
-            if 'wall' in [tile_info1['type'], tile_info2['type'], tile_info3['type']]:
+            if 0 <= point2x < map_width and 0 <= point2y < map_height:
+                point2info = self.map.get_tile_properties(point2x, point2y, 0)
+            if 0 <= point3x < map_width and 0 <= point3y < map_height:
+                point3info = self.map.get_tile_properties(point3x, point3y, 0)
+
+            if point1info['type'] == 'wall' \
+                    or point2info is None or point2info['type'] == 'wall' \
+                    or point3info is None or point3info['type'] == 'wall':
                 return False
 
         # if no wall tile was found, return True:

@@ -33,15 +33,16 @@ class MenuScreen(Screen):
         pass
 
     def render(self, surface, render_scale):
-        width, height = self.background.get_size()[0], self.background.get_size()[1]
+        width = self.background.get_size()[0]
+        height = self.background.get_size()[1]
         background = pygame.transform.smoothscale(
-            self.background,
-            (int(width * render_scale[0]), int(height * render_scale[1])))
+            self.background, (int(width * render_scale[0]),
+                              int(height * render_scale[1])))
         surface.blit(background, (0, 0))
 
-        surface_width = surface.get_size()[0]
+        # surface_width = surface.get_size()[0]
         surface_height = surface.get_size()[1]
-        surface.blit(self.title_shadow, (20, surface_height - 150))  # (horizontal, vertical)
+        surface.blit(self.title_shadow, (20, surface_height - 150))
         surface.blit(self.title, (15, surface_height - 155))
 
         surface.blit(self.menu_shadow, (202, surface_height - 65))

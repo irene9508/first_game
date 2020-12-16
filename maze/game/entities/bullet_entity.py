@@ -14,11 +14,13 @@ class BulletEntity(Entity):  # 25x25
         self.y = y
 
         # collisions:
-        self.body = self.game.world.CreateDynamicBody(position=(self.x * self.game.physics_scale,
-                                                                self.y * self.game.physics_scale), userData=self)
-        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True)
-        fixture_def.filter.groupIndex = collision_group
-        fixture = self.body.CreateFixture(fixture_def)
+        self.body = self.game.world.CreateDynamicBody(
+            position=(self.x * self.game.physics_scale,
+                      self.y * self.game.physics_scale), userData=self)
+        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True)
+        fixt_def.filter.groupIndex = collision_group
+        # noinspection PyUnusedLocal
+        fixture = self.body.CreateFixture(fixt_def)
 
         # other:
         self.sprite = pygame.image.load(
@@ -57,8 +59,9 @@ class BulletEntity(Entity):  # 25x25
     def render(self, surface, render_scale):
         bullet = pygame.transform.rotate(self.sprite, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
-        bullet = pygame.transform.smoothscale(
-            bullet, (int(width * render_scale[0]), int(height * render_scale[1])))
+        bullet = pygame.transform.smoothscale(bullet,
+                                              (int(width * render_scale[0]),
+                                               int(height * render_scale[1])))
         surface.blit(bullet, (int((self.x - width / 2) * render_scale[0]),
                               int((self.y - height / 2) * render_scale[1])))
         super().render(surface, render_scale)

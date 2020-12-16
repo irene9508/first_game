@@ -73,10 +73,10 @@ class Game:
             tile_properties = self.map.get_tile_properties(x, y, 0)
             if tile_properties['type'] == 'wall':
                 tile_body = self.world.CreateStaticBody(
-                    position=((
-                                          x * self.map.tilewidth + 0.5 * self.map.tilewidth) * self.physics_scale,
-                              (
-                                          y * self.map.tileheight + 0.5 * self.map.tileheight) * self.physics_scale))
+                    position=((x * self.map.tilewidth +
+                               0.5 * self.map.tilewidth) * self.physics_scale,
+                              (y * self.map.tileheight +
+                               0.5 * self.map.tileheight) * self.physics_scale))
                 tile_body.CreatePolygonFixture(
                     box=(0.5 * self.map.tilewidth * self.physics_scale,
                          0.5 * self.map.tileheight * self.physics_scale),

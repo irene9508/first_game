@@ -24,11 +24,14 @@ class CharacterEntity(Entity):  # 109x93
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.body = self.game.world.CreateDynamicBody(position=(self.x * self.game.physics_scale,
-                                                                self.y * self.game.physics_scale), userData=self)
-        fixture_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2, density=1.0)
-        fixture_def.filter.groupIndex = -1
-        fixture = self.body.CreateFixture(fixture_def)
+        self.body = self.game.world.CreateDynamicBody(
+            position=(self.x * self.game.physics_scale,
+                      self.y * self.game.physics_scale), userData=self)
+        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.4),
+                                friction=0.2, density=1.0)
+        fixt_def.filter.groupIndex = -1
+        # noinspection PyUnusedLocal
+        fixture = self.body.CreateFixture(fixt_def)
 
         # properties:
         self.x = 280
@@ -112,8 +115,9 @@ class CharacterEntity(Entity):  # 109x93
     def render(self, surface, render_scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        sprite = pygame.transform.smoothscale(
-            sprite, (int(width * render_scale[0]), int(height * render_scale[1])))
+        sprite = pygame.transform.smoothscale(sprite,
+                                              (int(width * render_scale[0]),
+                                               int(height * render_scale[1])))
         surface.blit(sprite, (int(((self.x - width / 2) * render_scale[0])),
                               int((self.y - height / 2) * render_scale[1])))
         super().render(surface, render_scale)
