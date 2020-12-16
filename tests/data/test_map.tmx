@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="3" height="3" tilewidth="80" tileheight="80" infinite="0" nextlayerid="2" nextobjectid="1">
+ <tileset firstgid="1" source="../../data/Tiled/trial_tileset.tsx"/>
+ <tileset firstgid="20" source="test_tileset.tsx"/>
+ <layer id="1" name="Tilelaag 1" width="3" height="3">
+  <data encoding="csv">
+20,21,20,
+20,21,20,
+20,20,20
+</data>
+ </layer>
+</map>
