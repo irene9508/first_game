@@ -1,6 +1,6 @@
 import pygame
-from Box2D import b2FixtureDef, b2CircleShape
 
+from Box2D import b2FixtureDef, b2CircleShape
 from maze.game.entities.entity import Entity
 
 
@@ -9,6 +9,7 @@ class BulletEntity(Entity):  # 25x25
         super().__init__(game)
 
         # properties:
+        self.img = pygame.image.load("data/images/bullet.png").convert_alpha()
         self.rotation = rotation
         self.x = x
         self.y = y
@@ -16,15 +17,12 @@ class BulletEntity(Entity):  # 25x25
         # collisions:
         self.body = self.game.world.CreateDynamicBody(
             position=(self.x * self.game.physics_scale,
-                      self.y * self.game.physics_scale), userData=self)
+                      self.y * self.game.physics_scale),
+            userData=self)
         fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True)
         fixt_def.filter.groupIndex = collision_group
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
-
-        # other:
-        self.sprite = pygame.image.load(
-            "data/images/bullet.png").convert_alpha()
         self.velocity = [0, 0]
 
     def contact(self, fixture, other_fixture, contact):
@@ -34,7 +32,6 @@ class BulletEntity(Entity):  # 25x25
         if isinstance(other_fixture.body.userData, EnemyEntity):
             enemy = other_fixture.body.userData
             enemy.health -= 1
-            print(enemy.health)
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -57,13 +54,14 @@ class BulletEntity(Entity):  # 25x25
             self.marked_for_destroy = True
 
     def render(self, surface, render_scale):
-        bullet = pygame.transform.rotate(self.sprite, self.rotation)
+        bullet = pygame.transform.rotate(self.img, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
-        bullet = pygame.transform.smoothscale(bullet,
-                                              (int(width * render_scale[0]),
-                                               int(height * render_scale[1])))
-        surface.blit(bullet, (int((self.x - width / 2) * render_scale[0]),
-                              int((self.y - height / 2) * render_scale[1])))
+        r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
+        bullet = pygame.transform.smoothscale(bullet, r_size)
+        r_position = (int(((self.x - width / 2) * render_scale[0])),
+                      int((self.y - height / 2) * render_scale[1]))
+
+        surface.blit(bullet, r_position)
         super().render(surface, render_scale)
 
     def trigger_collision_reaction(self, enemy):
