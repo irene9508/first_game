@@ -11,12 +11,12 @@ class MyDraw(b2Draw):
         self.physics_scale = physics_scale
 
     def DrawCircle(self, center, radius, color, drawwidth=1):
-        pygame.draw.circle(self.app.surface,
-                           (int(color[0] * 255), int(color[1] * 255),
-                            int(color[2] * 255)),
-                           (int(center[0] / self.physics_scale),
-                            int(center[1] / self.physics_scale)),
-                           int(radius / self.physics_scale))
+        pygame.draw.circle(
+            self.app.surface,
+            (int(color[0] * 255), int(color[1] * 255), int(color[2] * 255)),
+            (int(center[0] / self.physics_scale * self.app.render_scale[0]),
+             int(center[1] / self.physics_scale * self.app.render_scale[1])),
+            int(radius / self.physics_scale * self.app.render_scale[0]))
 
     def DrawSolidCircle(self, center, radius, axis, color):
         self.DrawCircle(center, radius, color)
@@ -24,20 +24,21 @@ class MyDraw(b2Draw):
     # noinspection PyUnusedLocal
     def DrawPoint(self, point, size, color):
         pygame.Surface.set_at(
-            (point[0] / self.physics_scale, point[1] / self.physics_scale),
+            (point[0] / self.physics_scale * self.app.render_scale[0],
+             point[1] / self.physics_scale * self.app.render_scale[1]),
             (color[0] * 255, color[1] * 255, color[2] * 255))
 
     def DrawPolygon(self, vertices, color):
-        pygame.draw.polygon(self.app.surface,
-                            (color[0] * 255, color[1] * 255, color[2] * 255),
-                            ((vertices[0][0] / self.physics_scale,
-                              vertices[0][1] / self.physics_scale),
-                             (vertices[1][0] / self.physics_scale,
-                              vertices[1][1] / self.physics_scale),
-                             (vertices[2][0] / self.physics_scale,
-                              vertices[2][1] / self.physics_scale),
-                             (vertices[3][0] / self.physics_scale,
-                              vertices[3][1] / self.physics_scale)))
+        pygame.draw.polygon(
+            self.app.surface, (color[0] * 255, color[1] * 255, color[2] * 255),
+            ((vertices[0][0] / self.physics_scale * self.app.render_scale[0],
+              vertices[0][1] / self.physics_scale * self.app.render_scale[1]),
+             (vertices[1][0] / self.physics_scale * self.app.render_scale[0],
+              vertices[1][1] / self.physics_scale * self.app.render_scale[1]),
+             (vertices[2][0] / self.physics_scale * self.app.render_scale[0],
+              vertices[2][1] / self.physics_scale * self.app.render_scale[1]),
+             (vertices[3][0] / self.physics_scale * self.app.render_scale[0],
+              vertices[3][1] / self.physics_scale * self.app.render_scale[1])))
 
     def DrawSolidPolygon(self, vertices, color):
         self.DrawPolygon(vertices, color)

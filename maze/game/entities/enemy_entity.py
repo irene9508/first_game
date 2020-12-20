@@ -82,7 +82,8 @@ class EnemyEntity(Entity):
         tile_height = self.game.map.tileheight
         p1 = (self.x, self.y)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (char.x / tile_width, char.y / tile_width)  # this was (char.x / tile_width, char.y) which I thought was weird
+        new_tile_pos_char = (char.x / tile_width, char.y / tile_width)
+        # this was (char.x / tile_width, char.y) which I thought was weird
         game_map = self.game.map
 
         if char is not None:
@@ -97,12 +98,16 @@ class EnemyEntity(Entity):
             if self.path is not None:
                 # skip nodes that aren't needed:
                 while True:
+                    # I noticed that if I check the 3rd node and delete the 2nd,
+                    # (instead of checking the 2nd node and deleting the 1st)
+                    # the path drawing represents the real path again, and it
+                    # still works
                     if len(self.path) > 2:
                         print(self.path)
-                        walkable = self.check_if_walkable(self.path[1])
+                        walkable = self.check_if_walkable(self.path[2])
                         print(walkable)
                         if walkable:
-                            del(self.path[0])
+                            del(self.path[1])
                     break
 
                 # move towards next node:
@@ -128,22 +133,56 @@ class EnemyEntity(Entity):
     def render(self, surface, render_scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
-        sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * render_scale[0])),
-                      int((self.y - height / 2) * render_scale[1]))
+        render_size = (int(width * render_scale[0]),
+                       int(height * render_scale[1]))
+        sprite = pygame.transform.smoothscale(sprite, render_size)
+        render_position = (int(((self.x - width / 2) * render_scale[0])),
+                           int((self.y - height / 2) * render_scale[1]))
 
-        surface.blit(sprite, r_position)
+        surface.blit(sprite, render_position)
         super().render(surface, render_scale)
 
-        # if self.game.debugging and self.path is not None:
-        #     # draw the enemy path:
-        #     for index in range(len(self.path) - 1):
-        #         pygame.draw.line(surface, (0, 0, 255),
-        #             (self.path[index][0] * tile_w + tile_w / 2,
-        #              self.path[index][1] * tile_h + tile_h / 2),
-        #             (self.path[index + 1][0] * tile_w + tile_w / 2,
-        #              self.path[index + 1][1] * tile_h + tile_h / 2))
+        if self.game.debugging and self.path is not None:
+            tile_w = self.game.map.tilewidth
+            tile_h = self.game.map.tileheight
+            # draw the enemy path:
+            for index in range(len(self.path) - 1):
+                pygame.draw.line(surface, (0, 0, 255),
+                    (self.path[index][0] * render_scale[0] * tile_w + tile_w / 2,
+                     self.path[index][1] * render_scale[1] * tile_h + tile_h / 2),
+                    (self.path[index + 1][0] * tile_w * render_scale[0] + tile_w / 2,
+                     self.path[index + 1][1] * tile_h * render_scale[1] + tile_h / 2))
+
+# ----------------------------------------------------------------------
+            if len(self.path) > 2:
+                start2 = (self.x, self.y)
+                finish = (self.path[2][0] * self.game.map.tilewidth + tile_w / 2,
+                          self.path[2][1] * self.game.map.tileheight + tile_w / 2)
+                vector = (finish[0] - start2[0], finish[1] - start2[1])
+                v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+                v_norm = (vector[0] / v_length, vector[1] / v_length)
+
+                # calculate the starting point of the two outer rays:
+                normal = (-v_norm[1], v_norm[0])
+                start1 = (start2[0] + normal[0] * self.radius,
+                          start2[1] + normal[1] * self.radius)
+                start3 = (start2[0] - normal[0] * self.radius,
+                          start2[1] - normal[1] * self.radius)
+
+                callback1 = RayCastCallback()
+                end1 = (start1[0] + v_norm[0] * v_length * callback1.fraction,
+                        start1[1] + v_norm[1] * v_length * callback1.fraction)
+                pygame.draw.line(surface, (0, 0, 255), start1, end1)
+
+                callback2 = RayCastCallback()
+                end2 = (start2[0] + v_norm[0] * v_length * callback2.fraction,
+                        start2[1] + v_norm[1] * v_length * callback2.fraction)
+                pygame.draw.line(surface, (0, 0, 255), start2, end2)
+
+                callback3 = RayCastCallback()
+                end3 = (start3[0] + v_norm[0] * v_length * callback3.fraction,
+                        start3[1] + v_norm[1] * v_length * callback3.fraction)
+                pygame.draw.line(surface, (0, 0, 255), start3, end3)
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
