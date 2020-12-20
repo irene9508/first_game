@@ -82,7 +82,7 @@ class EnemyEntity(Entity):
         tile_height = self.game.map.tileheight
         p1 = (self.x, self.y)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (char.x / tile_width, char.y)
+        new_tile_pos_char = (char.x / tile_width, char.y / tile_width)  # this was (char.x / tile_width, char.y) which I thought was weird
         game_map = self.game.map
 
         if char is not None:
