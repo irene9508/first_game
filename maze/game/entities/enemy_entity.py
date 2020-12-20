@@ -61,7 +61,7 @@ class EnemyEntity(Entity):
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
-    def update(self, delta_time):
+    def update(self, delta_time, surface):
 
         # animation, used in render():
         self.animation_length -= delta_time
@@ -95,6 +95,20 @@ class EnemyEntity(Entity):
                 self.path = PathFinder(game_map).find_path(p1, (char.x, char.y))
 
             if self.path is not None:
+                # -------------------------------------------------------------
+                smoothed_path = []
+                checkpoint = self.path[0]
+                smoothed_path.append(checkpoint)
+                for index in range(1, len(self.path) - 1):
+                    walkable = self.check_if_walkable(self.path[index + 1], surface)
+                    if not walkable:
+                        checkpoint = self.path[index]
+                        smoothed_path.append(self.path[index])
+                smoothed_path.append(self.path[-1])
+                self.path = smoothed_path
+
+        # ---------------------------------------------------------------------
+
                 # move towards next node:
                 p2 = (self.path[1][0] * tile_width + tile_width / 2,
                       self.path[1][1] * tile_height + tile_height / 2)
@@ -103,7 +117,7 @@ class EnemyEntity(Entity):
                 v_norm = (vector[0] / length, vector[1] / length)
                 self.velocity = [v_norm[0] * speed, v_norm[1] * speed]
 
-                # facing towards player:
+                # face towards player:
                 if abs(vector[1]) > abs(vector[0]):
                     if vector[1] < 0:
                         self.sprites = self.sprites_up
@@ -116,6 +130,7 @@ class EnemyEntity(Entity):
                         self.sprites = self.sprites_right
 
     def render(self, surface, render_scale):
+        surface = surface
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
@@ -123,23 +138,6 @@ class EnemyEntity(Entity):
         r_position = (int(((self.x - width / 2) * render_scale[0])),
                       int((self.y - height / 2) * render_scale[1]))
         tile_w, tile_h = self.game.map.tilewidth, self.game.map.tileheight
-
-        # ---------------------------------------------------------------------
-
-        # if self.path is not None:
-        #     for index, point in enumerate(reversed(self.path), start=0):
-        #         # for point in range(0, len(self.path), -1):
-        #         # for point in reversed(self.path):
-        #         walkable = self.check_if_walkable(
-        #             surface, (point[0] * tile_w + tile_w / 2,
-        #                       point[1] * tile_h + tile_w / 2))
-        #         if walkable:
-        #             for item in range(0, index):
-        #                 del(self.path[0])
-        #             break
-        #         break
-
-        # ---------------------------------------------------------------------
 
         surface.blit(sprite, r_position)
         super().render(surface, render_scale)
@@ -153,7 +151,7 @@ class EnemyEntity(Entity):
                     (self.path[index + 1][0] * tile_w + tile_w / 2,
                      self.path[index + 1][1] * tile_h + tile_h / 2))
 
-    def check_if_walkable(self, surface, end_point):
+    def check_if_walkable(self, end_point, surface):
         # calculate middle ray starting point and direction:
         # char = self.game.get_entity_of_category(CharacterEntity)
         start2, finish = (self.x, self.y), (end_point[0], end_point[1])

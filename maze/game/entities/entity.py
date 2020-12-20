@@ -29,5 +29,5 @@ class Entity:
     def trigger_collision_reaction(self, entity):
         pass
 
-    def update(self, delta_time):
+    def update(self, delta_time, surface):
         pass

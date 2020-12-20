@@ -36,7 +36,7 @@ class BulletEntity(Entity):  # 25x25
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
-    def update(self, delta_time):
+    def update(self, delta_time, surface):
         # movement direction:
         speed = 100
         self.velocity = [0, 0]

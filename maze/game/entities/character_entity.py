@@ -48,7 +48,7 @@ class CharacterEntity(Entity):  # 109x93
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
-    def update(self, delta_time):
+    def update(self, delta_time, surface):
         keys = pygame.key.get_pressed()
 
         # animating, used in render()

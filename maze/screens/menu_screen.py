@@ -29,7 +29,7 @@ class MenuScreen(Screen):
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 self.app.set_screen(game_screen.GameScreen(self.app))
 
-    def update(self, delta_time):
+    def update(self, delta_time, surface):
         pass
 
     def render(self, surface, render_scale):
