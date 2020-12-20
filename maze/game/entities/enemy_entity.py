@@ -162,28 +162,6 @@ class EnemyEntity(Entity):
                 v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
                 v_norm = (vector[0] / v_length, vector[1] / v_length)
 
-                # calculate the starting point of the two outer rays:
-                normal = (-v_norm[1], v_norm[0])
-                start1 = (start2[0] + normal[0] * self.radius,
-                          start2[1] + normal[1] * self.radius)
-                start3 = (start2[0] - normal[0] * self.radius,
-                          start2[1] - normal[1] * self.radius)
-
-                callback1 = RayCastCallback()
-                end1 = (start1[0] + v_norm[0] * v_length * callback1.fraction,
-                        start1[1] + v_norm[1] * v_length * callback1.fraction)
-                pygame.draw.line(surface, (0, 0, 255), start1, end1)
-
-                callback2 = RayCastCallback()
-                end2 = (start2[0] + v_norm[0] * v_length * callback2.fraction,
-                        start2[1] + v_norm[1] * v_length * callback2.fraction)
-                pygame.draw.line(surface, (0, 0, 255), start2, end2)
-
-                callback3 = RayCastCallback()
-                end3 = (start3[0] + v_norm[0] * v_length * callback3.fraction,
-                        start3[1] + v_norm[1] * v_length * callback3.fraction)
-                pygame.draw.line(surface, (0, 0, 255), start3, end3)
-
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
         start2 = (self.x, self.y)
@@ -207,8 +185,6 @@ class EnemyEntity(Entity):
                                  start1[1] * self.game.physics_scale),
                                 (finish[0] * self.game.physics_scale,
                                  finish[1] * self.game.physics_scale))
-        # end1 = (start1[0] + v_norm[0] * v_length * callback1.fraction,
-        #         start1[1] + v_norm[1] * v_length * callback1.fraction)
 
         # perform ray cast 2 and draw:
         callback2 = RayCastCallback()
@@ -217,8 +193,6 @@ class EnemyEntity(Entity):
                                  start2[1] * self.game.physics_scale),
                                 (finish[0] * self.game.physics_scale,
                                  finish[1] * self.game.physics_scale))
-        # end2 = (start2[0] + v_norm[0] * v_length * callback2.fraction,
-        #         start2[1] + v_norm[1] * v_length * callback2.fraction)
 
         # perform ray cast 3 and draw:
         callback3 = RayCastCallback()
@@ -227,8 +201,6 @@ class EnemyEntity(Entity):
                                  start3[1] * self.game.physics_scale),
                                 (finish[0] * self.game.physics_scale,
                                  finish[1] * self.game.physics_scale))
-        # end3 = (start3[0] + v_norm[0] * v_length * callback3.fraction,
-        #         start3[1] + v_norm[1] * v_length * callback3.fraction)
 
         if callback1.fraction == callback2.fraction == callback3.fraction == 1:
             return True
