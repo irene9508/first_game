@@ -153,15 +153,6 @@ class EnemyEntity(Entity):
                     (self.path[index + 1][0] * tile_w * render_scale[0] + tile_w / 2,
                      self.path[index + 1][1] * tile_h * render_scale[1] + tile_h / 2))
 
-# ----------------------------------------------------------------------
-            if len(self.path) > 2:
-                start2 = (self.x, self.y)
-                finish = (self.path[2][0] * self.game.map.tilewidth + tile_w / 2,
-                          self.path[2][1] * self.game.map.tileheight + tile_w / 2)
-                vector = (finish[0] - start2[0], finish[1] - start2[1])
-                v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
-                v_norm = (vector[0] / v_length, vector[1] / v_length)
-
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
         start2 = (self.x, self.y)
