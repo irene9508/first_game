@@ -106,9 +106,9 @@ class Game:
     def show_debug_info(self):
         self.debugging = not self.debugging
 
-    def update(self, delta_time, surface):
+    def update(self, delta_time):
         for entity in self.entities:
-            entity.update(delta_time, surface)
+            entity.update(delta_time)
 
         for entity in self.entities:
             entity.synchronize_body()

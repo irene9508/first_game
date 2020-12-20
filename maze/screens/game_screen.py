@@ -29,8 +29,8 @@ class GameScreen(Screen):
                 self.path = PathFinder(self.game.map).find_path(
                     (self.char.x, self.char.y), pygame.mouse.get_pos())
 
-    def update(self, delta_time, surface):
-        self.game.update(delta_time, surface)
+    def update(self, delta_time):
+        self.game.update(delta_time)
         if self.game.debugging:
             print(self.app.fps)
 

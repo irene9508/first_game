@@ -5,7 +5,7 @@ class Screen:
     def process_event(self, event):
         pass
 
-    def update(self, delta_time, surface):
+    def update(self, delta_time):
         pass
 
     def render(self, surface, render_scale):

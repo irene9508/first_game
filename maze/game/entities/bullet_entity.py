@@ -36,7 +36,7 @@ class BulletEntity(Entity):  # 25x25
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
-    def update(self, delta_time, surface):
+    def update(self, delta_time):
         # movement direction:
         speed = 100
         self.velocity = [0, 0]
@@ -58,7 +58,7 @@ class BulletEntity(Entity):  # 25x25
         width, height = bullet.get_size()[0], bullet.get_size()[1]
         r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
         bullet = pygame.transform.smoothscale(bullet, r_size)
-        r_position = (int(((self.x - width / 2) * render_scale[0])),
+        r_position = (int((self.x - width / 2) * render_scale[0]),
                       int((self.y - height / 2) * render_scale[1]))
 
         surface.blit(bullet, r_position)

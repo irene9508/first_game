@@ -9,7 +9,7 @@ from math import sqrt
 
 class RayCastCallback(b2RayCastCallback):
 
-    def __init__(self, **kwargs):
+    def __init__(self):
         b2RayCastCallback.__init__(self)
         self.fraction = 1
 
@@ -61,7 +61,7 @@ class EnemyEntity(Entity):
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
-    def update(self, delta_time, surface):
+    def update(self, delta_time):
 
         # animation, used in render():
         self.animation_length -= delta_time
@@ -95,19 +95,15 @@ class EnemyEntity(Entity):
                 self.path = PathFinder(game_map).find_path(p1, (char.x, char.y))
 
             if self.path is not None:
-                # -------------------------------------------------------------
-                smoothed_path = []
-                checkpoint = self.path[0]
-                smoothed_path.append(checkpoint)
-                for index in range(1, len(self.path) - 1):
-                    walkable = self.check_if_walkable(self.path[index + 1], surface)
-                    if not walkable:
-                        checkpoint = self.path[index]
-                        smoothed_path.append(self.path[index])
-                smoothed_path.append(self.path[-1])
-                self.path = smoothed_path
-
-        # ---------------------------------------------------------------------
+                # skip nodes that aren't needed:
+                while True:
+                    if len(self.path) > 2:
+                        print(self.path)
+                        walkable = self.check_if_walkable(self.path[1])
+                        print(walkable)
+                        if walkable:
+                            del(self.path[0])
+                    break
 
                 # move towards next node:
                 p2 = (self.path[1][0] * tile_width + tile_width / 2,
@@ -130,31 +126,30 @@ class EnemyEntity(Entity):
                         self.sprites = self.sprites_right
 
     def render(self, surface, render_scale):
-        surface = surface
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
         r_position = (int(((self.x - width / 2) * render_scale[0])),
                       int((self.y - height / 2) * render_scale[1]))
-        tile_w, tile_h = self.game.map.tilewidth, self.game.map.tileheight
 
         surface.blit(sprite, r_position)
         super().render(surface, render_scale)
 
-        if self.game.debugging and self.path is not None:
-            # draw the enemy path:
-            for index in range(len(self.path) - 1):
-                pygame.draw.line(surface, (0, 0, 255),
-                    (self.path[index][0] * tile_w + tile_w / 2,
-                     self.path[index][1] * tile_h + tile_h / 2),
-                    (self.path[index + 1][0] * tile_w + tile_w / 2,
-                     self.path[index + 1][1] * tile_h + tile_h / 2))
+        # if self.game.debugging and self.path is not None:
+        #     # draw the enemy path:
+        #     for index in range(len(self.path) - 1):
+        #         pygame.draw.line(surface, (0, 0, 255),
+        #             (self.path[index][0] * tile_w + tile_w / 2,
+        #              self.path[index][1] * tile_h + tile_h / 2),
+        #             (self.path[index + 1][0] * tile_w + tile_w / 2,
+        #              self.path[index + 1][1] * tile_h + tile_h / 2))
 
-    def check_if_walkable(self, end_point, surface):
+    def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
-        # char = self.game.get_entity_of_category(CharacterEntity)
-        start2, finish = (self.x, self.y), (end_point[0], end_point[1])
+        start2 = (self.x, self.y)
+        finish = (end_point[0] * self.game.map.tilewidth,
+                  end_point[1] * self.game.map.tileheight)
         vector = (finish[0] - start2[0], finish[1] - start2[1])
         v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
         v_norm = (vector[0] / v_length, vector[1] / v_length)
@@ -173,10 +168,8 @@ class EnemyEntity(Entity):
                                  start1[1] * self.game.physics_scale),
                                 (finish[0] * self.game.physics_scale,
                                  finish[1] * self.game.physics_scale))
-        end1 = (start1[0] + v_norm[0] * v_length * callback1.fraction,
-                start1[1] + v_norm[1] * v_length * callback1.fraction)
-        if self.game.debugging:
-            pygame.draw.line(surface, (0, 0, 255), start1, end1)
+        # end1 = (start1[0] + v_norm[0] * v_length * callback1.fraction,
+        #         start1[1] + v_norm[1] * v_length * callback1.fraction)
 
         # perform ray cast 2 and draw:
         callback2 = RayCastCallback()
@@ -185,10 +178,8 @@ class EnemyEntity(Entity):
                                  start2[1] * self.game.physics_scale),
                                 (finish[0] * self.game.physics_scale,
                                  finish[1] * self.game.physics_scale))
-        end2 = (start2[0] + v_norm[0] * v_length * callback2.fraction,
-                start2[1] + v_norm[1] * v_length * callback2.fraction)
-        if self.game.debugging:
-            pygame.draw.line(surface, (0, 0, 255), start2, end2)
+        # end2 = (start2[0] + v_norm[0] * v_length * callback2.fraction,
+        #         start2[1] + v_norm[1] * v_length * callback2.fraction)
 
         # perform ray cast 3 and draw:
         callback3 = RayCastCallback()
@@ -197,10 +188,8 @@ class EnemyEntity(Entity):
                                  start3[1] * self.game.physics_scale),
                                 (finish[0] * self.game.physics_scale,
                                  finish[1] * self.game.physics_scale))
-        end3 = (start3[0] + v_norm[0] * v_length * callback3.fraction,
-                start3[1] + v_norm[1] * v_length * callback3.fraction)
-        if self.game.debugging:
-            pygame.draw.line(surface, (0, 0, 255), start3, end3)
+        # end3 = (start3[0] + v_norm[0] * v_length * callback3.fraction,
+        #         start3[1] + v_norm[1] * v_length * callback3.fraction)
 
         if callback1.fraction == callback2.fraction == callback3.fraction == 1:
             return True

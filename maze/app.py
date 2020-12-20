@@ -57,7 +57,7 @@ class App:
                 else:
                     self.current_screen.process_event(event)
 
-            self.current_screen.update(self.delta_time, self.surface)
+            self.current_screen.update(self.delta_time)
             current_time = pygame.time.get_ticks()
 
             # calculate delta time:
