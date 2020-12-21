@@ -82,8 +82,7 @@ class EnemyEntity(Entity):
         tile_height = self.game.map.tileheight
         p1 = (self.x, self.y)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        new_tile_pos_char = (char.x / tile_width, char.y / tile_width)
-        # this was (char.x / tile_width, char.y) which I thought was weird
+        new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
 
         if char is not None:
@@ -97,22 +96,16 @@ class EnemyEntity(Entity):
 
             if self.path is not None:
                 # skip nodes that aren't needed:
-                while True:
-                    # I noticed that if I check the 3rd node and delete the 2nd,
-                    # (instead of checking the 2nd node and deleting the 1st)
-                    # the path drawing represents the real path again, and it
-                    # still works
-                    if len(self.path) > 2:
-                        print(self.path)
-                        walkable = self.check_if_walkable(self.path[2])
-                        print(walkable)
-                        if walkable:
-                            del(self.path[1])
-                    break
+                while len(self.path) >= 2:
+                    walkable = self.check_if_walkable(self.path[1])
+                    if walkable:
+                        del(self.path[0])
+                    else:
+                        break
 
                 # move towards next node:
-                p2 = (self.path[1][0] * tile_width + tile_width / 2,
-                      self.path[1][1] * tile_height + tile_height / 2)
+                p2 = (self.path[0][0] * tile_width + tile_width / 2,
+                      self.path[0][1] * tile_height + tile_height / 2)
                 vector = (p2[0] - p1[0], p2[1] - p1[1])
                 length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
                 v_norm = (vector[0] / length, vector[1] / length)
@@ -174,8 +167,12 @@ class EnemyEntity(Entity):
         self.game.world.RayCast(callback1,
                                 (start1[0] * self.game.physics_scale,
                                  start1[1] * self.game.physics_scale),
-                                (finish[0] * self.game.physics_scale,
-                                 finish[1] * self.game.physics_scale))
+                                ((finish[0] + normal[0] * self.radius) * self.game.physics_scale,
+                                 (finish[1] + normal[1] * self.radius) * self.game.physics_scale))
+
+        # pygame.draw.line(surface, (0, 0, 255), start1,
+        #                  (start1[0] + v_norm[0] * v_length * callback.fraction,
+        #                   start1[1] + v_norm[1] * v_length * callback.fraction))
 
         # perform ray cast 2 and draw:
         callback2 = RayCastCallback()
@@ -190,8 +187,8 @@ class EnemyEntity(Entity):
         self.game.world.RayCast(callback3,
                                 (start3[0] * self.game.physics_scale,
                                  start3[1] * self.game.physics_scale),
-                                (finish[0] * self.game.physics_scale,
-                                 finish[1] * self.game.physics_scale))
+                                ((finish[0] - normal[0] * self.radius) * self.game.physics_scale,
+                                 (finish[1] - normal[1] * self.radius) * self.game.physics_scale))
 
         if callback1.fraction == callback2.fraction == callback3.fraction == 1:
             return True
