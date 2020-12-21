@@ -139,6 +139,10 @@ class EnemyEntity(Entity):
             tile_w = self.game.map.tilewidth
             tile_h = self.game.map.tileheight
             # draw the enemy path:
+            pygame.draw.line(
+                surface, (0, 0, 255), (self.x, self.y),
+                (self.path[0][0] * render_scale[0] * tile_w + tile_w / 2,
+                 self.path[0][1] * render_scale[1] * tile_w + tile_w / 2))
             for index in range(len(self.path) - 1):
                 pygame.draw.line(surface, (0, 0, 255),
                     (self.path[index][0] * render_scale[0] * tile_w + tile_w / 2,
@@ -149,8 +153,8 @@ class EnemyEntity(Entity):
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
         start2 = (self.x, self.y)
-        finish = (end_point[0] * self.game.map.tilewidth,
-                  end_point[1] * self.game.map.tileheight)
+        finish = (end_point[0] * self.game.map.tilewidth + self.game.map.tilewidth / 2,
+                  end_point[1] * self.game.map.tileheight + self.game.map.tileheight / 2)
         vector = (finish[0] - start2[0], finish[1] - start2[1])
         v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
         v_norm = (vector[0] / v_length, vector[1] / v_length)
@@ -169,10 +173,6 @@ class EnemyEntity(Entity):
                                  start1[1] * self.game.physics_scale),
                                 ((finish[0] + normal[0] * self.radius) * self.game.physics_scale,
                                  (finish[1] + normal[1] * self.radius) * self.game.physics_scale))
-
-        # pygame.draw.line(surface, (0, 0, 255), start1,
-        #                  (start1[0] + v_norm[0] * v_length * callback.fraction,
-        #                   start1[1] + v_norm[1] * v_length * callback.fraction))
 
         # perform ray cast 2 and draw:
         callback2 = RayCastCallback()
