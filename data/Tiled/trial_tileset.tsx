@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="trial_tileset" tilewidth="80" tileheight="80" tilecount="9" columns="0">
+<tileset version="1.4" tiledversion="1.4.2" name="trial_tileset" tilewidth="80" tileheight="80" tilecount="10" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <terraintypes>
   <terrain name="Floor" tile="1"/>
@@ -11,6 +11,7 @@
   <terrain name="wall_lower_left_corner" tile="12"/>
   <terrain name="corner1" tile="17"/>
   <terrain name="corner2" tile="18"/>
+  <terrain name="door" tile="19"/>
  </terraintypes>
  <tile id="1" type="floor">
   <image width="80" height="80" source="../images/floor.png"/>
@@ -38,5 +39,8 @@
  </tile>
  <tile id="18" type="wall">
   <image width="80" height="80" source="../images/wall_corner2.png"/>
+ </tile>
+ <tile id="19" type="door">
+  <image width="80" height="80" source="../images/door.png"/>
  </tile>
 </tileset>

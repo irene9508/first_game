@@ -18,5 +18,5 @@ class EnemyEntityBlob(EnemyEntity):  # 109x93
         self.sprites_up = [
             pygame.image.load("data/images/e1/e1u1.png").convert_alpha()]
         self.sprites_down = [
-            pygame.image.load("data/images/e1/e1d1.png").convert_alpha()]
+            pygame.image.load("data/images/e1/e1d3.png").convert_alpha()]
         self.sprites = self.sprites_down

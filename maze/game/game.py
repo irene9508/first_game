@@ -36,6 +36,11 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
+    def destroy_bodies(self):
+        for body in self.world.bodies:
+            if body.type == b2_staticBody:
+                self.world.DestroyBody(body)
+
     def get_entity_of_category(self, category):
         for entity in self.entities:
             if isinstance(entity, category):
@@ -43,23 +48,19 @@ class Game:
         return None
 
     def initialize_entities(self):
-
         # remove dead entities:
         new_entities = []
-
         for entity in self.entities:
             entity.destroy() if entity.marked_for_destroy \
                 else new_entities.append(entity)
-
         self.entities = new_entities
 
         # add queued entities:
         self.entities.extend(self.entity_queue)
         self.entity_queue.clear()
 
-    def load(self):
-        # self.map = load_pygame('data/Tiled/trial_room.tmx')
-        self.map = load_pygame('data/Tiled/room_with_corridors.tmx')
+    def load(self, room):
+        self.map = load_pygame(room)
 
         # create enemies:
         obj_layer = self.map.get_layer_by_name('object layer')
@@ -67,11 +68,11 @@ class Game:
             if obj.type == 'enemy':
                 self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
 
-        # create collision boxes:
+        # create bodies and fixtures:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
             tile_properties = self.map.get_tile_properties(x, y, 0)
-            if tile_properties['type'] == 'wall':
+            if tile_properties['type'] == 'wall' or tile_properties['type'] == 'door':
                 tile_body = self.world.CreateStaticBody(
                     position=((x * self.map.tilewidth +
                                0.5 * self.map.tilewidth) * self.physics_scale,

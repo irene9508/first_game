@@ -1,5 +1,5 @@
 import pygame
-from Box2D import b2FixtureDef, b2CircleShape
+from Box2D import b2FixtureDef, b2CircleShape, b2_staticBody
 from pygame import mixer
 
 from maze.game.entities.bullet_entity import BulletEntity
@@ -12,7 +12,7 @@ class CharacterEntity(Entity):  # 109x93
 
         # animation:
         self.img_down = [
-            pygame.image.load("data/images/e1/e1d1.png").convert_alpha()]
+            pygame.image.load("data/images/e1/e1d3.png").convert_alpha()]
         self.img_left = [
             pygame.image.load("data/images/e1/e1l1.png").convert_alpha()]
         self.img_right = [
@@ -104,7 +104,7 @@ class CharacterEntity(Entity):  # 109x93
                 self.shot_sound.play()
                 self.shot_timer = shot_speed
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -1,self.y + 52, self.rotation))
+                    self.game, self.x, -1, self.y + 52, self.rotation))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.img_right
             self.rotation = 0
@@ -114,6 +114,21 @@ class CharacterEntity(Entity):  # 109x93
                 self.shot_timer = shot_speed
                 self.game.add_entity(BulletEntity(
                     self.game, self.x + 52, -1, self.y, self.rotation))
+
+        # check for collision with door object
+        obj_layer = self.game.map.get_layer_by_name('object layer')
+        door = None
+        for obj in obj_layer:
+            # if object is door and char.pos is inside the object box:
+            if obj.type == 'door':
+                if obj.x < self.x < obj.x + obj.width:
+                    if obj.y < self.y < obj.y + obj.height:
+                        door = obj
+
+        if door is not None:
+            self.game.destroy_bodies()
+            self.game.load('data/Tiled/trial_room.tmx')
+            door = None
 
     def render(self, surface, render_scale):
         sprite = self.sprites[self.sprites_index]

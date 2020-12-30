@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="80" tileheight="80" infinite="0" nextlayerid="3" nextobjectid="3">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="80" tileheight="80" infinite="0" nextlayerid="4" nextobjectid="5">
  <tileset firstgid="1" source="trial_tileset.tsx"/>
- <layer id="1" name="Tilelaag 1" width="16" height="9">
+ <layer id="1" name="tile layer" width="16" height="9">
   <data encoding="csv">
 9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,10,
 9,2,2,2,2,2,2,2,2,2,2,2,2,2,2,10,
@@ -11,7 +11,10 @@
 9,2,2,2,2,2,2,2,2,2,2,2,2,2,2,10,
 9,2,2,2,2,2,2,2,2,2,2,2,2,2,2,10,
 9,2,2,2,2,2,2,2,2,2,2,2,2,2,2,10,
-13,11,11,11,11,11,11,11,11,11,11,11,11,11,11,12
+13,11,11,11,11,11,11,11,11,20,11,11,11,11,11,12
 </data>
  </layer>
+ <objectgroup id="3" name="object layer">
+  <object id="3" name="door" type="door" x="720.891" y="597.956" width="79.6619" height="40.3227"/>
+ </objectgroup>
 </map>

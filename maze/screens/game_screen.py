@@ -11,7 +11,7 @@ class GameScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
         self.game = Game(self.app)
-        self.game.load()
+        self.game.load('data/Tiled/room_with_corridors.tmx')
         self.char = CharacterEntity(self.game)
         self.game.add_entity(self.char)
         self.path = None

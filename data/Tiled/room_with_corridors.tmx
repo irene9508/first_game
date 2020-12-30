@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="80" tileheight="80" infinite="0" nextlayerid="6" nextobjectid="9">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="16" height="9" tilewidth="80" tileheight="80" infinite="0" nextlayerid="6" nextobjectid="11">
  <tileset firstgid="1" source="trial_tileset.tsx"/>
  <layer id="1" name="tile layer" width="16" height="9">
   <data encoding="csv">
-9,7,7,7,7,7,7,7,7,7,7,7,7,7,7,10,
+9,7,7,7,7,7,7,7,7,20,7,7,7,7,7,10,
 9,2,2,2,2,2,2,2,2,2,2,2,2,2,2,10,
 9,2,2,2,2,2,18,19,2,2,2,2,2,2,2,10,
 9,2,2,2,2,18,9,7,18,19,2,2,2,2,2,10,
@@ -21,5 +21,6 @@
   <object id="6" name="enemy spawn point" type="enemy" x="1096" y="130.667">
    <point/>
   </object>
+  <object id="9" name="door" type="door" x="717.667" y="77.3333" width="84.6667" height="45"/>
  </objectgroup>
 </map>
