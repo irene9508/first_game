@@ -117,18 +117,15 @@ class CharacterEntity(Entity):  # 109x93
 
         # check for collision with door object
         obj_layer = self.game.map.get_layer_by_name('object layer')
-        door = None
         for obj in obj_layer:
             # if object is door and char.pos is inside the object box:
             if obj.type == 'door':
                 if obj.x < self.x < obj.x + obj.width:
                     if obj.y < self.y < obj.y + obj.height:
-                        door = obj
-
-        if door is not None:
-            self.game.destroy_bodies()
-            self.game.load('data/Tiled/trial_room.tmx')
-            door = None
+                        self.x = obj.target_x
+                        self.y = obj.target_y
+                        self.game.load(obj.target_map)
+                        break
 
     def render(self, surface, render_scale):
         sprite = self.sprites[self.sprites_index]

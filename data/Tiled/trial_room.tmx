@@ -15,6 +15,12 @@
 </data>
  </layer>
  <objectgroup id="3" name="object layer">
-  <object id="3" name="door" type="door" x="720.891" y="597.956" width="79.6619" height="40.3227"/>
+  <object id="3" name="door" type="door" x="720.891" y="597.956" width="79.6619" height="40.3227">
+   <properties>
+    <property name="target_map" value="data/Tiled/room_with_corridors.tmx"/>
+    <property name="target_x" type="int" value="760"/>
+    <property name="target_y" type="int" value="160"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>

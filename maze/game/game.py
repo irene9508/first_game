@@ -4,6 +4,7 @@ import pygame
 
 from maze.game.my_contact_listener import MyContactListener
 from maze.game.my_draw import MyDraw
+from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
 from Box2D import *  # pip install Box2D
@@ -36,7 +37,11 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
-    def destroy_bodies(self):
+    def destroy_old_entities_and_bodies(self):
+        for entity in self.entities:
+            if isinstance(entity, EnemyEntityBlob) or isinstance(entity, BulletEntity):
+                entity.marked_for_destroy = True
+
         for body in self.world.bodies:
             if body.type == b2_staticBody:
                 self.world.DestroyBody(body)
@@ -60,6 +65,7 @@ class Game:
         self.entity_queue.clear()
 
     def load(self, room):
+        self.destroy_old_entities_and_bodies()
         self.map = load_pygame(room)
 
         # create enemies:

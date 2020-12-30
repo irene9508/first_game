@@ -21,6 +21,12 @@
   <object id="6" name="enemy spawn point" type="enemy" x="1096" y="130.667">
    <point/>
   </object>
-  <object id="9" name="door" type="door" x="717.667" y="77.3333" width="84.6667" height="45"/>
+  <object id="9" name="door" type="door" x="716.334" y="80" width="84.6667" height="45">
+   <properties>
+    <property name="target_map" value="data/Tiled/trial_room.tmx"/>
+    <property name="target_x" type="int" value="760"/>
+    <property name="target_y" type="int" value="560"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
