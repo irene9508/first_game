@@ -10,6 +10,7 @@ class Entity:
         self.rotation = 0.0
         self.x = 0
         self.y = 0
+        self.active = True
 
     def contact(self, fixture, other_fixture, contact):
         pass

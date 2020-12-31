@@ -46,9 +46,13 @@ class EnemyEntity(Entity):
                 self.x * self.game.physics_scale,
                 self.y * self.game.physics_scale), userData=self)
         self.radius = 32
-        fixture_def = b2FixtureDef(shape=b2CircleShape(
-            radius=self.radius * self.game.physics_scale),
-            friction=0.2, density=1.0)
+        fixture_def = b2FixtureDef(
+            shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
+            friction=0.2,
+            density=1.0,
+            categoryBits=0x0006,
+            maskBits=0x0008
+        )
         # fixture_def.filter.groupIndex = -2
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)

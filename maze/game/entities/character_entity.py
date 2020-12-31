@@ -31,7 +31,10 @@ class CharacterEntity(Entity):  # 109x93
         fixt_def = b2FixtureDef(
             shape=b2CircleShape(radius=0.4),
             friction=0.2,
-            density=1.0)
+            density=1.0,
+            categoryBits=0x0004,  # is character
+            maskBits=0x0004  # collides with enemies
+        )
         fixt_def.filter.groupIndex = -1
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)

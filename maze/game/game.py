@@ -4,7 +4,8 @@ import pygame
 
 from maze.game.my_contact_listener import MyContactListener
 from maze.game.my_draw import MyDraw
-from maze.game.entities.bullet_entity import BulletEntity
+from maze.game.entities.character_entity import CharacterEntity
+from maze.game.entities.enemy_entity import EnemyEntity
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
 from Box2D import *  # pip install Box2D
@@ -27,6 +28,7 @@ class Game:
         self.entities = []
         self.entity_queue = []
         self.map = None
+        self.rooms = []
 
         # collisions:
         self.world = b2World(gravity=None, contactListener=MyContactListener())
@@ -37,10 +39,15 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
-    def destroy_old_entities_and_bodies(self):
+    def destroy_and_deactivate(self):
         for entity in self.entities:
-            if isinstance(entity, EnemyEntityBlob) or isinstance(entity, BulletEntity):
-                entity.marked_for_destroy = True
+            # destroy bullets and stuff:
+            if not isinstance(entity, CharacterEntity):
+                if not isinstance(entity, EnemyEntity):
+                    entity.marked_for_destroy = True
+            # deactivate still living enemies: ALSO THEIR MASK
+            if isinstance(entity, EnemyEntity):
+                entity.active = False
 
         for body in self.world.bodies:
             if body.type == b2_staticBody:
@@ -65,29 +72,38 @@ class Game:
         self.entity_queue.clear()
 
     def load(self, room):
-        self.destroy_old_entities_and_bodies()
+        self.destroy_and_deactivate()
         self.map = load_pygame(room)
 
         # create enemies:
         obj_layer = self.map.get_layer_by_name('object layer')
         for obj in obj_layer:
-            if obj.type == 'enemy':
+            if obj.type == 'enemy' and room not in self.rooms:
                 self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
 
-        # create bodies and fixtures:
+        # create bodies and fixtures for walls:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
             tile_properties = self.map.get_tile_properties(x, y, 0)
-            if tile_properties['type'] == 'wall' or tile_properties['type'] == 'door':
+            if tile_properties['type'] == 'wall' or tile_properties[
+                    'type'] == 'door':
                 tile_body = self.world.CreateStaticBody(
-                    position=((x * self.map.tilewidth +
-                               0.5 * self.map.tilewidth) * self.physics_scale,
-                              (y * self.map.tileheight +
-                               0.5 * self.map.tileheight) * self.physics_scale))
+                    position=((x * self.map.tilewidth + 0.5 *
+                               self.map.tilewidth) * self.physics_scale,
+                              (y * self.map.tileheight + 0.5 * self.map.tileheight) *
+                              self.physics_scale)
+                )
                 tile_body.CreatePolygonFixture(
                     box=(0.5 * self.map.tilewidth * self.physics_scale,
                          0.5 * self.map.tileheight * self.physics_scale),
-                    friction=0.2, density=1.0)
+                    friction=0.2,
+                    density=1.0,
+                    categoryBits=0x0008,
+                    maskBits=0x0004
+                )
+
+        if room not in self.rooms:
+            self.rooms.append(room)
 
     def render(self, surface, render_scale):
 
@@ -105,7 +121,8 @@ class Game:
         # entities:
         self.entities.sort(key=lambda e: e.y)
         for entity in self.entities:
-            entity.render(surface, render_scale)
+            if entity.active:
+                entity.render(surface, render_scale)
 
         if self.debugging:
             self.world.DrawDebugData()
@@ -115,14 +132,17 @@ class Game:
 
     def update(self, delta_time):
         for entity in self.entities:
-            entity.update(delta_time)
+            if entity.active:
+                entity.update(delta_time)
 
         for entity in self.entities:
-            entity.synchronize_body()
+            if entity.active:
+                entity.synchronize_body()
 
         self.world.Step(delta_time, 6, 2)
 
         for entity in self.entities:
-            entity.synchronize_entity()
+            if entity.active:
+                entity.synchronize_entity()
 
         self.initialize_entities()
