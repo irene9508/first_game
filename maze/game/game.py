@@ -2,9 +2,10 @@ from math import ceil
 
 import pygame
 
+from maze.game.entities.character_entity import CharacterEntity
 from maze.game.my_contact_listener import MyContactListener
 from maze.game.my_draw import MyDraw
-from maze.game.entities.character_entity import CharacterEntity
+from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.enemy_entity import EnemyEntity
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
@@ -39,17 +40,19 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
-    def destroy_and_deactivate(self):
+    def destroy_or_deactivate_old_bodies(self):
+        # destroy bullets, deactivate still living enemies:
         for entity in self.entities:
-            # destroy bullets and stuff:
-            if not isinstance(entity, CharacterEntity):
-                if not isinstance(entity, EnemyEntity):
-                    entity.marked_for_destroy = True
-            # deactivate still living enemies: ALSO THEIR MASK
+            if isinstance(entity, BulletEntity):
+                entity.marked_for_destroy = True
             if isinstance(entity, EnemyEntity):
                 entity.active = False
 
+        # turn off collision detection, destroy tile bodies:
         for body in self.world.bodies:
+            if isinstance(body.userData, EnemyEntity):
+                for fixture in body.fixtures:
+                    fixture.filterData.maskBits = 0
             if body.type == b2_staticBody:
                 self.world.DestroyBody(body)
 
@@ -72,34 +75,43 @@ class Game:
         self.entity_queue.clear()
 
     def load(self, room):
-        self.destroy_and_deactivate()
+        self.destroy_or_deactivate_old_bodies()
         self.map = load_pygame(room)
 
-        # create enemies:
-        obj_layer = self.map.get_layer_by_name('object layer')
-        for obj in obj_layer:
-            if obj.type == 'enemy' and room not in self.rooms:
-                self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
+        # if room has not been visited before, create enemies:
+        if room not in self.rooms:
+            obj_layer = self.map.get_layer_by_name('object layer')
+            for obj in obj_layer:
+                if obj.type == 'enemy':
+                    self.add_entity(EnemyEntityBlob(self, obj.x, obj.y, room))
+
+        # if room was visited before, activate entities belonging to the room,
+        # and activate collision detection for now active entities:
+        if room in self.rooms:
+            for entity in self.entities:
+                if not isinstance(entity, CharacterEntity):
+                    if entity.room == room and not entity.active:
+                        entity.active = True
+            for body in self.world.bodies:
+                if isinstance(body.userData, EnemyEntity):
+                    if body.userData.active:
+                        for fixture in body.fixtures:
+                            fixture.filterData.maskBits = 65535
 
         # create bodies and fixtures for walls:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
-            tile_properties = self.map.get_tile_properties(x, y, 0)
-            if tile_properties['type'] == 'wall' or tile_properties[
-                    'type'] == 'door':
+            tile = self.map.get_tile_properties(x, y, 0)
+            if tile['type'] == 'wall' or tile['type'] == 'door':
+                x_pos = x * self.map.tilewidth + 0.5 * self.map.tilewidth
+                y_pos = y * self.map.tileheight + 0.5 * self.map.tileheight
                 tile_body = self.world.CreateStaticBody(
-                    position=((x * self.map.tilewidth + 0.5 *
-                               self.map.tilewidth) * self.physics_scale,
-                              (y * self.map.tileheight + 0.5 * self.map.tileheight) *
-                              self.physics_scale)
-                )
+                    position=(x_pos * self.physics_scale,
+                              y_pos * self.physics_scale))
                 tile_body.CreatePolygonFixture(
                     box=(0.5 * self.map.tilewidth * self.physics_scale,
                          0.5 * self.map.tileheight * self.physics_scale),
-                    friction=0.2,
-                    density=1.0,
-                    categoryBits=0x0008,
-                    maskBits=0x0004
+                    friction=0.2, density=1.0
                 )
 
         if room not in self.rooms:
@@ -110,13 +122,12 @@ class Game:
         # tiles:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
-            width, height = image.get_size()[0], image.get_size()[1]
-            image = pygame.transform.smoothscale(
-                image,
-                (ceil(width * render_scale[0]), ceil(height * render_scale[1])))
-            surface.blit(image, (int(self.map.tilewidth * x * render_scale[0]),
-                                 int(self.map.tileheight * y * render_scale[
-                                     1])))
+            width = ceil(image.get_size()[0] * render_scale[0])
+            height = ceil(image.get_size()[1] * render_scale[1])
+            image = pygame.transform.smoothscale(image, (width, height))
+            x_pos = int(self.map.tilewidth * x * render_scale[0])
+            y_pos = int(self.map.tileheight * y * render_scale[1])
+            surface.blit(image, (x_pos, y_pos))
 
         # entities:
         self.entities.sort(key=lambda e: e.y)

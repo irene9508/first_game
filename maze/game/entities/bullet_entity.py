@@ -22,9 +22,7 @@ class BulletEntity(Entity):  # 25x25
         )
         fixt_def = b2FixtureDef(
             shape=b2CircleShape(radius=0.1),
-            isSensor=True,
-            categoryBits=0x0002,
-            maskBits=0x0006
+            isSensor=True
         )
         fixt_def.filter.groupIndex = collision_group
         # noinspection PyUnusedLocal

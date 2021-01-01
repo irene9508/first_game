@@ -1,5 +1,5 @@
 import pygame
-from Box2D import b2FixtureDef, b2CircleShape, b2_staticBody
+from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer
 
 from maze.game.entities.bullet_entity import BulletEntity
@@ -31,9 +31,7 @@ class CharacterEntity(Entity):  # 109x93
         fixt_def = b2FixtureDef(
             shape=b2CircleShape(radius=0.4),
             friction=0.2,
-            density=1.0,
-            categoryBits=0x0004,  # is character
-            maskBits=0x0004  # collides with enemies
+            density=1.0
         )
         fixt_def.filter.groupIndex = -1
         # noinspection PyUnusedLocal
