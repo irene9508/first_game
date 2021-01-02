@@ -8,5 +8,5 @@ class Screen:
     def update(self, delta_time):
         pass
 
-    def render(self, surface, render_scale):
+    def render(self, surface, r_scale):
         pass

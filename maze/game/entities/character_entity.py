@@ -128,16 +128,16 @@ class CharacterEntity(Entity):  # 109x93
                         self.game.load(obj.target_map)
                         break
 
-    def render(self, surface, render_scale):
+    def render(self, surface, r_scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
+        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * render_scale[0])),
-                      int((self.y - height / 2) * render_scale[1]))
+        r_position = (int(((self.x - width / 2) * r_scale[0])),
+                      int((self.y - height / 2) * r_scale[1]))
 
         surface.blit(sprite, r_position)
-        super().render(surface, render_scale)
+        super().render(surface, r_scale)
 
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,

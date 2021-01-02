@@ -34,8 +34,8 @@ class GameScreen(Screen):
         if self.game.debugging:
             print(self.app.fps)
 
-    def render(self, surface, render_scale):
-        self.game.render(surface, render_scale)
+    def render(self, surface, r_scale):
+        self.game.render(surface, r_scale)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
         if self.game.debugging and self.path is not None:

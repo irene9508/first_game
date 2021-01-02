@@ -4,8 +4,8 @@ from maze.game.entities.enemy_entity import EnemyEntity
 
 
 class EnemyEntityJorn(EnemyEntity):
-    def __init__(self, game, spawn_x, spawn_y):
-        super().__init__(game, spawn_x, spawn_y)
+    def __init__(self, game, spawn_x, spawn_y, room):
+        super().__init__(game, spawn_x, spawn_y, room)
 
         # properties:
         self.health = 15

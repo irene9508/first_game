@@ -9,7 +9,7 @@ from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.enemy_entity import EnemyEntity
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
-from Box2D import *  # pip install Box2D
+from Box2D import *  # pip install Box2D /or/ box2d-py
 
 
 class Node:
@@ -40,7 +40,7 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
-    def destroy_or_deactivate_old_bodies(self):
+    def destroy_or_deactivate_old_bodies_or_entities(self):
         # destroy bullets, deactivate still living enemies:
         for entity in self.entities:
             if isinstance(entity, BulletEntity):
@@ -48,13 +48,19 @@ class Game:
             if isinstance(entity, EnemyEntity):
                 entity.active = False
 
-        # turn off collision detection, destroy tile bodies:
+        # destroy bodies:
         for body in self.world.bodies:
-            if isinstance(body.userData, EnemyEntity):
-                for fixture in body.fixtures:
-                    fixture.filterData.maskBits = 0
-            if body.type == b2_staticBody:
+            if not isinstance(body.userData, CharacterEntity):
                 self.world.DestroyBody(body)
+            # body.linearVelocity = (0, (body)
+# I am trying to destroy bodies when switching screens, and recreate them when
+# switching back to the first screen. Those actions need to happen in the
+# EnemyEntity class; it has all the references that are needed to get it
+# working. There already is a method called DESTROY that destroys the bodies. I
+# think I just need to call that method in game.destroy_or_deactivate.
+
+# I'm not sure yet how to create the new body. I am keeping the enemy instance,
+# and creating a new body for it.
 
     def get_entity_of_category(self, category):
         for entity in self.entities:
@@ -75,7 +81,7 @@ class Game:
         self.entity_queue.clear()
 
     def load(self, room):
-        self.destroy_or_deactivate_old_bodies()
+        self.destroy_or_deactivate_old_bodies_or_entities()
         self.map = load_pygame(room)
 
         # if room has not been visited before, create enemies:
@@ -90,10 +96,13 @@ class Game:
         if room in self.rooms:
             for entity in self.entities:
                 if not isinstance(entity, CharacterEntity):
-                    if entity.room == room and not entity.active:
-                        entity.active = True
+                    if not isinstance(entity, BulletEntity):
+                        if entity.room == room and not entity.active:
+                            entity.active = True
+                    if entity.active:
+                        entity.create_new_body()
             for body in self.world.bodies:
-                if isinstance(body.userData, EnemyEntity):
+                if not isinstance(body.userData, CharacterEntity):
                     if body.userData.active:
                         for fixture in body.fixtures:
                             fixture.filterData.maskBits = 65535
@@ -117,24 +126,25 @@ class Game:
         if room not in self.rooms:
             self.rooms.append(room)
 
-    def render(self, surface, render_scale):
+    def render(self, surface, r_scale):
 
         # tiles:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
-            width = ceil(image.get_size()[0] * render_scale[0])
-            height = ceil(image.get_size()[1] * render_scale[1])
+            width = ceil(image.get_size()[0] * r_scale[0])
+            height = ceil(image.get_size()[1] * r_scale[1])
             image = pygame.transform.smoothscale(image, (width, height))
-            x_pos = int(self.map.tilewidth * x * render_scale[0])
-            y_pos = int(self.map.tileheight * y * render_scale[1])
+            x_pos = int(self.map.tilewidth * x * r_scale[0])
+            y_pos = int(self.map.tileheight * y * r_scale[1])
             surface.blit(image, (x_pos, y_pos))
 
         # entities:
         self.entities.sort(key=lambda e: e.y)
         for entity in self.entities:
             if entity.active:
-                entity.render(surface, render_scale)
+                entity.render(surface, r_scale)
 
+        # debug data:
         if self.debugging:
             self.world.DrawDebugData()
 

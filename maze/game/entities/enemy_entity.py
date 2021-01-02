@@ -61,6 +61,21 @@ class EnemyEntity(Entity):
         self.current_tile_pos_enemy = None
         self.path = None
 
+    def create_new_body(self):
+        self.body = self.game.world.CreateDynamicBody(
+            position=(
+                self.x * self.game.physics_scale,
+                self.y * self.game.physics_scale), userData=self)
+        self.radius = 32
+        self.fixture_def = b2FixtureDef(
+            shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
+            friction=0.2,
+            density=1.0
+        )
+        # fixture_def.filter.groupIndex = -2
+        # noinspection PyUnusedLocal
+        fixture = self.body.CreateFixture(self.fixture_def)
+
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
@@ -112,7 +127,8 @@ class EnemyEntity(Entity):
                 vector = (p2[0] - p1[0], p2[1] - p1[1])
                 length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
                 v_norm = (vector[0] / length, vector[1] / length)
-                self.velocity = [v_norm[0] * speed, v_norm[1] * speed]
+                if self.active:
+                    self.velocity = [v_norm[0] * speed, v_norm[1] * speed]
 
                 # face towards player:
                 if abs(vector[1]) > abs(vector[0]):
@@ -126,32 +142,32 @@ class EnemyEntity(Entity):
                     else:
                         self.sprites = self.sprites_right
 
-    def render(self, surface, render_scale):
+    def render(self, surface, r_scale):
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        render_size = (int(width * render_scale[0]),
-                       int(height * render_scale[1]))
-        sprite = pygame.transform.smoothscale(sprite, render_size)
-        render_position = (int(((self.x - width / 2) * render_scale[0])),
-                           int((self.y - height / 2) * render_scale[1]))
+        r_size = (int(width * r_scale[0]),
+                  int(height * r_scale[1]))
+        sprite = pygame.transform.smoothscale(sprite, r_size)
+        r_position = (int(((self.x - width / 2) * r_scale[0])),
+                      int((self.y - height / 2) * r_scale[1]))
 
-        surface.blit(sprite, render_position)
-        super().render(surface, render_scale)
+        surface.blit(sprite, r_position)
+        super().render(surface, r_scale)
 
         # draw the enemy path:
         if self.game.debugging and self.path is not None:
             tile_w = self.game.map.tilewidth
             tile_h = self.game.map.tileheight
-            pygame.draw.line(
-                surface, (0, 0, 255), (self.x, self.y),
-                (self.path[0][0] * render_scale[0] * tile_w + tile_w / 2,
-                 self.path[0][1] * render_scale[1] * tile_w + tile_w / 2))
+            end_pos = (self.path[0][0] * r_scale[0] * tile_w + tile_w / 2,
+                       self.path[0][1] * r_scale[1] * tile_w + tile_w / 2)
+            pygame.draw.line(surface, (0, 0, 255), (self.x, self.y), end_pos)
             for index in range(len(self.path) - 1):
-                pygame.draw.line(surface, (0, 0, 255),
-                    (self.path[index][0] * render_scale[0] * tile_w + tile_w / 2,
-                     self.path[index][1] * render_scale[1] * tile_h + tile_h / 2),
-                    (self.path[index + 1][0] * tile_w * render_scale[0] + tile_w / 2,
-                     self.path[index + 1][1] * tile_h * render_scale[1] + tile_h / 2))
+                pygame.draw.line(
+                    surface, (0, 0, 255),
+                    (self.path[index][0] * r_scale[0] * tile_w + tile_w / 2,
+                     self.path[index][1] * r_scale[1] * tile_h + tile_h / 2),
+                    (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
+                     self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2))
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
