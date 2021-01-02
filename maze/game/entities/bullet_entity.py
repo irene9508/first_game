@@ -18,12 +18,10 @@ class BulletEntity(Entity):  # 25x25
         self.body = self.game.world.CreateDynamicBody(
             position=(self.x * self.game.physics_scale,
                       self.y * self.game.physics_scale),
-            userData=self
-        )
+            userData=self)
         fixt_def = b2FixtureDef(
             shape=b2CircleShape(radius=0.1),
-            isSensor=True
-        )
+            isSensor=True)
         fixt_def.filter.groupIndex = collision_group
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)

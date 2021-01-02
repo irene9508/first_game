@@ -22,7 +22,7 @@ class RayCastCallback(b2RayCastCallback):
 
 
 class EnemyEntity(Entity):
-    def __init__(self, game, spawn_x, spawn_y, room):
+    def __init__(self, game, spawn_x, spawn_y):
         super().__init__(game)
 
         # properties:
@@ -30,7 +30,6 @@ class EnemyEntity(Entity):
         self.x = spawn_x
         self.y = spawn_y
         self.velocity = [0, 0]
-        self.room = room
 
         # animation:
         self.sprites_left = None
@@ -42,19 +41,9 @@ class EnemyEntity(Entity):
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.body = self.game.world.CreateDynamicBody(
-            position=(
-                self.x * self.game.physics_scale,
-                self.y * self.game.physics_scale), userData=self)
         self.radius = 32
-        self.fixture_def = b2FixtureDef(
-            shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
-            friction=0.2,
-            density=1.0
-        )
-        # fixture_def.filter.groupIndex = -2
-        # noinspection PyUnusedLocal
-        fixture = self.body.CreateFixture(self.fixture_def)
+        self.body = None
+        self.create_new_body()
 
         # movement:
         self.current_tile_pos_char = None
@@ -66,15 +55,12 @@ class EnemyEntity(Entity):
             position=(
                 self.x * self.game.physics_scale,
                 self.y * self.game.physics_scale), userData=self)
-        self.radius = 32
-        self.fixture_def = b2FixtureDef(
+        fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
             friction=0.2,
-            density=1.0
-        )
-        # fixture_def.filter.groupIndex = -2
+            density=1.0)
         # noinspection PyUnusedLocal
-        fixture = self.body.CreateFixture(self.fixture_def)
+        fixture = self.body.CreateFixture(fixture_def)
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)

@@ -4,8 +4,8 @@ from maze.game.entities.enemy_entity import EnemyEntity
 
 
 class EnemyEntityBlob(EnemyEntity):  # 109x93
-    def __init__(self, game, spawn_x, spawn_y, room):
-        super().__init__(game, spawn_x, spawn_y, room)
+    def __init__(self, game, spawn_x, spawn_y):
+        super().__init__(game, spawn_x, spawn_y)
 
         # properties:
         self.health = 10

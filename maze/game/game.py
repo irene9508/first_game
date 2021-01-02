@@ -29,6 +29,7 @@ class Game:
         self.entities = []
         self.entity_queue = []
         self.map = None
+        self.room = None
         self.rooms = []
 
         # collisions:
@@ -51,16 +52,8 @@ class Game:
         # destroy bodies:
         for body in self.world.bodies:
             if not isinstance(body.userData, CharacterEntity):
-                self.world.DestroyBody(body)
-            # body.linearVelocity = (0, (body)
-# I am trying to destroy bodies when switching screens, and recreate them when
-# switching back to the first screen. Those actions need to happen in the
-# EnemyEntity class; it has all the references that are needed to get it
-# working. There already is a method called DESTROY that destroys the bodies. I
-# think I just need to call that method in game.destroy_or_deactivate.
-
-# I'm not sure yet how to create the new body. I am keeping the enemy instance,
-# and creating a new body for it.
+                if not isinstance(body.userData, BulletEntity):
+                    self.world.DestroyBody(body)
 
     def get_entity_of_category(self, category):
         for entity in self.entities:
@@ -72,8 +65,10 @@ class Game:
         # remove dead entities:
         new_entities = []
         for entity in self.entities:
-            entity.destroy() if entity.marked_for_destroy \
-                else new_entities.append(entity)
+            if entity.marked_for_destroy:
+                entity.destroy()
+            else:
+                new_entities.append(entity)
         self.entities = new_entities
 
         # add queued entities:
@@ -81,6 +76,7 @@ class Game:
         self.entity_queue.clear()
 
     def load(self, room):
+        self.room = room
         self.destroy_or_deactivate_old_bodies_or_entities()
         self.map = load_pygame(room)
 
@@ -89,23 +85,16 @@ class Game:
             obj_layer = self.map.get_layer_by_name('object layer')
             for obj in obj_layer:
                 if obj.type == 'enemy':
-                    self.add_entity(EnemyEntityBlob(self, obj.x, obj.y, room))
+                    self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
 
         # if room was visited before, activate entities belonging to the room,
         # and activate collision detection for now active entities:
         if room in self.rooms:
             for entity in self.entities:
-                if not isinstance(entity, CharacterEntity):
-                    if not isinstance(entity, BulletEntity):
-                        if entity.room == room and not entity.active:
-                            entity.active = True
-                    if entity.active:
-                        entity.create_new_body()
-            for body in self.world.bodies:
-                if not isinstance(body.userData, CharacterEntity):
-                    if body.userData.active:
-                        for fixture in body.fixtures:
-                            fixture.filterData.maskBits = 65535
+                # if not isinstance(entity, CharacterEntity):
+                if entity.room == room and not entity.active:
+                    entity.active = True
+                    entity.create_new_body()
 
         # create bodies and fixtures for walls:
         tile_layer = self.map.get_layer_by_name('tile layer')
@@ -120,8 +109,7 @@ class Game:
                 tile_body.CreatePolygonFixture(
                     box=(0.5 * self.map.tilewidth * self.physics_scale,
                          0.5 * self.map.tileheight * self.physics_scale),
-                    friction=0.2, density=1.0
-                )
+                    friction=0.2, density=1.0)
 
         if room not in self.rooms:
             self.rooms.append(room)

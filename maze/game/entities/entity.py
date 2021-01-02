@@ -10,6 +10,7 @@ class Entity:
         self.x = 0
         self.y = 0
         self.active = True
+        self.room = game.room
 
     def contact(self, fixture, other_fixture, contact):
         pass
