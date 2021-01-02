@@ -4,6 +4,7 @@ from pygame import mixer
 
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class CharacterEntity(Entity):  # 109x93
@@ -41,6 +42,7 @@ class CharacterEntity(Entity):  # 109x93
         self.x = 280
         self.y = 300
         self.velocity = [0, 0]
+        self.room_change_behavior = RoomChangeBehavior.nothing
 
         # other:
         self.shot_timer = 0.2  # prevents the bullets from rapid firing

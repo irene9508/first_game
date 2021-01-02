@@ -1,5 +1,3 @@
-from math import ceil
-
 import pygame
 
 from maze.game.entities.character_entity import CharacterEntity
@@ -10,6 +8,7 @@ from maze.game.entities.enemy_entity import EnemyEntity
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
 from Box2D import *  # pip install Box2D /or/ box2d-py
+from math import ceil
 
 
 class Node:
@@ -41,12 +40,12 @@ class Game:
     def add_entity(self, entity):
         self.entity_queue.append(entity)
 
-    def destroy_or_deactivate_old_bodies_or_entities(self):
+    def on_room_change(self):
         # destroy bullets, deactivate still living enemies:
         for entity in self.entities:
-            if isinstance(entity, BulletEntity):
+            if entity.room_change_behavior.name == 'destroy':
                 entity.marked_for_destroy = True
-            if isinstance(entity, EnemyEntity):
+            if entity.room_change_behavior.name == 'deactivate':
                 entity.active = False
 
         # destroy bodies:
@@ -77,7 +76,7 @@ class Game:
 
     def load(self, room):
         self.room = room
-        self.destroy_or_deactivate_old_bodies_or_entities()
+        self.on_room_change()
         self.map = load_pygame(room)
 
         # if room has not been visited before, create enemies:
@@ -91,7 +90,6 @@ class Game:
         # and activate collision detection for now active entities:
         if room in self.rooms:
             for entity in self.entities:
-                # if not isinstance(entity, CharacterEntity):
                 if entity.room == room and not entity.active:
                     entity.active = True
                     entity.create_new_body()

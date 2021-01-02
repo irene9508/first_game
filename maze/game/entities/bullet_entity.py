@@ -2,6 +2,7 @@ import pygame
 
 from Box2D import b2FixtureDef, b2CircleShape
 from maze.game.entities.entity import Entity
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class BulletEntity(Entity):  # 25x25
@@ -13,6 +14,8 @@ class BulletEntity(Entity):  # 25x25
         self.rotation = rotation
         self.x = x
         self.y = y
+        self.room_change_behavior = RoomChangeBehavior.destroy
+        print(self.room_change_behavior.name)
 
         # collisions:
         self.body = self.game.world.CreateDynamicBody(

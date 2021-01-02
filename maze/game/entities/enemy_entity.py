@@ -2,6 +2,7 @@ import pygame
 from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
 
 from maze.game.entities.character_entity import CharacterEntity
+from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.entities.entity import Entity
 from maze.game.path_finder import PathFinder
 from math import sqrt
@@ -30,6 +31,7 @@ class EnemyEntity(Entity):
         self.x = spawn_x
         self.y = spawn_y
         self.velocity = [0, 0]
+        self.room_change_behavior = RoomChangeBehavior.deactivate
 
         # animation:
         self.sprites_left = None
@@ -59,6 +61,7 @@ class EnemyEntity(Entity):
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
             friction=0.2,
             density=1.0)
+        # fixture_def.filter.groupIndex = -2
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
