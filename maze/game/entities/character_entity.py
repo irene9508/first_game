@@ -39,10 +39,11 @@ class CharacterEntity(Entity):  # 109x93
         fixture = self.body.CreateFixture(fixt_def)
 
         # properties:
+        self.health = 100
+        self.room_change_behavior = RoomChangeBehavior.nothing
+        self.velocity = [0, 0]
         self.x = 280
         self.y = 300
-        self.velocity = [0, 0]
-        self.room_change_behavior = RoomChangeBehavior.nothing
 
         # other:
         self.shot_timer = 0.2  # prevents the bullets from rapid firing

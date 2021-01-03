@@ -29,9 +29,6 @@ class MenuScreen(Screen):
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 self.app.set_screen(game_screen.GameScreen(self.app))
 
-    def update(self, delta_time):
-        pass
-
     def render(self, surface, r_scale):
         width = self.background.get_size()[0]
         height = self.background.get_size()[1]
@@ -47,3 +44,6 @@ class MenuScreen(Screen):
 
         surface.blit(self.menu_shadow, (202, surface_height - 65))
         surface.blit(self.menu, (200, surface_height - 67))
+
+    def update(self, delta_time):
+        pass

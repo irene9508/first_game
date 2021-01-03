@@ -18,6 +18,11 @@ class App:
         self.render_scale = None
         self.surface = None
 
+    def process_screen_change(self):
+        if self.next_screen is not None:
+            self.current_screen = self.next_screen
+            self.next_screen = None
+
     def run(self):
         if sys.platform == "win32":
             ctypes.windll.shcore.SetProcessDpiAwareness(2)
@@ -83,8 +88,3 @@ class App:
 
     def set_screen(self, screen):
         self.next_screen = screen
-
-    def process_screen_change(self):
-        if self.next_screen is not None:
-            self.current_screen = self.next_screen
-            self.next_screen = None

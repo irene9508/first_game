@@ -52,6 +52,64 @@ class EnemyEntity(Entity):
         self.current_tile_pos_enemy = None
         self.path = None
 
+    def check_if_walkable(self, end_point):
+        # calculate middle ray starting point and direction:
+        start2 = (self.x, self.y)
+        tile_width = self.game.map.tilewidth
+        tile_height = self.game.map.tileheight
+        finish2 = (end_point[0] * tile_width + tile_width / 2,
+                   end_point[1] * tile_height + tile_height / 2)
+        vector = (finish2[0] - start2[0], finish2[1] - start2[1])
+        v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+        v_norm = (vector[0] / v_length, vector[1] / v_length)
+
+        # calculate the starting point of the two outer rays:
+        normal = (-v_norm[1], v_norm[0])
+        start1 = (start2[0] + normal[0] * self.radius,
+                  start2[1] + normal[1] * self.radius)
+        start3 = (start2[0] - normal[0] * self.radius,
+                  start2[1] - normal[1] * self.radius)
+        finish1 = (finish2[0] + normal[0] * self.radius,
+                   finish2[1] + normal[1] * self.radius)
+        finish3 = (finish2[0] - normal[0] * self.radius,
+                   finish2[1] - normal[1] * self.radius)
+
+        # perform ray cast 1 and draw:
+        callback1 = RayCastCallback()
+        self.game.world.RayCast(callback1,
+                                (start1[0] * self.game.physics_scale,
+                                 start1[1] * self.game.physics_scale),
+                                (finish1[0] * self.game.physics_scale,
+                                 finish1[1] * self.game.physics_scale))
+
+        # perform ray cast 2 and draw:
+        callback2 = RayCastCallback()
+        self.game.world.RayCast(callback2,
+                                (start2[0] * self.game.physics_scale,
+                                 start2[1] * self.game.physics_scale),
+                                (finish2[0] * self.game.physics_scale,
+                                 finish2[1] * self.game.physics_scale))
+
+        # perform ray cast 3 and draw:
+        callback3 = RayCastCallback()
+        self.game.world.RayCast(callback3,
+                                (start3[0] * self.game.physics_scale,
+                                 start3[1] * self.game.physics_scale),
+                                (finish3[0] * self.game.physics_scale,
+                                 finish3[1] * self.game.physics_scale))
+
+        # if there are no obstructions:
+        if callback1.fraction == callback2.fraction == callback3.fraction == 1:
+            return True
+        else:
+            return False
+
+    def contact(self, fixture, other_fixture, contact):
+        if isinstance(other_fixture.body.userData, CharacterEntity):
+            character = other_fixture.body.userData
+            character.health -= 5
+            print(character.health)
+
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
             position=(
@@ -67,6 +125,45 @@ class EnemyEntity(Entity):
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
+
+    def render(self, surface, r_scale):
+        sprite = self.sprites[self.sprites_index]
+        width, height = sprite.get_size()[0], sprite.get_size()[1]
+        r_size = (int(width * r_scale[0]),
+                  int(height * r_scale[1]))
+        sprite = pygame.transform.smoothscale(sprite, r_size)
+        r_position = (int(((self.x - width / 2) * r_scale[0])),
+                      int((self.y - height / 2) * r_scale[1]))
+
+        surface.blit(sprite, r_position)
+        super().render(surface, r_scale)
+
+        # draw the enemy path:
+        if self.game.debugging and self.path is not None:
+            tile_w = self.game.map.tilewidth
+            tile_h = self.game.map.tileheight
+            end_pos = (self.path[0][0] * r_scale[0] * tile_w + tile_w / 2,
+                       self.path[0][1] * r_scale[1] * tile_w + tile_w / 2)
+            pygame.draw.line(surface, (0, 0, 255), (self.x, self.y), end_pos)
+            for index in range(len(self.path) - 1):
+                pygame.draw.line(
+                    surface, (0, 0, 255),
+                    (self.path[index][0] * r_scale[0] * tile_w + tile_w / 2,
+                     self.path[index][1] * r_scale[1] * tile_h + tile_h / 2),
+                    (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
+                     self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2))
+
+    def synchronize_body(self):  # entity gives new info to body
+        self.body.position = (self.x * self.game.physics_scale,
+                              self.y * self.game.physics_scale)
+        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
+                                    self.velocity[1] * self.game.physics_scale)
+
+    def synchronize_entity(self):  # body gives new info to entity
+        self.x = self.body.position[0] / self.game.physics_scale
+        self.y = self.body.position[1] / self.game.physics_scale
+        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
+                         self.body.linearVelocity[1] / self.game.physics_scale]
 
     def update(self, delta_time):
 
@@ -130,94 +227,3 @@ class EnemyEntity(Entity):
                         self.sprites = self.sprites_left
                     else:
                         self.sprites = self.sprites_right
-
-    def render(self, surface, r_scale):
-        sprite = self.sprites[self.sprites_index]
-        width, height = sprite.get_size()[0], sprite.get_size()[1]
-        r_size = (int(width * r_scale[0]),
-                  int(height * r_scale[1]))
-        sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
-
-        surface.blit(sprite, r_position)
-        super().render(surface, r_scale)
-
-        # draw the enemy path:
-        if self.game.debugging and self.path is not None:
-            tile_w = self.game.map.tilewidth
-            tile_h = self.game.map.tileheight
-            end_pos = (self.path[0][0] * r_scale[0] * tile_w + tile_w / 2,
-                       self.path[0][1] * r_scale[1] * tile_w + tile_w / 2)
-            pygame.draw.line(surface, (0, 0, 255), (self.x, self.y), end_pos)
-            for index in range(len(self.path) - 1):
-                pygame.draw.line(
-                    surface, (0, 0, 255),
-                    (self.path[index][0] * r_scale[0] * tile_w + tile_w / 2,
-                     self.path[index][1] * r_scale[1] * tile_h + tile_h / 2),
-                    (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
-                     self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2))
-
-    def check_if_walkable(self, end_point):
-        # calculate middle ray starting point and direction:
-        start2 = (self.x, self.y)
-        tile_width = self.game.map.tilewidth
-        tile_height = self.game.map.tileheight
-        finish2 = (end_point[0] * tile_width + tile_width / 2,
-                   end_point[1] * tile_height + tile_height / 2)
-        vector = (finish2[0] - start2[0], finish2[1] - start2[1])
-        v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
-        v_norm = (vector[0] / v_length, vector[1] / v_length)
-
-        # calculate the starting point of the two outer rays:
-        normal = (-v_norm[1], v_norm[0])
-        start1 = (start2[0] + normal[0] * self.radius,
-                  start2[1] + normal[1] * self.radius)
-        start3 = (start2[0] - normal[0] * self.radius,
-                  start2[1] - normal[1] * self.radius)
-        finish1 = (finish2[0] + normal[0] * self.radius,
-                   finish2[1] + normal[1] * self.radius)
-        finish3 = (finish2[0] - normal[0] * self.radius,
-                   finish2[1] - normal[1] * self.radius)
-
-        # perform ray cast 1 and draw:
-        callback1 = RayCastCallback()
-        self.game.world.RayCast(callback1,
-                                (start1[0] * self.game.physics_scale,
-                                 start1[1] * self.game.physics_scale),
-                                (finish1[0] * self.game.physics_scale,
-                                 finish1[1] * self.game.physics_scale))
-
-        # perform ray cast 2 and draw:
-        callback2 = RayCastCallback()
-        self.game.world.RayCast(callback2,
-                                (start2[0] * self.game.physics_scale,
-                                 start2[1] * self.game.physics_scale),
-                                (finish2[0] * self.game.physics_scale,
-                                 finish2[1] * self.game.physics_scale))
-
-        # perform ray cast 3 and draw:
-        callback3 = RayCastCallback()
-        self.game.world.RayCast(callback3,
-                                (start3[0] * self.game.physics_scale,
-                                 start3[1] * self.game.physics_scale),
-                                (finish3[0] * self.game.physics_scale,
-                                 finish3[1] * self.game.physics_scale))
-
-        # if there are no obstructions:
-        if callback1.fraction == callback2.fraction == callback3.fraction == 1:
-            return True
-        else:
-            return False
-
-    def synchronize_body(self):  # entity gives new info to body
-        self.body.position = (self.x * self.game.physics_scale,
-                              self.y * self.game.physics_scale)
-        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
-                                    self.velocity[1] * self.game.physics_scale)
-
-    def synchronize_entity(self):  # body gives new info to entity
-        self.x = self.body.position[0] / self.game.physics_scale
-        self.y = self.body.position[1] / self.game.physics_scale
-        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
-                         self.body.linearVelocity[1] / self.game.physics_scale]

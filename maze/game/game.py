@@ -1,14 +1,16 @@
 import pygame
 
+from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from maze.game.entities.character_entity import CharacterEntity
+from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.my_contact_listener import MyContactListener
-from maze.game.my_draw import MyDraw
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.enemy_entity import EnemyEntity
-from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from pytmx.util_pygame import load_pygame
-from Box2D import *  # pip install Box2D /or/ box2d-py
+from maze.game.my_draw import MyDraw
 from math import ceil
+from Box2D import *  # pip install Box2D /or/ box2d-py
+
 
 
 class Node:
@@ -39,20 +41,6 @@ class Game:
 
     def add_entity(self, entity):
         self.entity_queue.append(entity)
-
-    def on_room_change(self):
-        # destroy bullets, deactivate still living enemies:
-        for entity in self.entities:
-            if entity.room_change_behavior.name == 'destroy':
-                entity.marked_for_destroy = True
-            if entity.room_change_behavior.name == 'deactivate':
-                entity.active = False
-
-        # destroy bodies:
-        for body in self.world.bodies:
-            if not isinstance(body.userData, CharacterEntity):
-                if not isinstance(body.userData, BulletEntity):
-                    self.world.DestroyBody(body)
 
     def get_entity_of_category(self, category):
         for entity in self.entities:
@@ -86,8 +74,7 @@ class Game:
                 if obj.type == 'enemy':
                     self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
 
-        # if room was visited before, activate entities belonging to the room,
-        # and activate collision detection for now active entities:
+        # if room is not new, activate its entities and create their bodies:
         if room in self.rooms:
             for entity in self.entities:
                 if entity.room == room and not entity.active:
@@ -111,6 +98,19 @@ class Game:
 
         if room not in self.rooms:
             self.rooms.append(room)
+
+    def on_room_change(self):
+        # destroy bullets, deactivate still living enemies:
+        for entity in self.entities:
+            if entity.room_change_behavior == RoomChangeBehavior.destroy:
+                entity.marked_for_destroy = True
+            elif entity.room_change_behavior == RoomChangeBehavior.deactivate:
+                entity.active = False
+
+        # destroy bodies:
+        for body in self.world.bodies:
+            if body.userData is None or body.userData.room_change_behavior == RoomChangeBehavior.deactivate:
+                self.world.DestroyBody(body)
 
     def render(self, surface, r_scale):
 

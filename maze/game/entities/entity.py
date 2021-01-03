@@ -1,3 +1,4 @@
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class Entity:
@@ -11,6 +12,7 @@ class Entity:
         self.y = 0
         self.active = True
         self.room = game.room
+        self.room_change_behavior = RoomChangeBehavior.nothing
 
     def contact(self, fixture, other_fixture, contact):
         pass

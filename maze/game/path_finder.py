@@ -48,19 +48,6 @@ class PathFinder:
                 path = path[::-1]
                 return path
 
-                # # skip unnecessary nodes:
-                # new_path = []
-                # checkpoint = path[0]
-                # new_path.append(checkpoint)
-                # for index in range(1, len(path) - 1):
-                #     walkable = self.check_if_walkable(checkpoint,
-                #                                       path[index + 1])
-                #     if not walkable:
-                #         checkpoint = path[index]
-                #         new_path.append(path[index])
-                # new_path.append(path[-1])
-                # return new_path
-
             cur_x, cur_y = current.xy[0], current.xy[1]
 
             # for every adjacent tile:
@@ -143,5 +130,5 @@ class PathFinder:
                     or point3info is None or point3info['type'] == 'wall':
                 return False
 
-        # if no wall tile was found, return True:
+        # if no wall tile was found:
         return True
