@@ -54,20 +54,22 @@ class EnemyEntity(Entity):
         self.current_tile_pos_char = None
         self.current_tile_pos_enemy = None
         self.path = None
+        self.current_attack_duration = 0
 
     def attack(self, char, full_duration, current_duration):
-        speed = 200
-        # move towards player!
-        # position we start at:
-        start_x, start_y = self.x, self.y
-        # position we move to:
-        goal_x, goal_y = char.x, char.y
-        # distance between start and goal:
-        x_distance, y_distance = self.x - char.x, self.y - char.y
-        # where we're at in the animation:
-        progress = current_duration / full_duration
-        self.x = start_x + (goal_x - start_x) * progress
-        self.y = start_y + (goal_y - start_y) * progress
+        # speed = 200
+        # # move towards player!
+        # # position we start at:
+        # start_x, start_y = self.x, self.y
+        # # position we move to:
+        # goal_x, goal_y = char.x, char.y
+        # # distance between start and goal:
+        # x_distance, y_distance = self.x - char.x, self.y - char.y
+        # # where we're at in the animation:
+        # progress = current_duration / full_duration
+        # self.x = start_x + (goal_x - start_x) * progress
+        # self.y = start_y + (goal_y - start_y) * progress
+        pass
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
@@ -208,62 +210,61 @@ class EnemyEntity(Entity):
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
+        distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
 
         if char is not None:
-            if self.current_tile_pos_enemy != new_tile_pos_enemy \
-                    or self.current_tile_pos_char != new_tile_pos_char:
-                self.current_tile_pos_enemy = new_tile_pos_enemy
-                self.current_tile_pos_char = new_tile_pos_char
+            if self.state == EnemyState.following and distance >= 250:
+                if self.current_tile_pos_enemy != new_tile_pos_enemy \
+                        or self.current_tile_pos_char != new_tile_pos_char:
+                    self.current_tile_pos_enemy = new_tile_pos_enemy
+                    self.current_tile_pos_char = new_tile_pos_char
 
-                # find path to char:
-                self.path = PathFinder(game_map).find_path(p1, (char.x, char.y))
+                    # find path to char:
+                    self.path = PathFinder(game_map).find_path(p1, (char.x, char.y))
 
-            if self.path is not None:
-                # skip nodes that aren't needed:
-                while len(self.path) >= 2:
-                    walkable = self.check_if_walkable(self.path[1])
-                    if walkable:
-                        del(self.path[0])
+                if self.path is not None:
+                    # skip nodes that aren't needed:
+                    while len(self.path) >= 2:
+                        walkable = self.check_if_walkable(self.path[1])
+                        if walkable:
+                            del(self.path[0])
+                        else:
+                            break
+
+                    # move towards next node:
+                    p2 = (self.path[0][0] * tile_width + tile_width / 2,
+                          self.path[0][1] * tile_height + tile_height / 2)
+                    vector = (p2[0] - p1[0], p2[1] - p1[1])
+                    length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
+                    v_norm = (vector[0] / length, vector[1] / length)
+                    if self.active:
+                        self.velocity = [v_norm[0] * speed, v_norm[1] * speed]
+
+                    # face towards player:
+                    if abs(vector[1]) > abs(vector[0]):
+                        if vector[1] < 0:
+                            self.sprites = self.sprites_up
+                        else:
+                            self.sprites = self.sprites_down
                     else:
-                        break
-
-                # move towards next node:
-                p2 = (self.path[0][0] * tile_width + tile_width / 2,
-                      self.path[0][1] * tile_height + tile_height / 2)
-                vector = (p2[0] - p1[0], p2[1] - p1[1])
-                length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
-                v_norm = (vector[0] / length, vector[1] / length)
-                if self.active:
-                    self.velocity = [v_norm[0] * speed, v_norm[1] * speed]
-
-                # face towards player:
-                if abs(vector[1]) > abs(vector[0]):
-                    if vector[1] < 0:
-                        self.sprites = self.sprites_up
-                    else:
-                        self.sprites = self.sprites_down
-                else:
-                    if vector[0] < 0:
-                        self.sprites = self.sprites_left
-                    else:
-                        self.sprites = self.sprites_right
+                        if vector[0] < 0:
+                            self.sprites = self.sprites_left
+                        else:
+                            self.sprites = self.sprites_right
 
             # detect whether to attack:
-            distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
-            if self.state == EnemyState.following and distance < 250:
+            elif self.state == EnemyState.following and distance < 250:
                 self.state = EnemyState.attacking
 
             elif self.state == EnemyState.attacking:
-                print(self.x, self.y)
-                full_duration = 5
-                current_duration = 0
-                while current_duration < full_duration:
-                    self.attack(char, full_duration, current_duration)
-                    current_duration += delta_time
-                print(self.x, self.y)
-                self.x = 95
-                self.y = 95
-                print(self.x, self.y)
-                self.retreat()
+                full_duration = 3
+                self.current_attack_duration += delta_time
+                print(self.current_attack_duration)
+                if self.current_attack_duration < full_duration:
+                    self.attack(char, full_duration, self.current_attack_duration)
+                else:
+                    self.retreat()
+                    self.current_attack_duration = 0
+                    self.state = EnemyState.following
             elif self.state == EnemyState.retreating:
                 self.retreat()
