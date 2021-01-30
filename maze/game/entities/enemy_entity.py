@@ -1,6 +1,8 @@
+import time
 import pygame
-from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
 
+from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
+from maze.game.enemy_state import EnemyState
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.entities.entity import Entity
@@ -32,6 +34,7 @@ class EnemyEntity(Entity):
         self.y = spawn_y
         self.velocity = [0, 0]
         self.room_change_behavior = RoomChangeBehavior.deactivate
+        self.state = EnemyState.following
 
         # animation:
         self.sprites_left = None
@@ -51,6 +54,20 @@ class EnemyEntity(Entity):
         self.current_tile_pos_char = None
         self.current_tile_pos_enemy = None
         self.path = None
+
+    def attack(self, char, full_duration, current_duration):
+        speed = 200
+        # move towards player!
+        # position we start at:
+        start_x, start_y = self.x, self.y
+        # position we move to:
+        goal_x, goal_y = char.x, char.y
+        # distance between start and goal:
+        x_distance, y_distance = self.x - char.x, self.y - char.y
+        # where we're at in the animation:
+        progress = current_duration / full_duration
+        self.x = start_x + (goal_x - start_x) * progress
+        self.y = start_y + (goal_y - start_y) * progress
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
@@ -153,6 +170,9 @@ class EnemyEntity(Entity):
                     (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
                      self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2))
 
+    def retreat(self):
+        pass
+
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
                               self.y * self.game.physics_scale)
@@ -227,3 +247,23 @@ class EnemyEntity(Entity):
                         self.sprites = self.sprites_left
                     else:
                         self.sprites = self.sprites_right
+
+            # detect whether to attack:
+            distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
+            if self.state == EnemyState.following and distance < 250:
+                self.state = EnemyState.attacking
+
+            elif self.state == EnemyState.attacking:
+                print(self.x, self.y)
+                full_duration = 5
+                current_duration = 0
+                while current_duration < full_duration:
+                    self.attack(char, full_duration, current_duration)
+                    current_duration += delta_time
+                print(self.x, self.y)
+                self.x = 95
+                self.y = 95
+                print(self.x, self.y)
+                self.retreat()
+            elif self.state == EnemyState.retreating:
+                self.retreat()
