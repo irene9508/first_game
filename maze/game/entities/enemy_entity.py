@@ -1,4 +1,3 @@
-import time
 import pygame
 
 from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
@@ -55,16 +54,16 @@ class EnemyEntity(Entity):
         self.current_tile_pos_enemy = None
         self.path = None
         self.current_attack_duration = 0
+        self.start_x = None
+        self.start_y = None
+        self.goal_x = None
+        self.goal_y = None
 
-    def attack(self, char, full_duration, current_duration):
-        # position we start at:
-        start_x, start_y = self.x, self.y
-        # position we move to:
-        goal_x, goal_y = char.x, char.y
+    def attack(self, full_duration, current_duration):
         # where we're at in the animation:
         progress = current_duration / full_duration
-        self.x = start_x + (goal_x - start_x) * progress
-        self.y = start_y + (goal_y - start_y) * progress
+        self.x = self.start_x + (self.goal_x - self.start_x) * progress
+        self.y = self.start_y + (self.goal_y - self.start_y) * progress
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
@@ -198,10 +197,10 @@ class EnemyEntity(Entity):
 
         # movement:
         speed = 150
-        char = self.game.get_entity_of_category(CharacterEntity)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
         p1 = (self.x, self.y)
+        char = self.game.get_entity_of_category(CharacterEntity)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
@@ -248,18 +247,20 @@ class EnemyEntity(Entity):
                             self.sprites = self.sprites_right
 
             # detect whether to attack:
-            elif self.state == EnemyState.following and distance < 250:
+            elif self.state == EnemyState.following and distance < 50:
                 self.state = EnemyState.attacking
+                self.start_x, self.start_y = self.x, self.y
+                self.goal_x, self.goal_y = char.x, char.y
 
             elif self.state == EnemyState.attacking:
-                full_duration = 10
+                full_duration = 5
                 self.current_attack_duration += delta_time
-                if self.current_attack_duration < full_duration / 2:
+                if self.current_attack_duration < full_duration:
                     self.velocity = [0, 0]
-                    self.attack(char, full_duration, self.current_attack_duration)
+                    self.attack(full_duration, self.current_attack_duration)
+                    self.velocity = [0, 0]
                 else:
                     self.velocity = [0, 0]
-                    self.retreat()
                     self.current_attack_duration = 0
                     self.state = EnemyState.retreating
             elif self.state == EnemyState.retreating:
