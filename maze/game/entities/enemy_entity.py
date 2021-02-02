@@ -57,19 +57,14 @@ class EnemyEntity(Entity):
         self.current_attack_duration = 0
 
     def attack(self, char, full_duration, current_duration):
-        # speed = 200
-        # # move towards player!
-        # # position we start at:
-        # start_x, start_y = self.x, self.y
-        # # position we move to:
-        # goal_x, goal_y = char.x, char.y
-        # # distance between start and goal:
-        # x_distance, y_distance = self.x - char.x, self.y - char.y
-        # # where we're at in the animation:
-        # progress = current_duration / full_duration
-        # self.x = start_x + (goal_x - start_x) * progress
-        # self.y = start_y + (goal_y - start_y) * progress
-        pass
+        # position we start at:
+        start_x, start_y = self.x, self.y
+        # position we move to:
+        goal_x, goal_y = char.x, char.y
+        # where we're at in the animation:
+        progress = current_duration / full_duration
+        self.x = start_x + (goal_x - start_x) * progress
+        self.y = start_y + (goal_y - start_y) * progress
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
@@ -257,14 +252,16 @@ class EnemyEntity(Entity):
                 self.state = EnemyState.attacking
 
             elif self.state == EnemyState.attacking:
-                full_duration = 3
+                full_duration = 10
                 self.current_attack_duration += delta_time
-                print(self.current_attack_duration)
-                if self.current_attack_duration < full_duration:
+                if self.current_attack_duration < full_duration / 2:
+                    self.velocity = [0, 0]
                     self.attack(char, full_duration, self.current_attack_duration)
                 else:
+                    self.velocity = [0, 0]
                     self.retreat()
                     self.current_attack_duration = 0
-                    self.state = EnemyState.following
+                    self.state = EnemyState.retreating
             elif self.state == EnemyState.retreating:
                 self.retreat()
+                self.state = EnemyState.following
