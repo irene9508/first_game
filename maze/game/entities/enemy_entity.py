@@ -50,6 +50,7 @@ class EnemyEntity(Entity):
         self.create_new_body()
 
         # movement:
+        self.current_retreat_duration = 0
         self.current_tile_pos_char = None
         self.current_tile_pos_enemy = None
         self.path = None
@@ -166,8 +167,10 @@ class EnemyEntity(Entity):
                     (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
                      self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2))
 
-    def retreat(self):
-        pass
+    def retreat(self, full_duration, current_duration):
+        progress = current_duration / full_duration
+        self.x = self.goal_x + (self.start_x - self.goal_x) * progress
+        self.y = self.goal_y + (self.start_y - self.goal_y) * progress
 
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
@@ -207,7 +210,7 @@ class EnemyEntity(Entity):
         distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
 
         if char is not None:
-            if self.state == EnemyState.following and distance >= 250:
+            if self.state == EnemyState.following:
                 if self.current_tile_pos_enemy != new_tile_pos_enemy \
                         or self.current_tile_pos_char != new_tile_pos_char:
                     self.current_tile_pos_enemy = new_tile_pos_enemy
@@ -246,14 +249,14 @@ class EnemyEntity(Entity):
                         else:
                             self.sprites = self.sprites_right
 
-            # detect whether to attack:
-            elif self.state == EnemyState.following and distance < 50:
-                self.state = EnemyState.attacking
-                self.start_x, self.start_y = self.x, self.y
-                self.goal_x, self.goal_y = char.x, char.y
+                # detect whether to attack:
+                if distance < 200:
+                    self.state = EnemyState.attacking
+                    self.start_x, self.start_y = self.x, self.y
+                    self.goal_x, self.goal_y = char.x, char.y
 
             elif self.state == EnemyState.attacking:
-                full_duration = 5
+                full_duration = 0.2
                 self.current_attack_duration += delta_time
                 if self.current_attack_duration < full_duration:
                     self.velocity = [0, 0]
@@ -264,5 +267,13 @@ class EnemyEntity(Entity):
                     self.current_attack_duration = 0
                     self.state = EnemyState.retreating
             elif self.state == EnemyState.retreating:
-                self.retreat()
-                self.state = EnemyState.following
+                full_duration = 0.2
+                self.current_retreat_duration += delta_time
+                if self.current_retreat_duration < full_duration:
+                    self.velocity = [0, 0]
+                    self.retreat(full_duration, self.current_retreat_duration)
+                    self.velocity = [0, 0]
+                else:
+                    self.velocity = [0, 0]
+                    self.current_retreat_duration = 0
+                    self.state = EnemyState.following
