@@ -14,8 +14,14 @@ class Entity:
         self.room = game.room
         self.room_change_behavior = RoomChangeBehavior.nothing
 
+    def activate(self):
+        self.active = True
+
     def contact(self, fixture, other_fixture, contact):
         pass
+
+    def deactivate(self):
+        self.active = False
 
     def destroy(self):
         pass

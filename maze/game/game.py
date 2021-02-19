@@ -1,16 +1,12 @@
 import pygame
 
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
-from maze.game.entities.character_entity import CharacterEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.my_contact_listener import MyContactListener
-from maze.game.entities.bullet_entity import BulletEntity
-from maze.game.entities.enemy_entity import EnemyEntity
 from pytmx.util_pygame import load_pygame
 from maze.game.my_draw import MyDraw
 from math import ceil
 from Box2D import *  # pip install Box2D /or/ box2d-py
-
 
 
 class Node:
@@ -64,7 +60,7 @@ class Game:
 
     def load(self, room):
         self.room = room
-        self.on_room_change()
+        self.on_room_exit()
         self.map = load_pygame(room)
 
         # if room has not been visited before, create enemies:
@@ -74,12 +70,11 @@ class Game:
                 if obj.type == 'enemy':
                     self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
 
-        # if room is not new, activate its entities and create their bodies:
+        # if room is not new, activate its entities:
         if room in self.rooms:
             for entity in self.entities:
                 if entity.room == room and not entity.active:
-                    entity.active = True
-                    entity.create_new_body()
+                    entity.activate()
 
         # create bodies and fixtures for walls:
         tile_layer = self.map.get_layer_by_name('tile layer')
@@ -99,13 +94,13 @@ class Game:
         if room not in self.rooms:
             self.rooms.append(room)
 
-    def on_room_change(self):
+    def on_room_exit(self):
         # destroy bullets, deactivate still living enemies:
         for entity in self.entities:
             if entity.room_change_behavior == RoomChangeBehavior.destroy:
                 entity.marked_for_destroy = True
             elif entity.room_change_behavior == RoomChangeBehavior.deactivate:
-                entity.active = False
+                entity.deactivate()
 
         # destroy bodies:
         for body in self.world.bodies:

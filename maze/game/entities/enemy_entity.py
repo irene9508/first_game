@@ -60,6 +60,11 @@ class EnemyEntity(Entity):
         self.goal_x = None
         self.goal_y = None
 
+    def activate(self):
+        super().activate()
+        self.state = EnemyState.following
+        self.create_new_body()
+
     def attack(self, full_duration, current_duration):
         # where we're at in the animation:
         progress = current_duration / full_duration
@@ -122,7 +127,6 @@ class EnemyEntity(Entity):
         if isinstance(other_fixture.body.userData, CharacterEntity):
             character = other_fixture.body.userData
             character.health -= 5
-            print(character.health)
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
@@ -256,7 +260,7 @@ class EnemyEntity(Entity):
                     self.goal_x, self.goal_y = char.x, char.y
 
             elif self.state == EnemyState.attacking:
-                full_duration = 0.2
+                full_duration = 5
                 self.current_attack_duration += delta_time
                 if self.current_attack_duration < full_duration:
                     self.velocity = [0, 0]
@@ -267,7 +271,7 @@ class EnemyEntity(Entity):
                     self.current_attack_duration = 0
                     self.state = EnemyState.retreating
             elif self.state == EnemyState.retreating:
-                full_duration = 0.2
+                full_duration = 5
                 self.current_retreat_duration += delta_time
                 if self.current_retreat_duration < full_duration:
                     self.velocity = [0, 0]
