@@ -46,7 +46,7 @@ class CharacterEntity(Entity):  # 109x93
         self.y = 300
 
         # other:
-        self.shot_timer = 0.2  # prevents the bullets from rapid firing
+        self.initial_shot_timer = 0.2  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
 
     def destroy(self):
@@ -80,42 +80,42 @@ class CharacterEntity(Entity):  # 109x93
             self.velocity[0] = sprite_speed
 
         # shooting:
-        self.shot_timer -= delta_time
-        shot_speed = 0.2
+        self.initial_shot_timer -= delta_time
+        shot_timer = 1
         if keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
             self.sprites = self.img_up
             self.rotation = 90
-            if self.shot_timer <= 0:
+            if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
-                self.shot_timer = shot_speed
+                self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, -1, self.y - 52, self.rotation))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.img_left
             self.rotation = 180
-            if self.shot_timer <= 0:
+            if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
-                self.shot_timer = shot_speed
+                self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x - 52, -1, self.y, self.rotation))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.img_down
             self.rotation = 270
-            if self.shot_timer <= 0:
+            if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
-                self.shot_timer = shot_speed
+                self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, -1, self.y + 52, self.rotation))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.img_right
             self.rotation = 0
-            if self.shot_timer <= 0:
+            if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
-                self.shot_timer = shot_speed
+                self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x + 52, -1, self.y, self.rotation))
 

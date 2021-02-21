@@ -80,7 +80,8 @@ class Game:
         tile_layer = self.map.get_layer_by_name('tile layer')
         for x, y, image in tile_layer.tiles():
             tile = self.map.get_tile_properties(x, y, 0)
-            if tile['type'] == 'wall' or tile['type'] == 'door':
+            if tile['type'] == 'wall':
+                #  or tile['type'] == 'door'
                 x_pos = x * self.map.tilewidth + 0.5 * self.map.tilewidth
                 y_pos = y * self.map.tileheight + 0.5 * self.map.tileheight
                 tile_body = self.world.CreateStaticBody(

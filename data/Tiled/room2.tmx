@@ -15,14 +15,14 @@
 </data>
  </layer>
  <objectgroup id="3" name="object layer">
-  <object id="3" name="door" type="door" x="720.891" y="597.956" width="79.6619" height="40.3227">
+  <object id="3" name="door" type="door" x="721.874" y="679.585" width="79.6619" height="40.3227">
    <properties>
     <property name="target_map" value="data/Tiled/room1.tmx"/>
     <property name="target_x" type="int" value="760"/>
     <property name="target_y" type="int" value="160"/>
    </properties>
   </object>
-  <object id="5" name="door" type="door" x="160.799" y="78.1867" width="79.6619" height="40.3227">
+  <object id="5" name="door" type="door" x="160.799" y="1.47521" width="79.6619" height="40.3227">
    <properties>
     <property name="target_map" value="data/Tiled/room3.tmx"/>
     <property name="target_x" type="int" value="200"/>

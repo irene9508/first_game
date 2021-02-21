@@ -15,7 +15,7 @@
 </data>
  </layer>
  <objectgroup id="3" name="object layer">
-  <object id="5" name="door" type="door" x="159.169" y="601.839" width="79.6619" height="40.3227">
+  <object id="5" name="door" type="door" x="160.169" y="680.839" width="79.6619" height="40.3227">
    <properties>
     <property name="target_map" value="data/Tiled/room2.tmx"/>
     <property name="target_x" type="int" value="200"/>

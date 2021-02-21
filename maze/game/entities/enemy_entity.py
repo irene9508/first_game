@@ -1,12 +1,14 @@
 import pygame
 
 from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
-from maze.game.enemy_state import EnemyState
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
+from maze.game.entities.bullet_entity import BulletEntity
+from maze.game.enemy_state import EnemyState
 from maze.game.entities.entity import Entity
 from maze.game.path_finder import PathFinder
-from math import sqrt
+from pygame import mixer
+from math import sqrt, atan2, pi
 
 
 class RayCastCallback(b2RayCastCallback):
@@ -36,6 +38,8 @@ class EnemyEntity(Entity):
         self.state = EnemyState.following
 
         # animation:
+        self.r_scale = None
+        self.surface = None
         self.sprites_left = None
         self.sprites_right = None
         self.sprites_up = None
@@ -59,6 +63,10 @@ class EnemyEntity(Entity):
         self.start_y = None
         self.goal_x = None
         self.goal_y = None
+
+        # shooting:
+        self.initial_shot_timer = 0.5
+        self.shot_sound = mixer.Sound('data/sounds/laser.wav')
 
     def activate(self):
         super().activate()
@@ -93,7 +101,7 @@ class EnemyEntity(Entity):
         finish3 = (finish2[0] - normal[0] * self.radius,
                    finish2[1] - normal[1] * self.radius)
 
-        # perform ray cast 1 and draw:
+        # perform ray cast 1:
         callback1 = RayCastCallback()
         self.game.world.RayCast(callback1,
                                 (start1[0] * self.game.physics_scale,
@@ -101,7 +109,7 @@ class EnemyEntity(Entity):
                                 (finish1[0] * self.game.physics_scale,
                                  finish1[1] * self.game.physics_scale))
 
-        # perform ray cast 2 and draw:
+        # perform ray cast 2:
         callback2 = RayCastCallback()
         self.game.world.RayCast(callback2,
                                 (start2[0] * self.game.physics_scale,
@@ -109,7 +117,7 @@ class EnemyEntity(Entity):
                                 (finish2[0] * self.game.physics_scale,
                                  finish2[1] * self.game.physics_scale))
 
-        # perform ray cast 3 and draw:
+        # perform ray cast 3:
         callback3 = RayCastCallback()
         self.game.world.RayCast(callback3,
                                 (start3[0] * self.game.physics_scale,
@@ -145,6 +153,8 @@ class EnemyEntity(Entity):
         self.game.world.DestroyBody(self.body)
 
     def render(self, surface, r_scale):
+        self.r_scale = r_scale
+        self.surface = surface
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * r_scale[0]),
@@ -212,6 +222,7 @@ class EnemyEntity(Entity):
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
         distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
+        duration = 0.07
 
         if char is not None:
             if self.state == EnemyState.following:
@@ -254,30 +265,45 @@ class EnemyEntity(Entity):
                             self.sprites = self.sprites_right
 
                 # detect whether to attack:
-                if distance < 200:
+                if distance < 80:
                     self.state = EnemyState.attacking
                     self.start_x, self.start_y = self.x, self.y
                     self.goal_x, self.goal_y = char.x, char.y
+                    self.current_attack_duration = 0
 
             elif self.state == EnemyState.attacking:
-                full_duration = 5
                 self.current_attack_duration += delta_time
-                if self.current_attack_duration < full_duration:
+                if self.current_attack_duration < duration:
                     self.velocity = [0, 0]
-                    self.attack(full_duration, self.current_attack_duration)
+                    self.attack(duration, self.current_attack_duration)
                     self.velocity = [0, 0]
                 else:
                     self.velocity = [0, 0]
-                    self.current_attack_duration = 0
                     self.state = EnemyState.retreating
+                    self.current_retreat_duration = 0
             elif self.state == EnemyState.retreating:
-                full_duration = 5
                 self.current_retreat_duration += delta_time
-                if self.current_retreat_duration < full_duration:
+                if self.current_retreat_duration < duration:
                     self.velocity = [0, 0]
-                    self.retreat(full_duration, self.current_retreat_duration)
+                    self.retreat(duration, self.current_retreat_duration)
                     self.velocity = [0, 0]
                 else:
                     self.velocity = [0, 0]
-                    self.current_retreat_duration = 0
                     self.state = EnemyState.following
+
+        # shooting:
+        self.initial_shot_timer -= delta_time
+        shot_timer = 1
+        walkable = self.check_if_walkable((char.x / tile_width, char.y / tile_height))
+        if walkable:
+            self.sprites = self.sprites_up
+            delta_x = char.x - self.x
+            delta_y = char.y - self.y
+            distance = sqrt(delta_x ** 2 + delta_y ** 2)
+            angle = atan2(delta_y, delta_x) * 180 / pi
+            if self.initial_shot_timer <= 0:
+                pygame.mixer.stop()
+                self.shot_sound.play()
+                self.initial_shot_timer = shot_timer
+                self.game.add_entity(BulletEntity(
+                    self.game, self.x, -2, self.y - 52, angle, distance))
