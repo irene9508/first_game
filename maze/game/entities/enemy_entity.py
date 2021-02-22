@@ -293,17 +293,16 @@ class EnemyEntity(Entity):
 
         # shooting:
         self.initial_shot_timer -= delta_time
-        shot_timer = 1
+        shot_timer = 0.5
         walkable = self.check_if_walkable((char.x / tile_width, char.y / tile_height))
         if walkable:
             self.sprites = self.sprites_up
             delta_x = char.x - self.x
             delta_y = char.y - self.y
-            distance = sqrt(delta_x ** 2 + delta_y ** 2)
             angle = atan2(delta_y, delta_x) * 180 / pi
             if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -2, self.y - 52, angle, distance))
+                    self.game, self.x, -2, self.y - 100, angle))

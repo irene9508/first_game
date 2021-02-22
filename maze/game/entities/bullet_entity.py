@@ -3,11 +3,11 @@ import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
-from math import cos, sin
+from math import cos, sin, pi
 
 
 class BulletEntity(Entity):  # 25x25
-    def __init__(self, game, x, collision_group, y, rotation, distance=1):
+    def __init__(self, game, x, collision_group, y, rotation):
         super().__init__(game)
 
         # properties:
@@ -30,7 +30,6 @@ class BulletEntity(Entity):  # 25x25
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
         self.velocity = [0, 0]
-        self.distance = distance
 
     def contact(self, fixture, other_fixture, contact):
         from maze.game.entities.enemy_entity import EnemyEntity
@@ -74,18 +73,8 @@ class BulletEntity(Entity):  # 25x25
         # movement direction:
         speed = 200
         self.velocity = [0, 0]
-        if self.collision_group == -2:
-            self.velocity[0] = self.distance * cos(self.rotation)
-            self.velocity[1] = self.distance * sin(self.rotation)
-        if self.collision_group == -1:
-            if self.rotation == 90:
-                self.velocity[1] = -speed
-            if self.rotation == 180:
-                self.velocity[0] = -speed
-            if self.rotation == 270:
-                self.velocity[1] = speed
-            if self.rotation == 0:
-                self.velocity[0] = speed
+        self.velocity[0] = speed * cos(self.rotation * pi / 180)
+        self.velocity[1] = speed * sin(self.rotation * pi / 180)
 
         # destruction:
         if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:

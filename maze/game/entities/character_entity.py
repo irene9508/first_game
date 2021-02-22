@@ -84,7 +84,7 @@ class CharacterEntity(Entity):  # 109x93
         shot_timer = 1
         if keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
             self.sprites = self.img_up
-            self.rotation = 90
+            self.rotation = 270
             if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
@@ -102,7 +102,7 @@ class CharacterEntity(Entity):  # 109x93
                     self.game, self.x - 52, -1, self.y, self.rotation))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.img_down
-            self.rotation = 270
+            self.rotation = 90
             if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
