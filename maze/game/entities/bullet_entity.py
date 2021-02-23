@@ -73,7 +73,7 @@ class BulletEntity(Entity):  # 25x25
 
     def update(self, delta_time):
         # movement direction:
-        speed = 200
+        speed = 500
         self.velocity = [0, 0]
         self.velocity[0] = speed * cos(self.rotation * pi / 180)
         self.velocity[1] = speed * sin(self.rotation * pi / 180)

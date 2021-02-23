@@ -32,7 +32,7 @@ class CharacterEntity(Entity):  # 109x93
             userData=self)
         fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2,
                                 density=1.0, categoryBits=Category.CHARACTER,
-                                maskBits=Category.ENEMY | Category.ENEMY_BULLET)
+                                maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -89,7 +89,7 @@ class CharacterEntity(Entity):  # 109x93
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, -1, self.y - 52, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY))
+                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.img_left
             self.rotation = 180
@@ -99,7 +99,7 @@ class CharacterEntity(Entity):  # 109x93
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x - 52, -1, self.y, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY))
+                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.img_down
             self.rotation = 90
@@ -109,7 +109,7 @@ class CharacterEntity(Entity):  # 109x93
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, -1, self.y + 52, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY))
+                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.img_right
             self.rotation = 0
@@ -119,7 +119,7 @@ class CharacterEntity(Entity):  # 109x93
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x + 52, -1, self.y, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY))
+                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
 
         # check for collision with door object
         obj_layer = self.game.map.get_layer_by_name('object layer')

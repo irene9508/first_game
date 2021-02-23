@@ -146,7 +146,7 @@ class EnemyEntity(Entity):
         fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
             friction=0.2, density=1.0, categoryBits=Category.ENEMY,
-            maskBits=Category.ENEMY | Category.CHARACTER | Category.CHARACTER_BULLET)
+            maskBits=Category.ENEMY | Category.CHARACTER | Category.CHARACTER_BULLET | Category.WALL)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
@@ -306,5 +306,5 @@ class EnemyEntity(Entity):
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -2, self.y - 100, angle,
-                    Category.ENEMY_BULLET, Category.CHARACTER))
+                    self.game, self.x, -2, self.y, angle,
+                    Category.ENEMY_BULLET, Category.CHARACTER | Category.WALL))

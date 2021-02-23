@@ -1,5 +1,6 @@
 import pygame
 
+from maze.game.collision_masks import Category
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
 from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.my_contact_listener import MyContactListener
@@ -81,16 +82,24 @@ class Game:
         for x, y, image in tile_layer.tiles():
             tile = self.map.get_tile_properties(x, y, 0)
             if tile['type'] == 'wall':
-                #  or tile['type'] == 'door'
+                # set xy as middle of tile
                 x_pos = x * self.map.tilewidth + 0.5 * self.map.tilewidth
                 y_pos = y * self.map.tileheight + 0.5 * self.map.tileheight
                 tile_body = self.world.CreateStaticBody(
                     position=(x_pos * self.physics_scale,
                               y_pos * self.physics_scale))
-                tile_body.CreatePolygonFixture(
-                    box=(0.5 * self.map.tilewidth * self.physics_scale,
-                         0.5 * self.map.tileheight * self.physics_scale),
-                    friction=0.2, density=1.0)
+                fixt_def = b2FixtureDef(
+                    shape=b2PolygonShape(
+                        box=(0.5 * self.map.tilewidth * self.physics_scale,
+                             0.5 * self.map.tileheight * self.physics_scale)),
+                    categoryBits=Category.WALL)
+                # noinspection PyUnusedLocal
+                fixture = tile_body.CreateFixture(fixt_def)
+
+                # tile_body.CreatePolygonFixture(
+                #     box=(0.5 * self.map.tilewidth * self.physics_scale,
+                #          0.5 * self.map.tileheight * self.physics_scale),
+                #     friction=0.2, density=1.0)
 
         if room not in self.rooms:
             self.rooms.append(room)
