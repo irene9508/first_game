@@ -1,6 +1,8 @@
 import pygame
 
 from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
+
+from maze.game.collision_masks import Category
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.entities.bullet_entity import BulletEntity
@@ -143,9 +145,8 @@ class EnemyEntity(Entity):
                 self.y * self.game.physics_scale), userData=self)
         fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
-            friction=0.2,
-            density=1.0)
-        # fixture_def.filter.groupIndex = -2
+            friction=0.2, density=1.0, categoryBits=Category.ENEMY,
+            maskBits=Category.ENEMY | Category.CHARACTER | Category.CHARACTER_BULLET)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
@@ -305,4 +306,5 @@ class EnemyEntity(Entity):
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -2, self.y - 100, angle))
+                    self.game, self.x, -2, self.y - 100, angle,
+                    Category.ENEMY_BULLET, Category.CHARACTER))

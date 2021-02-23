@@ -2,6 +2,7 @@ import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer
 
+from maze.game.collision_masks import Category
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
@@ -29,12 +30,9 @@ class CharacterEntity(Entity):  # 109x93
             position=(self.x * self.game.physics_scale,
                       self.y * self.game.physics_scale),
             userData=self)
-        fixt_def = b2FixtureDef(
-            shape=b2CircleShape(radius=0.4),
-            friction=0.2,
-            density=1.0
-        )
-        fixt_def.filter.groupIndex = -1
+        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2,
+                                density=1.0, categoryBits=Category.CHARACTER,
+                                maskBits=Category.ENEMY | Category.ENEMY_BULLET)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -90,7 +88,8 @@ class CharacterEntity(Entity):  # 109x93
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -1, self.y - 52, self.rotation))
+                    self.game, self.x, -1, self.y - 52, self.rotation,
+                    Category.CHARACTER_BULLET, Category.ENEMY))
         if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
             self.sprites = self.img_left
             self.rotation = 180
@@ -99,7 +98,8 @@ class CharacterEntity(Entity):  # 109x93
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x - 52, -1, self.y, self.rotation))
+                    self.game, self.x - 52, -1, self.y, self.rotation,
+                    Category.CHARACTER_BULLET, Category.ENEMY))
         if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
             self.sprites = self.img_down
             self.rotation = 90
@@ -108,7 +108,8 @@ class CharacterEntity(Entity):  # 109x93
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -1, self.y + 52, self.rotation))
+                    self.game, self.x, -1, self.y + 52, self.rotation,
+                    Category.CHARACTER_BULLET, Category.ENEMY))
         if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
             self.sprites = self.img_right
             self.rotation = 0
@@ -117,7 +118,8 @@ class CharacterEntity(Entity):  # 109x93
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x + 52, -1, self.y, self.rotation))
+                    self.game, self.x + 52, -1, self.y, self.rotation,
+                    Category.CHARACTER_BULLET, Category.ENEMY))
 
         # check for collision with door object
         obj_layer = self.game.map.get_layer_by_name('object layer')
