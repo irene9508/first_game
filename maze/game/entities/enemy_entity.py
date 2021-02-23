@@ -1,16 +1,16 @@
-import pygame
+from math import sqrt, atan2, pi
 
+import pygame
 from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
+from pygame import mixer
 
 from maze.game.collision_masks import Category
-from maze.game.entities.character_entity import CharacterEntity
-from maze.game.room_change_behavior import RoomChangeBehavior
-from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.enemy_state import EnemyState
+from maze.game.entities.bullet_entity import BulletEntity
+from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
 from maze.game.path_finder import PathFinder
-from pygame import mixer
-from math import sqrt, atan2, pi
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class RayCastCallback(b2RayCastCallback):
@@ -142,11 +142,15 @@ class EnemyEntity(Entity):
         self.body = self.game.world.CreateDynamicBody(
             position=(
                 self.x * self.game.physics_scale,
-                self.y * self.game.physics_scale), userData=self)
+                self.y * self.game.physics_scale),
+            userData=self)
         fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
-            friction=0.2, density=1.0, categoryBits=Category.ENEMY,
-            maskBits=Category.ENEMY | Category.CHARACTER | Category.CHARACTER_BULLET | Category.WALL)
+            friction=0.2,
+            density=1.0,
+            categoryBits=Category.ENEMY,
+            maskBits=(Category.ENEMY | Category.CHARACTER |
+                      Category.CHARACTER_BULLET | Category.WALL))
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
@@ -180,7 +184,8 @@ class EnemyEntity(Entity):
                     (self.path[index][0] * r_scale[0] * tile_w + tile_w / 2,
                      self.path[index][1] * r_scale[1] * tile_h + tile_h / 2),
                     (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
-                     self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2))
+                     self.path[index + 1][1] * tile_h * r_scale[
+                         1] + tile_h / 2))
 
     def retreat(self, full_duration, current_duration):
         progress = current_duration / full_duration
@@ -233,14 +238,15 @@ class EnemyEntity(Entity):
                     self.current_tile_pos_char = new_tile_pos_char
 
                     # find path to char:
-                    self.path = PathFinder(game_map).find_path(p1, (char.x, char.y))
+                    self.path = PathFinder(game_map).find_path(
+                        p1, (char.x, char.y))
 
                 if self.path is not None:
                     # skip nodes that aren't needed:
                     while len(self.path) >= 2:
                         walkable = self.check_if_walkable(self.path[1])
                         if walkable:
-                            del(self.path[0])
+                            del (self.path[0])
                         else:
                             break
 
@@ -293,9 +299,10 @@ class EnemyEntity(Entity):
                     self.state = EnemyState.following
 
         # shooting:
-        self.initial_shot_timer -= delta_time
         shot_timer = 0.5
-        walkable = self.check_if_walkable((char.x / tile_width, char.y / tile_height))
+        self.initial_shot_timer -= delta_time
+        walkable = self.check_if_walkable(
+            (int(char.x / tile_width), int(char.y / tile_height)))
         if walkable:
             self.sprites = self.sprites_up
             delta_x = char.x - self.x
@@ -306,5 +313,5 @@ class EnemyEntity(Entity):
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x, -2, self.y, angle,
-                    Category.ENEMY_BULLET, Category.CHARACTER | Category.WALL))
+                    self.game, self.x, self.y, angle, Category.ENEMY_BULLET,
+                    Category.CHARACTER | Category.WALL))

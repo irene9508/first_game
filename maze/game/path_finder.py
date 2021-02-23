@@ -96,39 +96,3 @@ class PathFinder:
 
         # if no path:
         return None
-
-    def check_if_walkable(self, point_1, point_2):
-        tile_width, tile_height = self.map.tilewidth, self.map.tileheight
-        map_width, map_height = self.map.width, self.map.height
-
-        p1 = (point_1[0] * tile_width + tile_width / 2,
-              point_1[1] * tile_height + tile_height / 2)
-        p2 = (point_2[0] * tile_width + tile_width / 2,
-              point_2[1] * tile_height + tile_height / 2)
-
-        vector = (p2[0] - p1[0], p2[1] - p1[1])
-        length1 = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
-        v_norm1 = (vector[0] / length1, vector[1] / length1)
-
-        # check if full sprite can go from 1 to 2 without encountering wall:
-        for distance in range(0, int(length1), int(tile_width / 10)):
-            x1 = p1[0] + v_norm1[0] * distance
-            y1 = p1[1] + v_norm1[1] * distance
-
-            point1info = self.map.get_tile_properties(x1 / tile_width, y1 / tile_height, 0)
-            point2info, point3info = None, None
-            point2x, point2y = x1 / tile_width + 0.5, y1 / tile_height + 0.5
-            point3x, point3y = x1 / tile_width - 0.5, y1 / tile_height - 0.5
-
-            if 0 <= point2x < map_width and 0 <= point2y < map_height:
-                point2info = self.map.get_tile_properties(point2x, point2y, 0)
-            if 0 <= point3x < map_width and 0 <= point3y < map_height:
-                point3info = self.map.get_tile_properties(point3x, point3y, 0)
-
-            if point1info['type'] == 'wall' \
-                    or point2info is None or point2info['type'] == 'wall' \
-                    or point3info is None or point3info['type'] == 'wall':
-                return False
-
-        # if no wall tile was found:
-        return True

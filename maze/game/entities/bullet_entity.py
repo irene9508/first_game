@@ -1,14 +1,14 @@
-import pygame
+from math import cos, sin, pi
 
+import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
-from math import cos, sin, pi
 
 
 class BulletEntity(Entity):  # 25x25
-    def __init__(self, game, x, collision_group, y, rotation, category, mask):
+    def __init__(self, game, x, y, rotation, category, mask):
         super().__init__(game)
 
         # properties:
@@ -23,12 +23,9 @@ class BulletEntity(Entity):  # 25x25
             position=(self.x * self.game.physics_scale,
                       self.y * self.game.physics_scale),
             userData=self)
-        fixt_def = b2FixtureDef(
-            shape=b2CircleShape(radius=0.1),
-            isSensor=True, categoryBits=category,
-            maskBits=mask)
-        fixt_def.filter.groupIndex = collision_group
-        self.collision_group = collision_group
+        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.1),
+                                isSensor=True, categoryBits=category,
+                                maskBits=mask)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
         self.velocity = [0, 0]

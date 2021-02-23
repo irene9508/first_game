@@ -30,9 +30,12 @@ class CharacterEntity(Entity):  # 109x93
             position=(self.x * self.game.physics_scale,
                       self.y * self.game.physics_scale),
             userData=self)
-        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2,
-                                density=1.0, categoryBits=Category.CHARACTER,
-                                maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL)
+        fixt_def = b2FixtureDef(
+            shape=b2CircleShape(radius=0.4),
+            friction=0.2,
+            density=1.0,
+            categoryBits=Category.CHARACTER,
+            maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -62,63 +65,45 @@ class CharacterEntity(Entity):  # 109x93
             self.animation_length = 0.12
 
         # movement:
-        sprite_speed = 600
+        speed = 600
         self.velocity = [0, 0]
         if keys[pygame.K_w] and not keys[pygame.K_s]:
             self.sprites = self.img_up
-            self.velocity[1] = -sprite_speed
+            self.velocity[1] = -speed
         if keys[pygame.K_a] and not keys[pygame.K_d]:
             self.sprites = self.img_left
-            self.velocity[0] = -sprite_speed
+            self.velocity[0] = -speed
         if keys[pygame.K_s] and not keys[pygame.K_w]:
             self.sprites = self.img_down
-            self.velocity[1] = sprite_speed
+            self.velocity[1] = speed
         if keys[pygame.K_d] and not keys[pygame.K_a]:
             self.sprites = self.img_right
-            self.velocity[0] = sprite_speed
+            self.velocity[0] = speed
 
         # shooting:
-        self.initial_shot_timer -= delta_time
         shot_timer = 1
-        if keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
+        self.initial_shot_timer -= delta_time
+        up, down = keys[pygame.K_UP], keys[pygame.K_DOWN]
+        left, right = keys[pygame.K_LEFT], keys[pygame.K_RIGHT]
+        if up and not down:
             self.sprites = self.img_up
             self.rotation = 270
-            if self.initial_shot_timer <= 0:
-                pygame.mixer.stop()
-                self.shot_sound.play()
-                self.initial_shot_timer = shot_timer
-                self.game.add_entity(BulletEntity(
-                    self.game, self.x, -1, self.y - 52, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
-        if keys[pygame.K_LEFT] and not keys[pygame.K_RIGHT]:
+        if left and not right:
             self.sprites = self.img_left
             self.rotation = 180
-            if self.initial_shot_timer <= 0:
-                pygame.mixer.stop()
-                self.shot_sound.play()
-                self.initial_shot_timer = shot_timer
-                self.game.add_entity(BulletEntity(
-                    self.game, self.x - 52, -1, self.y, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
-        if keys[pygame.K_DOWN] and not keys[pygame.K_UP]:
+        if down and not up:
             self.sprites = self.img_down
             self.rotation = 90
-            if self.initial_shot_timer <= 0:
-                pygame.mixer.stop()
-                self.shot_sound.play()
-                self.initial_shot_timer = shot_timer
-                self.game.add_entity(BulletEntity(
-                    self.game, self.x, -1, self.y + 52, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
-        if keys[pygame.K_RIGHT] and not keys[pygame.K_LEFT]:
+        if right and not left:
             self.sprites = self.img_right
             self.rotation = 0
+        if up or down or left or right:
             if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
-                    self.game, self.x + 52, -1, self.y, self.rotation,
+                    self.game, self.x, self.y, self.rotation,
                     Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL))
 
         # check for collision with door object

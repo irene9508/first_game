@@ -1,13 +1,14 @@
+from math import ceil
+
 import pygame
+from Box2D import *  # pip install Box2D /or/ box2d-py
+from pytmx.util_pygame import load_pygame
 
 from maze.game.collision_masks import Category
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
-from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.my_contact_listener import MyContactListener
-from pytmx.util_pygame import load_pygame
 from maze.game.my_draw import MyDraw
-from math import ceil
-from Box2D import *  # pip install Box2D /or/ box2d-py
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class Node:
@@ -64,7 +65,7 @@ class Game:
         self.on_room_exit()
         self.map = load_pygame(room)
 
-        # if room has not been visited before, create enemies:
+        # if room is new, create enemies:
         if room not in self.rooms:
             obj_layer = self.map.get_layer_by_name('object layer')
             for obj in obj_layer:
@@ -96,11 +97,6 @@ class Game:
                 # noinspection PyUnusedLocal
                 fixture = tile_body.CreateFixture(fixt_def)
 
-                # tile_body.CreatePolygonFixture(
-                #     box=(0.5 * self.map.tilewidth * self.physics_scale,
-                #          0.5 * self.map.tileheight * self.physics_scale),
-                #     friction=0.2, density=1.0)
-
         if room not in self.rooms:
             self.rooms.append(room)
 
@@ -114,7 +110,8 @@ class Game:
 
         # destroy bodies:
         for body in self.world.bodies:
-            if body.userData is None or body.userData.room_change_behavior == RoomChangeBehavior.deactivate:
+            if body.userData is None or body.userData.room_change_behavior \
+                    == RoomChangeBehavior.deactivate:
                 self.world.DestroyBody(body)
 
     def render(self, surface, r_scale):

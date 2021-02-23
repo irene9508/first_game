@@ -1,4 +1,5 @@
 import pygame.draw
+from pygame import gfxdraw
 import pygame.pixelarray
 
 from Box2D import b2Draw
@@ -23,11 +24,15 @@ class MyDraw(b2Draw):
         self.DrawCircle(center, radius, color)
 
     # noinspection PyUnusedLocal
-    def DrawPoint(self, point, size, color):
-        pygame.Surface.set_at(
-            (point[0] / self.physics_scale * self.app.render_scale[0],
-             point[1] / self.physics_scale * self.app.render_scale[1]),
-            (color[0] * 255, color[1] * 255, color[2] * 255))
+    def DrawPoint(self, p, size, color):
+        gfxdraw.pixel(self.app.surface,
+                      p[0] / self.physics_scale * self.app.render_scale[0],
+                      p[1] / self.physics_scale * self.app.render_scale[1],
+                      (color[0] * 255, color[1] * 255, color[2] * 255))
+        # self.app.surface.set_at(
+        #     (p[0] / self.physics_scale * self.app.render_scale[0],
+        #      p[1] / self.physics_scale * self.app.render_scale[1]),
+        #     (color[0] * 255, color[1] * 255, color[2] * 255))
 
     def DrawPolygon(self, vertices, color):
         pygame.draw.polygon(
