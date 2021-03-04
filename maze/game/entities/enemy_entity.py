@@ -32,23 +32,24 @@ class EnemyEntity(Entity):
         super().__init__(game)
 
         # properties:
+        self.room_change_behavior = RoomChangeBehavior.deactivate
+        self.state = EnemyState.following
         self.health = 0
         self.x = spawn_x
         self.y = spawn_y
         self.velocity = [0, 0]
-        self.room_change_behavior = RoomChangeBehavior.deactivate
-        self.state = EnemyState.following
 
         # animation:
+        self.animation_length = 0.12  # controls speed of sprite animation
+        self.sprites_right = None
+        self.sprites_dead = None
+        self.sprites_down = None
+        self.sprites_left = None
+        self.sprites_index = 0  # needed to iterate through the list of sprites
+        self.sprites_up = None
+        self.sprites = None
         self.r_scale = None
         self.surface = None
-        self.sprites_left = None
-        self.sprites_right = None
-        self.sprites_up = None
-        self.sprites_down = None
-        self.sprites = None
-        self.sprites_index = 0  # needed to iterate through the list of sprites
-        self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
         self.radius = 32
@@ -56,19 +57,19 @@ class EnemyEntity(Entity):
         self.create_new_body()
 
         # movement:
+        self.current_tile_pos_enemy = None
         self.current_retreat_duration = 0
         self.current_tile_pos_char = None
-        self.current_tile_pos_enemy = None
-        self.path = None
         self.current_attack_duration = 0
         self.start_x = None
         self.start_y = None
         self.goal_x = None
         self.goal_y = None
+        self.path = None
 
         # shooting:
-        self.initial_shot_timer = 0.5
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+        self.initial_shot_timer = 0.5
 
     def activate(self):
         super().activate()
@@ -135,14 +136,14 @@ class EnemyEntity(Entity):
 
     def contact(self, fixture, other_fixture, contact):
         if isinstance(other_fixture.body.userData, CharacterEntity):
-            character = other_fixture.body.userData
-            character.health -= 5
+            if not self.state == EnemyState.dead:
+                character = other_fixture.body.userData
+                character.health -= 5
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
-            position=(
-                self.x * self.game.physics_scale,
-                self.y * self.game.physics_scale),
+            position=(self.x * self.game.physics_scale,
+                      self.y * self.game.physics_scale),
             userData=self)
         fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
@@ -158,12 +159,10 @@ class EnemyEntity(Entity):
         self.game.world.DestroyBody(self.body)
 
     def render(self, surface, r_scale):
-        self.r_scale = r_scale
-        self.surface = surface
+        self.r_scale, self.surface = r_scale, surface
         sprite = self.sprites[self.sprites_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
-        r_size = (int(width * r_scale[0]),
-                  int(height * r_scale[1]))
+        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
         r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2) * r_scale[1]))
@@ -205,7 +204,6 @@ class EnemyEntity(Entity):
                          self.body.linearVelocity[1] / self.game.physics_scale]
 
     def update(self, delta_time):
-
         # animation, used in render():
         self.animation_length -= delta_time
         if self.animation_length <= 0:
@@ -216,7 +214,8 @@ class EnemyEntity(Entity):
 
         # health:
         if self.health <= 0:
-            self.marked_for_destroy = True
+            # self.marked_for_destroy = True
+            self.state = EnemyState.dead
 
         # movement:
         speed = 150
@@ -225,19 +224,19 @@ class EnemyEntity(Entity):
         p1 = (self.x, self.y)
         char = self.game.get_entity_of_category(CharacterEntity)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
+        distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
-        distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
         duration = 0.07
 
         if char is not None:
             if self.state == EnemyState.following:
                 if self.current_tile_pos_enemy != new_tile_pos_enemy \
                         or self.current_tile_pos_char != new_tile_pos_char:
-                    self.current_tile_pos_enemy = new_tile_pos_enemy
-                    self.current_tile_pos_char = new_tile_pos_char
 
                     # find path to char:
+                    self.current_tile_pos_enemy = new_tile_pos_enemy
+                    self.current_tile_pos_char = new_tile_pos_char
                     self.path = PathFinder(game_map).find_path(
                         p1, (char.x, char.y))
 
@@ -288,6 +287,7 @@ class EnemyEntity(Entity):
                     self.velocity = [0, 0]
                     self.state = EnemyState.retreating
                     self.current_retreat_duration = 0
+
             elif self.state == EnemyState.retreating:
                 self.current_retreat_duration += delta_time
                 if self.current_retreat_duration < duration:
@@ -298,12 +298,16 @@ class EnemyEntity(Entity):
                     self.velocity = [0, 0]
                     self.state = EnemyState.following
 
+            elif self.state == EnemyState.dead:
+                self.sprites = self.sprites_dead
+                self.velocity = [0, 0]
+
         # shooting:
         shot_timer = 0.5
         self.initial_shot_timer -= delta_time
         walkable = self.check_if_walkable(
             (int(char.x / tile_width), int(char.y / tile_height)))
-        if walkable:
+        if walkable and self.state != EnemyState.dead:
             self.sprites = self.sprites_up
             delta_x = char.x - self.x
             delta_y = char.y - self.y

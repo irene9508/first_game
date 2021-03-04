@@ -109,8 +109,8 @@ class CharacterEntity(Entity):  # 109x93
         # check for collision with door object
         obj_layer = self.game.map.get_layer_by_name('object layer')
         for obj in obj_layer:
-            # if object is door and char.pos is inside the object box:
             if obj.type == 'door':
+                # if char.pos is inside the object box:
                 if obj.x < self.x < obj.x + obj.width:
                     if obj.y < self.y < obj.y + obj.height:
                         self.x = obj.target_x

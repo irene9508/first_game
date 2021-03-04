@@ -36,6 +36,8 @@ class GameScreen(Screen):
         for hp in range(self.char.health):
             while index < self.char.health:
                 pygame.draw.circle(
+                    surface, (0, 0, 0), (5 * index + 20, 20), 6)
+                pygame.draw.circle(
                     surface, (255, 0, 0), (5 * index + 20, 20), 5)
                 index += 5
 

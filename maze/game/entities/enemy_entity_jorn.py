@@ -19,4 +19,6 @@ class EnemyEntityJorn(EnemyEntity):
             pygame.image.load("data/images/e1/e2l1.png").convert_alpha()]
         self.sprites_down = [
             pygame.image.load("data/images/e1/e2r1.png").convert_alpha()]
+        self.sprites_dead = [
+            pygame.image.load("data/images/e1/e1dead.png").convert_alpha()]
         self.sprites = self.sprites_down
