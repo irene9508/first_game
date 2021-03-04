@@ -32,11 +32,15 @@ class BulletEntity(Entity):  # 25x25
 
     def contact(self, fixture, other_fixture, contact):
         from maze.game.entities.enemy_entity import EnemyEntity
+        from maze.game.entities.character_entity import CharacterEntity
 
         self.marked_for_destroy = True
         if isinstance(other_fixture.body.userData, EnemyEntity):
             enemy = other_fixture.body.userData
             enemy.health -= 2
+        if isinstance(other_fixture.body.userData, CharacterEntity):
+            character = other_fixture.body.userData
+            character.health -= 10
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -63,10 +67,6 @@ class BulletEntity(Entity):  # 25x25
         self.y = self.body.position[1] / self.game.physics_scale
         self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
                          self.body.linearVelocity[1] / self.game.physics_scale]
-
-    def trigger_collision_reaction(self, enemy):
-        self.marked_for_destroy = True
-        enemy.health -= 1
 
     def update(self, delta_time):
         # movement direction:

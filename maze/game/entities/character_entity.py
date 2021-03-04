@@ -47,7 +47,7 @@ class CharacterEntity(Entity):  # 109x93
         self.y = 300
 
         # other:
-        self.initial_shot_timer = 0.2  # prevents the bullets from rapid firing
+        self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
 
     def destroy(self):
@@ -81,7 +81,7 @@ class CharacterEntity(Entity):  # 109x93
             self.velocity[0] = speed
 
         # shooting:
-        shot_timer = 1
+        shot_timer = 0.2
         self.initial_shot_timer -= delta_time
         up, down = keys[pygame.K_UP], keys[pygame.K_DOWN]
         left, right = keys[pygame.K_LEFT], keys[pygame.K_RIGHT]
