@@ -3,6 +3,7 @@ from math import cos, sin, pi
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 
+from maze.game.enemy_state import EnemyState
 from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
@@ -36,11 +37,10 @@ class BulletEntity(Entity):  # 25x25
 
         self.marked_for_destroy = True
         if isinstance(other_fixture.body.userData, EnemyEntity):
-            enemy = other_fixture.body.userData
-            enemy.health -= 2
+            other_fixture.body.userData.health -= 2
+
         if isinstance(other_fixture.body.userData, CharacterEntity):
-            character = other_fixture.body.userData
-            character.health -= 10
+            other_fixture.body.userData.health -= 10
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)

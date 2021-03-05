@@ -151,7 +151,8 @@ class EnemyEntity(Entity):
             density=1.0,
             categoryBits=Category.ENEMY,
             maskBits=(Category.ENEMY | Category.CHARACTER |
-                      Category.CHARACTER_BULLET | Category.WALL))
+                      Category.CHARACTER_BULLET | Category.WALL |
+                      Category.CORPSE))
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
@@ -301,6 +302,7 @@ class EnemyEntity(Entity):
             elif self.state == EnemyState.dead:
                 self.sprites = self.sprites_dead
                 self.velocity = [0, 0]
+                self.body.fixtures[0].filterData.categoryBits = Category.CORPSE
 
         # shooting:
         shot_timer = 0.5
@@ -318,4 +320,4 @@ class EnemyEntity(Entity):
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, self.y, angle, Category.ENEMY_BULLET,
-                    Category.CHARACTER | Category.WALL))
+                    Category.CHARACTER | Category.WALL | Category.CORPSE))
