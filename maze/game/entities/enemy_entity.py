@@ -314,7 +314,6 @@ class EnemyEntity(Entity):
         walkable = self.check_if_walkable(
             (int(char.x / tile_width), int(char.y / tile_height)))
         if walkable and self.state != EnemyState.dead:
-            self.images = self.img_up
             delta_x = char.x - self.x
             delta_y = char.y - self.y
             angle = atan2(delta_y, delta_x) * 180 / pi
