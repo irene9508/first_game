@@ -21,8 +21,8 @@ class CharacterEntity(Entity):  # 109x93
             pygame.image.load("data/images/e1/e1r1.png").convert_alpha()]
         self.img_up = [
             pygame.image.load("data/images/e1/e1u1.png").convert_alpha()]
-        self.sprites_index = 0  # needed to iterate through the list of sprites
-        self.sprites = self.img_down
+        self.img_index = 0  # needed to iterate through the list of images
+        self.images = self.img_down
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
@@ -59,25 +59,25 @@ class CharacterEntity(Entity):  # 109x93
         # animating, used in render()
         self.animation_length -= delta_time
         if self.animation_length <= 0:
-            self.sprites_index += 1
-            if self.sprites_index == len(self.sprites):
-                self.sprites_index = 0
+            self.img_index += 1
+            if self.img_index == len(self.images):
+                self.img_index = 0
             self.animation_length = 0.12
 
         # movement:
         speed = 600
         self.velocity = [0, 0]
         if keys[pygame.K_w] and not keys[pygame.K_s]:
-            self.sprites = self.img_up
+            self.images = self.img_up
             self.velocity[1] = -speed
         if keys[pygame.K_a] and not keys[pygame.K_d]:
-            self.sprites = self.img_left
+            self.images = self.img_left
             self.velocity[0] = -speed
         if keys[pygame.K_s] and not keys[pygame.K_w]:
-            self.sprites = self.img_down
+            self.images = self.img_down
             self.velocity[1] = speed
         if keys[pygame.K_d] and not keys[pygame.K_a]:
-            self.sprites = self.img_right
+            self.images = self.img_right
             self.velocity[0] = speed
 
         # shooting:
@@ -86,16 +86,16 @@ class CharacterEntity(Entity):  # 109x93
         up, down = keys[pygame.K_UP], keys[pygame.K_DOWN]
         left, right = keys[pygame.K_LEFT], keys[pygame.K_RIGHT]
         if up and not down:
-            self.sprites = self.img_up
+            self.images = self.img_up
             self.rotation = 270
         if left and not right:
-            self.sprites = self.img_left
+            self.images = self.img_left
             self.rotation = 180
         if down and not up:
-            self.sprites = self.img_down
+            self.images = self.img_down
             self.rotation = 90
         if right and not left:
-            self.sprites = self.img_right
+            self.images = self.img_right
             self.rotation = 0
         if up or down or left or right:
             if self.initial_shot_timer <= 0:
@@ -119,14 +119,14 @@ class CharacterEntity(Entity):  # 109x93
                         break
 
     def render(self, surface, r_scale):
-        sprite = self.sprites[self.sprites_index]
-        width, height = sprite.get_size()[0], sprite.get_size()[1]
+        img = self.images[self.img_index]
+        width, height = img.get_size()[0], img.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
-        sprite = pygame.transform.smoothscale(sprite, r_size)
+        img = pygame.transform.smoothscale(img, r_size)
         r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2) * r_scale[1]))
 
-        surface.blit(sprite, r_position)
+        surface.blit(img, r_position)
         super().render(surface, r_scale)
 
     def synchronize_body(self):  # entity gives new info to body

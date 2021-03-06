@@ -11,14 +11,14 @@ class EnemyEntityBlob(EnemyEntity):  # 109x93
         self.health = 10
 
         # animation:
-        self.sprites_left = [
+        self.img_left = [
             pygame.image.load("data/images/e1/e1l1.png").convert_alpha()]
-        self.sprites_right = [
+        self.img_right = [
             pygame.image.load("data/images/e1/e1r1.png").convert_alpha()]
-        self.sprites_up = [
+        self.img_up = [
             pygame.image.load("data/images/e1/e1u1.png").convert_alpha()]
-        self.sprites_down = [
+        self.img_down = [
             pygame.image.load("data/images/e1/e1d3.png").convert_alpha()]
-        self.sprites_dead = [
+        self.img_dead = [
             pygame.image.load("data/images/e1/e1dead.png").convert_alpha()]
-        self.sprites = self.sprites_down
+        self.images = self.img_down

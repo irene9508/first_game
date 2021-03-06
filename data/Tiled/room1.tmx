@@ -15,13 +15,13 @@
 </data>
  </layer>
  <objectgroup id="5" name="object layer">
-  <object id="4" name="enemy spawn point" type="enemy" x="597.333" y="361.333">
+  <object id="4" name="enemy spawn point" type="enemy" x="597" y="378.333">
    <point/>
   </object>
   <object id="6" name="enemy spawn point" type="enemy" x="163.66" y="560.448">
    <point/>
   </object>
-  <object id="9" name="door" type="door" x="715.812" y="4.43066" width="84.6667" height="45">
+  <object id="9" name="door" type="door" x="717.812" y="0.43066" width="84.6667" height="45">
    <properties>
     <property name="target_map" value="data/Tiled/room2.tmx"/>
     <property name="target_x" type="int" value="760"/>

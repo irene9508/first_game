@@ -41,13 +41,13 @@ class EnemyEntity(Entity):
 
         # animation:
         self.animation_length = 0.12  # controls speed of sprite animation
-        self.sprites_right = None
-        self.sprites_dead = None
-        self.sprites_down = None
-        self.sprites_left = None
-        self.sprites_index = 0  # needed to iterate through the list of sprites
-        self.sprites_up = None
-        self.sprites = None
+        self.img_right = None
+        self.img_dead = None
+        self.img_down = None
+        self.img_left = None
+        self.img_index = 0  # needed to iterate through the list of images
+        self.img_up = None
+        self.images = None
         self.r_scale = None
         self.surface = None
 
@@ -136,9 +136,8 @@ class EnemyEntity(Entity):
 
     def contact(self, fixture, other_fixture, contact):
         if isinstance(other_fixture.body.userData, CharacterEntity):
-            if not self.state == EnemyState.dead:
-                character = other_fixture.body.userData
-                character.health -= 5
+            if self.state != EnemyState.dead:
+                other_fixture.body.userData.health -= 5
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
@@ -161,7 +160,7 @@ class EnemyEntity(Entity):
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
-        sprite = self.sprites[self.sprites_index]
+        sprite = self.images[self.img_index]
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
@@ -208,15 +207,19 @@ class EnemyEntity(Entity):
         # animation, used in render():
         self.animation_length -= delta_time
         if self.animation_length <= 0:
-            self.sprites_index += 1
-            if self.sprites_index == len(self.sprites):
-                self.sprites_index = 0
+            self.img_index += 1
+            if self.img_index == len(self.images):
+                self.img_index = 0
             self.animation_length = 0.12
 
         # health:
         if self.health <= 0:
-            # self.marked_for_destroy = True
             self.state = EnemyState.dead
+            self.body.fixtures[0].filterData.categoryBits = Category.CORPSE
+            self.body.fixtures[0].filterData.maskBits = (
+                    Category.CHARACTER_BULLET | Category.ENEMY_BULLET |
+                    Category.CHARACTER | Category.ENEMY | Category.WALL |
+                    Category.CORPSE)
 
         # movement:
         speed = 150
@@ -262,14 +265,14 @@ class EnemyEntity(Entity):
                     # face towards player:
                     if abs(vector[1]) > abs(vector[0]):
                         if vector[1] < 0:
-                            self.sprites = self.sprites_up
+                            self.images = self.img_up
                         else:
-                            self.sprites = self.sprites_down
+                            self.images = self.img_down
                     else:
                         if vector[0] < 0:
-                            self.sprites = self.sprites_left
+                            self.images = self.img_left
                         else:
-                            self.sprites = self.sprites_right
+                            self.images = self.img_right
 
                 # detect whether to attack:
                 if distance < 80:
@@ -300,9 +303,10 @@ class EnemyEntity(Entity):
                     self.state = EnemyState.following
 
             elif self.state == EnemyState.dead:
-                self.sprites = self.sprites_dead
+                self.images = self.img_dead
                 self.velocity = [0, 0]
-                self.body.fixtures[0].filterData.categoryBits = Category.CORPSE
+                if distance < 80:
+                    pass
 
         # shooting:
         shot_timer = 0.5
@@ -310,7 +314,7 @@ class EnemyEntity(Entity):
         walkable = self.check_if_walkable(
             (int(char.x / tile_width), int(char.y / tile_height)))
         if walkable and self.state != EnemyState.dead:
-            self.sprites = self.sprites_up
+            self.images = self.img_up
             delta_x = char.x - self.x
             delta_y = char.y - self.y
             angle = atan2(delta_y, delta_x) * 180 / pi
