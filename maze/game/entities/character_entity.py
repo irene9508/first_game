@@ -8,7 +8,7 @@ from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
-class CharacterEntity(Entity):  # 109x93
+class CharacterEntity(Entity):
     def __init__(self, game):
         super().__init__(game)
 
@@ -35,7 +35,8 @@ class CharacterEntity(Entity):  # 109x93
             friction=0.2,
             density=1.0,
             categoryBits=Category.CHARACTER,
-            maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL | Category.CORPSE)
+            maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL |
+                     Category.CORPSE)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -104,7 +105,8 @@ class CharacterEntity(Entity):  # 109x93
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, self.y, self.rotation,
-                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL | Category.CORPSE))
+                    Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL |
+                                               Category.CORPSE))
 
         # check for collision with door object
         obj_layer = self.game.map.get_layer_by_name('object layer')
