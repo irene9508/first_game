@@ -309,7 +309,7 @@ class EnemyEntity(Entity):
                     pass
 
         # shooting:
-        shot_timer = 0.5
+        shot_timer = 0.2
         self.initial_shot_timer -= delta_time
         walkable = self.check_if_walkable(
             (int(char.x / tile_width), int(char.y / tile_height)))

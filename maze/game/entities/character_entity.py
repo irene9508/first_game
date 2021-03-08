@@ -5,6 +5,7 @@ from pygame import mixer
 from maze.game.collision_masks import Category
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
+from maze.game.particles import Particles
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -14,7 +15,7 @@ class CharacterEntity(Entity):
 
         # animation:
         self.img_down = [
-            pygame.image.load("data/images/e1/e1d3.png").convert_alpha()]
+            pygame.image.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_left = [
             pygame.image.load("data/images/e1/e1l1.png").convert_alpha()]
         self.img_right = [
@@ -50,6 +51,9 @@ class CharacterEntity(Entity):
         # other:
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+        self.particle_timer = 2
+        self.particle_x = self.x
+        self.particle_y = self.y
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -121,6 +125,13 @@ class CharacterEntity(Entity):
                         break
 
     def render(self, surface, r_scale):
+        self.particle_timer -= 0.02
+        particle = Particles(self.particle_x, self.particle_y, surface, r_scale)
+        if self.particle_timer <= 0:
+            self.particle_x = self.x
+            self.particle_y = self.y
+            self.particle_timer = 2
+
         img = self.images[self.img_index]
         width, height = img.get_size()[0], img.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))

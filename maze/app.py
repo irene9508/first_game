@@ -1,3 +1,6 @@
+import os
+import random
+
 import pygame
 import sys
 if sys.platform == "win32":
@@ -12,6 +15,7 @@ class App:
         self.current_screen = None
         self.delta_time = 0
         self.fps = 0
+        self.playing = False
         self.next_screen = None
         self.ref_res = (1280, 720)  # reference resolution
         self.running = True
@@ -62,6 +66,17 @@ class App:
                 else:
                     self.current_screen.process_event(event)
 
+            # play background music:
+            if not self.playing:
+                path = "data/sounds/music/"
+                all_music = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.mp3')]
+                randomfile = random.choice(all_music)
+                pygame.mixer.init()
+                pygame.mixer.music.load(randomfile)
+                pygame.mixer.music.play()
+                self.playing = True
+
+            # update screens:
             self.current_screen.update(self.delta_time)
             current_time = pygame.time.get_ticks()
 

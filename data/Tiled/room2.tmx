@@ -14,7 +14,7 @@
 13,11,11,11,11,11,11,11,11,20,11,11,11,11,11,12
 </data>
  </layer>
- <objectgroup id="3" name="object layer">
+ <objectgroup id="3" name="object layer" visible="0">
   <object id="3" name="door" type="door" x="721.874" y="679.585" width="79.6619" height="40.3227">
    <properties>
     <property name="target_map" value="data/Tiled/room1.tmx"/>

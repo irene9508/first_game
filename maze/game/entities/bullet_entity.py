@@ -3,7 +3,7 @@ from math import cos, sin, pi
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 
-from maze.game.enemy_state import EnemyState
+from maze.game.collision_masks import Category
 from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
@@ -13,7 +13,12 @@ class BulletEntity(Entity):  # 25x25
         super().__init__(game)
 
         # properties:
-        self.img = pygame.image.load("data/images/bullet.png").convert_alpha()
+        if category == Category.ENEMY_BULLET:
+            self.img = pygame.image.load(
+                "data/images/bullet.png").convert_alpha()
+        else:
+            self.img = pygame.image.load(
+                "data/images/bullet1.png").convert_alpha()
         self.rotation = rotation
         self.x = x
         self.y = y
