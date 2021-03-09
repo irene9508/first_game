@@ -1,3 +1,4 @@
+import random
 from math import cos, sin, pi
 
 import pygame
@@ -5,6 +6,7 @@ from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.collision_masks import Category
 from maze.game.entities.entity import Entity
+from maze.game.entities.particle_entity import Particles
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -43,6 +45,12 @@ class BulletEntity(Entity):  # 25x25
         self.marked_for_destroy = True
         if isinstance(other_fixture.body.userData, EnemyEntity):
             other_fixture.body.userData.health -= 2
+            self.game.add_entity(Particles(
+                other_fixture.body.userData.x, other_fixture.body.userData.y,
+                self.game,
+                [random.randint(-100, 100) / 500,
+                 random.randint(-100, 100) / 500],
+                random.randint(2, 5)))
 
         if isinstance(other_fixture.body.userData, CharacterEntity):
             other_fixture.body.userData.health -= 10
