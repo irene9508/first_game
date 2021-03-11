@@ -1,5 +1,3 @@
-import random
-
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer
@@ -7,7 +5,6 @@ from pygame import mixer
 from maze.game.collision_masks import Category
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
-from maze.game.entities.particle_entity import Particles
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -39,7 +36,7 @@ class CharacterEntity(Entity):
             density=1.0,
             categoryBits=Category.CHARACTER,
             maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL |
-                     Category.CORPSE)
+            Category.CORPSE)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -109,7 +106,7 @@ class CharacterEntity(Entity):
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, self.y, self.rotation,
                     Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL |
-                                               Category.CORPSE))
+                    Category.CORPSE))
 
         # check for collision with door object
         obj_layer = self.game.map.get_layer_by_name('object layer')

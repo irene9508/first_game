@@ -1,4 +1,3 @@
-import random
 import pygame
 
 from maze.game.entities.entity import Entity
