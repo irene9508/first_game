@@ -122,9 +122,9 @@ class CharacterEntity(Entity):
 
     def render(self, surface, r_scale):
         # # add particles:
-        # self.game.add_entity(Particles(
+        # self.game.add_entity(ParticleEffectEntity(
         #     self.x, self.y, self.game,
-        #     [random.randint(-100, 100) / 500, random.randint(-100, 100) / 500],
+        #    [random.randint(-100, 100) / 500, random.randint(-100, 100) / 500],
         #     random.randint(2, 5)))
 
         # add char image:
