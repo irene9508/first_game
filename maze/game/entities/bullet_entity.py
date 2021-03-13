@@ -6,7 +6,6 @@ from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.collision_masks import Category
 from maze.game.entities.entity import Entity
-from maze.game.entities.particle_effect_entity import ParticleEffectEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -45,12 +44,11 @@ class BulletEntity(Entity):  # 25x25
         self.marked_for_destroy = True
         if isinstance(other_fixture.body.userData, EnemyEntity):
             other_fixture.body.userData.health -= 2
-            self.game.add_entity(ParticleEffectEntity(self.game).add_particle(
+            self.game.particle_effect.add_particle(
                 other_fixture.body.userData.x, other_fixture.body.userData.y,
-                self.game,
                 [random.randint(-100, 100) / 500,
                  random.randint(-100, 100) / 500],
-                random.randint(2, 5)))
+                random.randint(2, 15))
 
         if isinstance(other_fixture.body.userData, CharacterEntity):
             other_fixture.body.userData.health -= 10
@@ -65,6 +63,8 @@ class BulletEntity(Entity):  # 25x25
         bullet = pygame.transform.smoothscale(bullet, r_size)
         r_position = (int((self.x - width / 2) * render_scale[0]),
                       int((self.y - height / 2) * render_scale[1]))
+
+        self.game.particle_effect.render(surface, render_scale)
 
         surface.blit(bullet, r_position)
         super().render(surface, render_scale)
