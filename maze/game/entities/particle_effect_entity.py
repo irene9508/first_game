@@ -4,14 +4,14 @@ from maze.game.entities.entity import Entity
 
 
 class ParticleEffectEntity(Entity):
-    def __init__(self, game):
+    def __init__(self, game, x, y, velocity, radius):
         super().__init__(game)
         self.particles = []
         self.timer = 50
-        self.x = None
-        self.y = None
-
-    def add_particle(self, x, y, velocity, radius):
+        self.x = x
+        self.y = y
+        self.velocity = velocity
+        self.radius = radius
         self.particles.append(Particle(x, y, velocity, self.timer, radius))
 
     def render(self, surface, render_scale):

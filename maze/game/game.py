@@ -39,7 +39,7 @@ class Game:
         self.world.renderer.flags = dict(drawShapes=True)
 
         # particles:
-        self.particle_effect = ParticleEffectEntity(self)
+        # self.particle_effect = ParticleEffectEntity(self)
 
     def add_entity(self, entity):
         self.entity_queue.append(entity)

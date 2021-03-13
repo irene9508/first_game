@@ -44,11 +44,11 @@ class BulletEntity(Entity):  # 25x25
         self.marked_for_destroy = True
         if isinstance(other_fixture.body.userData, EnemyEntity):
             other_fixture.body.userData.health -= 2
-            self.game.particle_effect.add_particle(
-                other_fixture.body.userData.x, other_fixture.body.userData.y,
-                [random.randint(-100, 100) / 500,
-                 random.randint(-100, 100) / 500],
-                random.randint(2, 15))
+            # self.game.particle_effect.add_particle(
+            #     other_fixture.body.userData.x, other_fixture.body.userData.y,
+            #     [random.randint(-100, 100) / 500,
+            #      random.randint(-100, 100) / 500],
+            #     random.randint(2, 15))
 
         if isinstance(other_fixture.body.userData, CharacterEntity):
             other_fixture.body.userData.health -= 10
@@ -64,7 +64,7 @@ class BulletEntity(Entity):  # 25x25
         r_position = (int((self.x - width / 2) * render_scale[0]),
                       int((self.y - height / 2) * render_scale[1]))
 
-        self.game.particle_effect.render(surface, render_scale)
+        # self.game.particle_effect.render(surface, render_scale)
 
         surface.blit(bullet, r_position)
         super().render(surface, render_scale)

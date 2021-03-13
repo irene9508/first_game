@@ -1,3 +1,5 @@
+import random
+
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer
@@ -5,6 +7,7 @@ from pygame import mixer
 from maze.game.collision_masks import Category
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
+from maze.game.entities.particle_effect_entity import ParticleEffectEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -50,12 +53,21 @@ class CharacterEntity(Entity):
         # other:
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+        # add particles:
+        self.particle_effect = ParticleEffectEntity(
+            self.game, self.x, self.y, [random.randint(-100, 100) / 500,
+                                        random.randint(-100, 100) / 500],
+            random.randint(2, 5))
+        self.game.add_entity(self.particle_effect)
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
+
+        self.particle_effect.x = self.x
+        self.particle_effect.y = self.y
 
         # animating, used in render()
         self.animation_length -= delta_time
@@ -121,12 +133,6 @@ class CharacterEntity(Entity):
                         break
 
     def render(self, surface, r_scale):
-        # # add particles:
-        # self.game.add_entity(ParticleEffectEntity(
-        #     self.x, self.y, self.game,
-        #    [random.randint(-100, 100) / 500, random.randint(-100, 100) / 500],
-        #     random.randint(2, 5)))
-
         # add char image:
         img = self.images[self.img_index]
         width, height = img.get_size()[0], img.get_size()[1]
@@ -134,6 +140,9 @@ class CharacterEntity(Entity):
         img = pygame.transform.smoothscale(img, r_size)
         r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2) * r_scale[1]))
+
+        if self.particle_effect is not None:
+            self.particle_effect.render(surface, r_scale)
 
         # add surface:
         surface.blit(img, r_position)
