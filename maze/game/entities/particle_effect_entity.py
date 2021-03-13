@@ -26,7 +26,16 @@ class ParticleEffectEntity(Entity):
                                 int(particle.y * render_scale[1])),
                                int(particle.radius * render_scale[0]))
             if particle.timer <= 0:
-                self.particles.remove(particle)
+                particle.marked_for_destroy = True
+
+            # remove dead entities:
+            new_entities = []
+            for entity in self.particles:
+                if entity.marked_for_destroy:
+                    entity.destroy(self.particles)
+                else:
+                    new_entities.append(entity)
+            self.particles = new_entities
 
 
 class Particle:
@@ -36,3 +45,7 @@ class Particle:
         self.velocity = velocity
         self.timer = timer
         self.radius = radius
+        self.marked_for_destroy = False
+
+    def destroy(self, particles):
+        particles.remove(self)
