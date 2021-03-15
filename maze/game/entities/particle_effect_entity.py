@@ -5,30 +5,39 @@ import pygame
 from maze.game.entities.entity import Entity
 
 
-class ParticleEffectEntity(Entity):
-    def __init__(self, game, x, y):
-        super().__init__(game)
+class ParticleEffectEntity:
+    def __init__(self, x, y, color, life_length, velocity, radius):
         self.particles = []
-        self.end_life_timer = 5
-        self.new_particle_timer = 1
+        self.life_length = life_length
+        self.new_particle_timer = 0
+        self.color = color
+        self.velocity = velocity
+        self.radius = radius
         self.x = x
         self.y = y
-        self.particles.append(Particle(
-            self.x, self.y, [random.randint(-100, 100) / 500, random.randint(-100, 100) / 500],
-            self.end_life_timer, random.randint(2, 15)))
 
     def render(self, surface, render_scale):
         for particle in self.particles:
-            particle.x += particle.velocity[0]
-            particle.y += particle.velocity[1]
-            particle.end_life_timer -= 0.02
-            if particle.radius >= 0.02:
-                particle.radius -= 0.01
-            pygame.draw.circle(surface, (255, 0, 0),
+            pygame.draw.circle(surface, self.color,
                                (int(particle.x * render_scale[0]),
                                 int(particle.y * render_scale[1])),
-                               int(particle.radius * render_scale[0]))
-            if particle.end_life_timer <= 0:
+                               int(particle.radius))
+
+    def update(self, delta_time):
+        self.new_particle_timer -= delta_time
+        if self.new_particle_timer <= 0:
+            self.new_particle_timer = 0.005
+            self.particles.append(
+                Particle(self.x, self.y, [random.randint(-100, 100) / 500,
+                         random.randint(-100, 100) / 500], self.life_length,
+                         random.randint(2, 15)))
+        for particle in self.particles:
+            particle.x += particle.velocity[0]
+            particle.y += particle.velocity[1]
+            particle.life_length -= delta_time
+            if particle.radius >= delta_time:
+                particle.radius -= delta_time
+            if particle.life_length <= 0:
                 particle.marked_for_destroy = True
 
             # remove dead entities:
@@ -40,23 +49,13 @@ class ParticleEffectEntity(Entity):
                     new_entities.append(entity)
             self.particles = new_entities
 
-    def update(self, delta_time):
-        self.new_particle_timer -= delta_time
-        if self.new_particle_timer <= 0:
-            self.particles.append(
-                Particle(
-                    self.x, self.y,
-                    [random.randint(-100, 100) / 500,
-                     random.randint(-100, 100) / 500],
-                    self.end_life_timer, random.randint(2, 15)))
-
 
 class Particle:
-    def __init__(self, x, y, velocity, timer, radius):
+    def __init__(self, x, y, velocity, life_length, radius):
         self.x = x
         self.y = y
         self.velocity = velocity
-        self.end_life_timer = timer
+        self.life_length = life_length
         self.radius = radius
         self.marked_for_destroy = False
 

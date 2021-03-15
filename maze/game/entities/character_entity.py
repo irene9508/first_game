@@ -54,9 +54,9 @@ class CharacterEntity(Entity):
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
         # add particles:
-        self.particle_effect = ParticleEffectEntity(
-            self.game, self.x, self.y)
-        self.game.add_entity(self.particle_effect)
+        self.particle_effect = ParticleEffectEntity(self.x, self.y, (255, 0, 0),
+            1, [random.randint(-100, 100) / 500,
+                         random.randint(-100, 100) / 500], random.randint(2, 15))
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -67,7 +67,7 @@ class CharacterEntity(Entity):
         # particle effect:
         self.particle_effect.x = self.x
         self.particle_effect.y = self.y
-        # self.particle_effect.update(delta_time)
+        self.particle_effect.update(delta_time)
 
         # animation, used in render():
         self.animation_length -= delta_time
@@ -78,7 +78,7 @@ class CharacterEntity(Entity):
             self.animation_length = 0.12
 
         # movement:
-        speed = 600
+        speed = 300
         self.velocity = [0, 0]
         if keys[pygame.K_w] and not keys[pygame.K_s]:
             self.images = self.img_up
@@ -133,6 +133,8 @@ class CharacterEntity(Entity):
                         break
 
     def render(self, surface, r_scale):
+        self.particle_effect.render(surface, r_scale)
+
         # add char image:
         img = self.images[self.img_index]
         width, height = img.get_size()[0], img.get_size()[1]
