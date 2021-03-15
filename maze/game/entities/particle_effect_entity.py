@@ -1,4 +1,5 @@
 import random
+from math import cos, pi, sin
 
 import pygame
 
@@ -6,13 +7,11 @@ from maze.game.entities.entity import Entity
 
 
 class ParticleEffectEntity:
-    def __init__(self, x, y, color, life_length, velocity, radius):
+    def __init__(self, x, y, color, life_length):
         self.particles = []
         self.life_length = life_length
         self.new_particle_timer = 0
         self.color = color
-        self.velocity = velocity
-        self.radius = radius
         self.x = x
         self.y = y
 
@@ -23,14 +22,18 @@ class ParticleEffectEntity:
                                 int(particle.y * render_scale[1])),
                                int(particle.radius))
 
-    def update(self, delta_time):
+    def update(self, delta_time, speed, radius):
+
+        angle = random.random() * 360
+        velocity = [speed * cos(angle * pi / 180),
+                    speed * sin(angle * pi / 180)]
+
         self.new_particle_timer -= delta_time
         if self.new_particle_timer <= 0:
             self.new_particle_timer = 0.005
             self.particles.append(
-                Particle(self.x, self.y, [random.randint(-100, 100) / 500,
-                         random.randint(-100, 100) / 500], self.life_length,
-                         random.randint(2, 15)))
+                Particle(self.x, self.y, velocity, self.life_length,
+                         radius))
         for particle in self.particles:
             particle.x += particle.velocity[0]
             particle.y += particle.velocity[1]

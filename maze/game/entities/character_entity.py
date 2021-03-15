@@ -55,8 +55,7 @@ class CharacterEntity(Entity):
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
         # add particles:
         self.particle_effect = ParticleEffectEntity(self.x, self.y, (255, 0, 0),
-            1, [random.randint(-100, 100) / 500,
-                         random.randint(-100, 100) / 500], random.randint(2, 15))
+            1)
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -67,7 +66,7 @@ class CharacterEntity(Entity):
         # particle effect:
         self.particle_effect.x = self.x
         self.particle_effect.y = self.y
-        self.particle_effect.update(delta_time)
+        self.particle_effect.update(delta_time, 0.2, random.randint(2, 15))
 
         # animation, used in render():
         self.animation_length -= delta_time
