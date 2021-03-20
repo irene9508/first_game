@@ -1,5 +1,3 @@
-import random
-
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer
@@ -44,7 +42,7 @@ class CharacterEntity(Entity):
         fixture = self.body.CreateFixture(fixt_def)
 
         # properties:
-        self.health = 100
+        self.health = 40
         self.room_change_behavior = RoomChangeBehavior.nothing
         self.velocity = [0, 0]
         self.x = 280
@@ -53,9 +51,10 @@ class CharacterEntity(Entity):
         # other:
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
-        # add particles:
-        self.particle_effect = ParticleEffectEntity(self.x, self.y, (255, 0, 0),
-            1)
+
+        # # add particles:
+        # self.particle_effect = \
+        #     ParticleEffectEntity(self.x, self.y, (255, 0, 0), 1, 0.2, 2, 10)
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -63,10 +62,10 @@ class CharacterEntity(Entity):
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
 
-        # particle effect:
-        self.particle_effect.x = self.x
-        self.particle_effect.y = self.y
-        self.particle_effect.update(delta_time, 0.2, random.randint(2, 15))
+        # # particle effect:
+        # self.particle_effect.x = self.x
+        # self.particle_effect.y = self.y
+        # self.particle_effect.update(delta_time)
 
         # animation, used in render():
         self.animation_length -= delta_time
@@ -93,7 +92,7 @@ class CharacterEntity(Entity):
             self.velocity[0] = speed
 
         # shooting:
-        shot_timer = 0.2
+        shot_timer = 0.4
         self.initial_shot_timer -= delta_time
         up, down = keys[pygame.K_UP], keys[pygame.K_DOWN]
         left, right = keys[pygame.K_LEFT], keys[pygame.K_RIGHT]
@@ -132,9 +131,10 @@ class CharacterEntity(Entity):
                         break
 
     def render(self, surface, r_scale):
-        self.particle_effect.render(surface, r_scale)
+        # # particles:
+        # self.particle_effect.render(surface, r_scale)
 
-        # add char image:
+        # character image:
         img = self.images[self.img_index]
         width, height = img.get_size()[0], img.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
@@ -142,10 +142,10 @@ class CharacterEntity(Entity):
         r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2) * r_scale[1]))
 
-        if self.particle_effect is not None:
-            self.particle_effect.render(surface, r_scale)
+        # if self.particle_effect is not None:
+        #     self.particle_effect.render(surface, r_scale)
 
-        # add surface:
+        # surface:
         surface.blit(img, r_position)
         super().render(surface, r_scale)
 

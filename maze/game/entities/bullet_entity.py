@@ -1,4 +1,3 @@
-import random
 from math import cos, sin, pi
 
 import pygame
@@ -6,6 +5,7 @@ from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.collision_masks import Category
 from maze.game.entities.entity import Entity
+from maze.game.entities.particle_effect_entity import ParticleEffectEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -37,6 +37,10 @@ class BulletEntity(Entity):  # 25x25
         fixture = self.body.CreateFixture(fixt_def)
         self.velocity = [0, 0]
 
+        # add particles:
+        self.particle_effect = \
+            ParticleEffectEntity(self.x, self.y, (190, 190, 190), 0.08, 0.1, 1, 15)
+
     def contact(self, fixture, other_fixture, contact):
         from maze.game.entities.enemy_entity import EnemyEntity
         from maze.game.entities.character_entity import CharacterEntity
@@ -56,18 +60,19 @@ class BulletEntity(Entity):  # 25x25
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
-    def render(self, surface, render_scale):
+    def render(self, surface, r_scale):
         bullet = pygame.transform.rotate(self.img, self.rotation)
         width, height = bullet.get_size()[0], bullet.get_size()[1]
-        r_size = (int(width * render_scale[0]), int(height * render_scale[1]))
+        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         bullet = pygame.transform.smoothscale(bullet, r_size)
-        r_position = (int((self.x - width / 2) * render_scale[0]),
-                      int((self.y - height / 2) * render_scale[1]))
+        r_position = (int((self.x - width / 2) * r_scale[0]),
+                      int((self.y - height / 2) * r_scale[1]))
 
-        # self.game.particle_effect.render(surface, render_scale)
+        # particles:
+        self.particle_effect.render(surface, r_scale)
 
         surface.blit(bullet, r_position)
-        super().render(surface, render_scale)
+        super().render(surface, r_scale)
 
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
@@ -87,6 +92,11 @@ class BulletEntity(Entity):  # 25x25
         self.velocity = [0, 0]
         self.velocity[0] = speed * cos(self.rotation * pi / 180)
         self.velocity[1] = speed * sin(self.rotation * pi / 180)
+
+        # particles:
+        self.particle_effect.x = self.x
+        self.particle_effect.y = self.y
+        self.particle_effect.update(delta_time)
 
         # destruction:
         if self.x < 0 or self.x > 1280 or self.y < 0 or self.y > 720:
