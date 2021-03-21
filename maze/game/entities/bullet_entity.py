@@ -39,7 +39,7 @@ class BulletEntity(Entity):  # 25x25
 
         # add particles:
         self.particle_effect = ParticleEffect(
-            self.x, self.y, (190, 190, 190), 0.08, 0.1, 1, 15)
+            self.x, self.y, (190, 190, 190), 0.08, 0.1, [1, 15], 0, 50)
 
     def contact(self, fixture, other_fixture, contact):
         from maze.game.entities.enemy_entity import EnemyEntity

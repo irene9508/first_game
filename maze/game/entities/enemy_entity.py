@@ -141,8 +141,8 @@ class EnemyEntity(Entity):
 
         if isinstance(other_fixture.body.userData, BulletEntity):
             self.particle_effect_enemy = ParticleEffect(
-                other_fixture.body.userData.x, other_fixture.body.userData.y,
-                (255, 0, 0), 1, 0.2, 2, 10)
+                self.x, self.y,
+                (255, 0, 0), 1, 0.2, [2, 10], 30, 0)
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
@@ -172,12 +172,12 @@ class EnemyEntity(Entity):
         r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2) * r_scale[1]))
 
-        surface.blit(sprite, r_position)
-        super().render(surface, r_scale)
-
         # particles
         if self.particle_effect_enemy is not None:
             self.particle_effect_enemy.render(surface, r_scale)
+
+        surface.blit(sprite, r_position)
+        super().render(surface, r_scale)
 
         # enemy path:
         if self.game.debugging and self.path is not None:
