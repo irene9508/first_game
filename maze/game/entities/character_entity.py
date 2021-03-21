@@ -5,7 +5,6 @@ from pygame import mixer
 from maze.game.collision_masks import Category
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
-from maze.game.entities.particle_effect_entity import ParticleEffectEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -54,7 +53,7 @@ class CharacterEntity(Entity):
 
         # # add particles:
         # self.particle_effect = \
-        #     ParticleEffectEntity(self.x, self.y, (255, 0, 0), 1, 0.2, 2, 10)
+        #     ParticleEffect(self.x, self.y, (255, 0, 0), 1, 0.2, 2, 10)
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)

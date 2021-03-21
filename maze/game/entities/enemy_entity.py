@@ -9,12 +9,12 @@ from maze.game.enemy_state import EnemyState
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
+from maze.game.particle_effect import ParticleEffect
 from maze.game.path_finder import PathFinder
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class RayCastCallback(b2RayCastCallback):
-
     def __init__(self):
         b2RayCastCallback.__init__(self)
         self.fraction = 1
@@ -45,6 +45,7 @@ class EnemyEntity(Entity):
         self.img_dead = None
         self.img_down = None
         self.img_left = None
+        self.img_dead_near = None
         self.img_index = 0  # needed to iterate through the list of images
         self.img_up = None
         self.images = None
@@ -70,6 +71,9 @@ class EnemyEntity(Entity):
         # shooting:
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
         self.initial_shot_timer = 0.5
+
+        # particles:
+        self.particle_effect_enemy = None
 
     def activate(self):
         super().activate()
@@ -104,23 +108,19 @@ class EnemyEntity(Entity):
         finish3 = (finish2[0] - normal[0] * self.radius,
                    finish2[1] - normal[1] * self.radius)
 
-        # perform ray cast 1:
+        # perform ray casts:
         callback1 = RayCastCallback()
         self.game.world.RayCast(callback1,
                                 (start1[0] * self.game.physics_scale,
                                  start1[1] * self.game.physics_scale),
                                 (finish1[0] * self.game.physics_scale,
                                  finish1[1] * self.game.physics_scale))
-
-        # perform ray cast 2:
         callback2 = RayCastCallback()
         self.game.world.RayCast(callback2,
                                 (start2[0] * self.game.physics_scale,
                                  start2[1] * self.game.physics_scale),
                                 (finish2[0] * self.game.physics_scale,
                                  finish2[1] * self.game.physics_scale))
-
-        # perform ray cast 3:
         callback3 = RayCastCallback()
         self.game.world.RayCast(callback3,
                                 (start3[0] * self.game.physics_scale,
@@ -138,6 +138,11 @@ class EnemyEntity(Entity):
         if isinstance(other_fixture.body.userData, CharacterEntity):
             if self.state != EnemyState.dead:
                 other_fixture.body.userData.health -= 5
+
+        if isinstance(other_fixture.body.userData, BulletEntity):
+            self.particle_effect_enemy = ParticleEffect(
+                other_fixture.body.userData.x, other_fixture.body.userData.y,
+                (255, 0, 0), 1, 0.2, 2, 10)
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
@@ -170,7 +175,11 @@ class EnemyEntity(Entity):
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)
 
-        # draw the enemy path:
+        # particles
+        if self.particle_effect_enemy is not None:
+            self.particle_effect_enemy.render(surface, r_scale)
+
+        # enemy path:
         if self.game.debugging and self.path is not None:
             tile_w = self.game.map.tilewidth
             tile_h = self.game.map.tileheight
@@ -303,10 +312,11 @@ class EnemyEntity(Entity):
                     self.state = EnemyState.following
 
             elif self.state == EnemyState.dead:
-                self.images = self.img_dead
                 self.velocity = [0, 0]
                 if distance < 80:
-                    pass
+                    self.images = self.img_dead_near
+                else:
+                    self.images = self.img_dead
 
         # shooting:
         shot_timer = 0.2
@@ -324,3 +334,9 @@ class EnemyEntity(Entity):
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, self.y, angle, Category.ENEMY_BULLET,
                     Category.CHARACTER | Category.WALL | Category.CORPSE))
+
+        # particles:
+        if self.particle_effect_enemy is not None:
+            self.particle_effect_enemy.x = self.x
+            self.particle_effect_enemy.y = self.y
+            self.particle_effect_enemy.update(delta_time)

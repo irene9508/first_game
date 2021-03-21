@@ -6,7 +6,6 @@ from pytmx.util_pygame import load_pygame
 
 from maze.game.collision_masks import Category
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
-from maze.game.entities.particle_effect_entity import ParticleEffectEntity
 from maze.game.my_contact_listener import MyContactListener
 from maze.game.my_draw import MyDraw
 from maze.game.room_change_behavior import RoomChangeBehavior
@@ -39,7 +38,7 @@ class Game:
         self.world.renderer.flags = dict(drawShapes=True)
 
         # particles:
-        # self.particle_effect = ParticleEffectEntity(self)
+        # self.particle_effect = ParticleEffect(self)
 
     def add_entity(self, entity):
         self.entity_queue.append(entity)

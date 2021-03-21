@@ -21,4 +21,6 @@ class EnemyEntityBlob(EnemyEntity):  # 109x93
             pygame.image.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_dead = [
             pygame.image.load("data/images/e1/e1dead.png").convert_alpha()]
+        self.img_dead_near = [
+            pygame.image.load("data/images/e1/e1dead_near.png").convert_alpha()]
         self.images = self.img_down
