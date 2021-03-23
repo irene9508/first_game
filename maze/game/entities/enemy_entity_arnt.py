@@ -1,5 +1,6 @@
 import pygame
 
+from pygame import image as img
 from maze.game.entities.enemy_entity import EnemyEntity
 
 
@@ -11,14 +12,9 @@ class EnemyEntityArnt(EnemyEntity):
         self.health = 8
 
         # animation:
-        self.img_left = [
-            pygame.image.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_right = [
-            pygame.image.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_up = [
-            pygame.image.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_down = [
-            pygame.image.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_dead = [
-            pygame.image.load("data/images/e1/e1dead.png").convert_alpha()]
+        self.img_left = [img.load("data/images/e1/e3r1.png").convert_alpha()]
+        self.img_right = [img.load("data/images/e1/e3r1.png").convert_alpha()]
+        self.img_up = [img.load("data/images/e1/e3r1.png").convert_alpha()]
+        self.img_down = [img.load("data/images/e1/e3r1.png").convert_alpha()]
+        self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
         self.images = self.img_down

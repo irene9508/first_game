@@ -1,6 +1,6 @@
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
-from pygame import mixer
+from pygame import mixer, image as img
 
 from maze.game.collision_masks import Category
 from maze.game.entities.bullet_entity import BulletEntity
@@ -13,22 +13,18 @@ class CharacterEntity(Entity):
         super().__init__(game)
 
         # animation:
-        self.img_down = [
-            pygame.image.load("data/images/e1/e1d1.png").convert_alpha()]
-        self.img_left = [
-            pygame.image.load("data/images/e1/e1l1.png").convert_alpha()]
-        self.img_right = [
-            pygame.image.load("data/images/e1/e1r1.png").convert_alpha()]
-        self.img_up = [
-            pygame.image.load("data/images/e1/e1u1.png").convert_alpha()]
+        self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
+        self.img_left = [img.load("data/images/e1/e1l1.png").convert_alpha()]
+        self.img_right = [img.load("data/images/e1/e1r1.png").convert_alpha()]
+        self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_index = 0  # needed to iterate through the list of images
         self.images = self.img_down
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.body = self.game.world.CreateDynamicBody(
-            position=(self.x * self.game.physics_scale,
-                      self.y * self.game.physics_scale),
+        self.body = game.world.CreateDynamicBody(
+            position=(
+                self.x * game.physics_scale, self.y * game.physics_scale),
             userData=self)
         fixt_def = b2FixtureDef(
             shape=b2CircleShape(radius=0.4),
@@ -41,8 +37,8 @@ class CharacterEntity(Entity):
         fixture = self.body.CreateFixture(fixt_def)
 
         # properties:
-        self.health = 40
         self.room_change_behavior = RoomChangeBehavior.nothing
+        self.health = 40
         self.velocity = [0, 0]
         self.x = 280
         self.y = 300
