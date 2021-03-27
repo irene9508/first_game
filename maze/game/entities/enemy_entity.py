@@ -319,7 +319,7 @@ class EnemyEntity(Entity):
                     self.images = self.img_dead
 
         # shooting:
-        shot_timer = 0.2
+        shot_timer = 0.4
         self.initial_shot_timer -= delta_time
         walkable = self.check_if_walkable(
             (int(char.x / tile_width), int(char.y / tile_height)))

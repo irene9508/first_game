@@ -1,8 +1,11 @@
+from math import sqrt
+
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer, image as img
 
 from maze.game.collision_masks import Category
+from maze.game.enemy_state import EnemyState
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
 from maze.game.room_change_behavior import RoomChangeBehavior
@@ -13,7 +16,7 @@ class CharacterEntity(Entity):
         super().__init__(game)
 
         # animation:
-        self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
+        self.img_down = [img.load("data/images/e2/e2r4.png").convert_alpha()]
         self.img_left = [img.load("data/images/e1/e1l1.png").convert_alpha()]
         self.img_right = [img.load("data/images/e1/e1r1.png").convert_alpha()]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
@@ -86,8 +89,18 @@ class CharacterEntity(Entity):
             self.images = self.img_right
             self.velocity[0] = speed
 
+        # health:
+        from maze.game.entities.enemy_entity import EnemyEntity
+        if keys[pygame.K_e]:
+            for entity in self.game.entities:
+                if isinstance(entity, EnemyEntity):
+                    distance = sqrt((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2)
+                    if distance < 80 and entity.state == EnemyState.dead:
+                        self.health += 10
+                        entity.marked_for_destroy = True
+
         # shooting:
-        shot_timer = 0.4
+        shot_timer = 0.6
         self.initial_shot_timer -= delta_time
         up, down = keys[pygame.K_UP], keys[pygame.K_DOWN]
         left, right = keys[pygame.K_LEFT], keys[pygame.K_RIGHT]
