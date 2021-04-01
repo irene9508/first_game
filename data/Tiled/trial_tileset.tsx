@@ -1,34 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tileset version="1.4" tiledversion="1.4.2" name="trial_tileset" tilewidth="80" tileheight="80" tilecount="25" columns="0">
+<tileset version="1.4" tiledversion="1.4.2" name="trial_tileset" tilewidth="80" tileheight="80" tilecount="27" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
- <terraintypes>
-  <terrain name="Floor" tile="1"/>
-  <terrain name="wall_upper" tile="6"/>
-  <terrain name="wall" tile="8"/>
-  <terrain name="wall" tile="9"/>
-  <terrain name="wall" tile="10"/>
-  <terrain name="wall" tile="11"/>
-  <terrain name="wall" tile="12"/>
-  <terrain name="wall" tile="17"/>
-  <terrain name="wall" tile="18"/>
-  <terrain name="door" tile="19"/>
-  <terrain name="wall" tile="20"/>
-  <terrain name="wall" tile="21"/>
-  <terrain name="wall" tile="6"/>
-  <terrain name="wall" tile="23"/>
-  <terrain name="wall" tile="25"/>
-  <terrain name="wall" tile="26"/>
-  <terrain name="wall" tile="27"/>
-  <terrain name="wall" tile="28"/>
-  <terrain name="wall" tile="29"/>
-  <terrain name="wall" tile="30"/>
-  <terrain name="wall" tile="31"/>
-  <terrain name="wall" tile="32"/>
-  <terrain name="wall" tile="33"/>
-  <terrain name="wall" tile="34"/>
- </terraintypes>
  <tile id="1" type="floor">
-  <image width="80" height="80" source="../images/floor.png"/>
+  <image width="80" height="80" source="../images/floor - kopie.png"/>
  </tile>
  <tile id="6" type="wall">
   <image width="80" height="80" source="../images/walls/facing_down/wall_3a.png"/>
@@ -101,5 +75,11 @@
  </tile>
  <tile id="34" type="wall">
   <image width="80" height="80" source="../images/walls/facing_down/fd_1.png"/>
+ </tile>
+ <tile id="35" type="floor">
+  <image width="80" height="80" source="../images/floor 1.png"/>
+ </tile>
+ <tile id="36" type="floor">
+  <image width="80" height="80" source="../images/floor_2.png"/>
  </tile>
 </tileset>

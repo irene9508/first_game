@@ -16,9 +16,9 @@ class CharacterEntity(Entity):
         super().__init__(game)
 
         # animation:
-        self.img_down = [img.load("data/images/e2/e2r4.png").convert_alpha()]
+        self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_left = [img.load("data/images/e1/e1l1.png").convert_alpha()]
-        self.img_right = [img.load("data/images/e1/e1r1.png").convert_alpha()]
+        self.img_right = [img.load("data/images/e2/e2r1.png").convert_alpha()]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_index = 0  # needed to iterate through the list of images
         self.images = self.img_down
@@ -50,20 +50,11 @@ class CharacterEntity(Entity):
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
 
-        # # add particles:
-        # self.particle_effect = \
-        #     ParticleEffect(self.x, self.y, (255, 0, 0), 1, 0.2, 2, 10)
-
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
-
-        # # particle effect:
-        # self.particle_effect.x = self.x
-        # self.particle_effect.y = self.y
-        # self.particle_effect.update(delta_time)
 
         # animation, used in render():
         self.animation_length -= delta_time
@@ -93,11 +84,11 @@ class CharacterEntity(Entity):
         from maze.game.entities.enemy_entity import EnemyEntity
         if keys[pygame.K_e]:
             for entity in self.game.entities:
-                if isinstance(entity, EnemyEntity):
+                if isinstance(entity, EnemyEntity) and entity.state == EnemyState.dead:
                     distance = sqrt((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2)
-                    if distance < 80 and entity.state == EnemyState.dead:
-                        self.health += 10
+                    if distance < 80:
                         entity.marked_for_destroy = True
+                        self.health += 5
 
         # shooting:
         shot_timer = 0.6
@@ -126,7 +117,7 @@ class CharacterEntity(Entity):
                     Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL |
                     Category.CORPSE))
 
-        # check for collision with door object
+        # check for collision with door object:
         obj_layer = self.game.map.get_layer_by_name('object layer')
         for obj in obj_layer:
             if obj.type == 'door':
@@ -139,22 +130,16 @@ class CharacterEntity(Entity):
                         break
 
     def render(self, surface, r_scale):
-        # # particles:
-        # self.particle_effect.render(surface, r_scale)
-
         # character image:
-        img = self.images[self.img_index]
-        width, height = img.get_size()[0], img.get_size()[1]
+        char = self.images[self.img_index]
+        width, height = char.get_size()[0], char.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
-        img = pygame.transform.smoothscale(img, r_size)
+        char = pygame.transform.smoothscale(char, r_size)
         r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2) * r_scale[1]))
 
-        # if self.particle_effect is not None:
-        #     self.particle_effect.render(surface, r_scale)
-
         # surface:
-        surface.blit(img, r_position)
+        surface.blit(char, r_position)
         super().render(surface, r_scale)
 
     def synchronize_body(self):  # entity gives new info to body

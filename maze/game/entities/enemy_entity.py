@@ -141,8 +141,8 @@ class EnemyEntity(Entity):
 
         if isinstance(other_fixture.body.userData, BulletEntity):
             self.particle_effect_enemy = ParticleEffect(self.x, self.y,
-                                                        (255, 0, 0), [1, 3],
-                                                        [2, 4], [2, 10], 30, 0)
+                                                        (0, 0, 0), [1, 5],
+                                                        [2, 7], [2, 20], 60, 0)
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
