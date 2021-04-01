@@ -139,11 +139,6 @@ class EnemyEntity(Entity):
             if self.state != EnemyState.dead:
                 other_fixture.body.userData.health -= 5
 
-        if isinstance(other_fixture.body.userData, BulletEntity):
-            self.particle_effect_enemy = ParticleEffect(self.x, self.y,
-                                                        (0, 0, 0), [1, 5],
-                                                        [2, 7], [2, 20], 60, 0)
-
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
             position=(self.x * self.game.physics_scale,
@@ -212,6 +207,12 @@ class EnemyEntity(Entity):
         self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
                          self.body.linearVelocity[1] / self.game.physics_scale]
 
+    def take_damage(self, damage):
+        self.body.userData.health -= damage
+        self.particle_effect_enemy = ParticleEffect(self.x, self.y,
+                                                    (0, 0, 0), [1, 5],
+                                                    [2, 7], [2, 20], 60, 0)
+
     def update(self, delta_time):
         # animation, used in render():
         self.animation_length -= delta_time
@@ -246,7 +247,6 @@ class EnemyEntity(Entity):
             if self.state == EnemyState.following:
                 if self.current_tile_pos_enemy != new_tile_pos_enemy \
                         or self.current_tile_pos_char != new_tile_pos_char:
-
                     # find path to char:
                     self.current_tile_pos_enemy = new_tile_pos_enemy
                     self.current_tile_pos_char = new_tile_pos_char

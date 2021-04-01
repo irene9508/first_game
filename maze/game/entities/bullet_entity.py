@@ -44,7 +44,7 @@ class BulletEntity(Entity):  # 25x25
 
         self.marked_for_destroy = True
         if isinstance(other_fixture.body.userData, EnemyEntity):
-            other_fixture.body.userData.health -= 2
+            EnemyEntity.take_damage(other_fixture.body.userData, 2)
 
         if isinstance(other_fixture.body.userData, CharacterEntity):
             other_fixture.body.userData.health -= 10
