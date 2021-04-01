@@ -139,6 +139,11 @@ class EnemyEntity(Entity):
             if self.state != EnemyState.dead:
                 other_fixture.body.userData.health -= 5
 
+        if isinstance(other_fixture.body.userData, BulletEntity):
+            self.particle_effect_enemy = ParticleEffect(self.x, self.y,
+                                                        (0, 0, 0), [1, 5],
+                                                        [2, 7], [2, 20], 60, 0)
+
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
             position=(self.x * self.game.physics_scale,
