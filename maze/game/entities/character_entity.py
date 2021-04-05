@@ -91,7 +91,7 @@ class CharacterEntity(Entity):
                         self.health += 5
 
         # shooting:
-        shot_timer = 0.6
+        shot_timer = 0.3
         self.initial_shot_timer -= delta_time
         up, down = keys[pygame.K_UP], keys[pygame.K_DOWN]
         left, right = keys[pygame.K_LEFT], keys[pygame.K_RIGHT]

@@ -73,7 +73,7 @@ class EnemyEntity(Entity):
         self.initial_shot_timer = 0.5
 
         # particles:
-        self.particle_effect_enemy = None
+        self.particles = []
 
     def activate(self):
         super().activate()
@@ -170,9 +170,9 @@ class EnemyEntity(Entity):
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)
 
-        # particles
-        if self.particle_effect_enemy is not None:
-            self.particle_effect_enemy.render(surface, r_scale)
+        # particles:
+        for item in self.particles:
+            item.render(surface, r_scale)
 
         # enemy path:
         if self.game.debugging and self.path is not None:
@@ -209,9 +209,7 @@ class EnemyEntity(Entity):
 
     def take_damage(self, damage):
         self.body.userData.health -= damage
-        self.particle_effect_enemy = ParticleEffect(self.x, self.y,
-                                                    (0, 0, 0), [1, 5],
-                                                    [2, 7], [2, 20], 60, 0)
+        self.particles.append(ParticleEffect(self.x, self.y, (0, 0, 0), [1, 5], [2, 7], [2, 20], 60, 0))
 
     def update(self, delta_time):
         # animation, used in render():
@@ -336,7 +334,7 @@ class EnemyEntity(Entity):
                     Category.CHARACTER | Category.WALL | Category.CORPSE))
 
         # particles:
-        if self.particle_effect_enemy is not None:
-            self.particle_effect_enemy.x = self.x
-            self.particle_effect_enemy.y = self.y
-            self.particle_effect_enemy.update(delta_time)
+        for item in self.particles:
+            item.x = self.x
+            item.y = self.y
+            item.update(delta_time)
