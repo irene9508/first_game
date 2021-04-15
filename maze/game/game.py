@@ -1,14 +1,15 @@
-from math import ceil
-
 import pygame
-from Box2D import *  # pip install Box2D /or/ box2d-py
-from pytmx.util_pygame import load_pygame
 
-from maze.game.collision_masks import Category
+from pytmx.util_pygame import load_pygame
+from math import ceil
+from Box2D import *  # pip install Box2D /or/ box2d-py
+
+from maze.game.entities.enemy_entity_arnt import EnemyEntityArnt
 from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
-from maze.game.my_contact_listener import MyContactListener
-from maze.game.my_draw import MyDraw
 from maze.game.room_change_behavior import RoomChangeBehavior
+from maze.game.my_contact_listener import MyContactListener
+from maze.game.collision_masks import Category
+from maze.game.my_draw import MyDraw
 
 
 class Node:
@@ -72,8 +73,10 @@ class Game:
         if room not in self.rooms:
             obj_layer = self.map.get_layer_by_name('object layer')
             for obj in obj_layer:
-                if obj.type == 'enemy':
+                if obj.type == 'enemy_blob':
                     self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
+                elif obj.type == 'enemy_arnt':
+                    self.add_entity(EnemyEntityArnt(self, obj.x, obj.y))
 
         # if room is not new, activate its entities:
         if room in self.rooms:

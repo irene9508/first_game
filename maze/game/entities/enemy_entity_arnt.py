@@ -12,9 +12,13 @@ class EnemyEntityArnt(EnemyEntity):
         self.health = 8
 
         # animation:
-        self.img_left = [img.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_right = [img.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_up = [img.load("data/images/e1/e3r1.png").convert_alpha()]
-        self.img_down = [img.load("data/images/e1/e3r1.png").convert_alpha()]
+        self.img_left = [img.load("data/images/e3/e3r1.png").convert_alpha()]
+        self.img_right = [img.load("data/images/e3/e3r1.png").convert_alpha()]
+        self.img_up = [img.load("data/images/e3/e3r1.png").convert_alpha()]
+        self.img_down = [img.load("data/images/e3/e3r1.png").convert_alpha()]
         self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
         self.images = self.img_down
+
+    def attack(self, full_duration, current_duration):
+        progress = current_duration / full_duration
+        print(progress)

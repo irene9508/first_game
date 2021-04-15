@@ -71,6 +71,7 @@ class App:
                 path = "data/sounds/music/"
                 all_music = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.mp3')]
                 randomfile = random.choice(all_music)
+                print(randomfile)
                 pygame.mixer.init()
                 pygame.mixer.music.load(randomfile)
                 pygame.mixer.music.play()
