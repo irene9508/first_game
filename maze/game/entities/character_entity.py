@@ -41,7 +41,7 @@ class CharacterEntity(Entity):
 
         # properties:
         self.room_change_behavior = RoomChangeBehavior.nothing
-        self.health = 40
+        self.health = 4000
         self.velocity = [0, 0]
         self.x = 280
         self.y = 300

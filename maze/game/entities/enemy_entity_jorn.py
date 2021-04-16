@@ -11,9 +11,9 @@ class EnemyEntityJorn(EnemyEntity):
         self.health = 15
 
         # animation:
-        self.img_left = [
+        self.img_left1 = [
             pygame.image.load("data/images/e1/e2l1.png").convert_alpha()]
-        self.img_right = [
+        self.img_right1 = [
             pygame.image.load("data/images/e1/e2r1.png").convert_alpha()]
         self.img_up = [
             pygame.image.load("data/images/e1/e2l1.png").convert_alpha()]

@@ -22,10 +22,10 @@
     <property name="target_y" type="int" value="100"/>
    </properties>
   </object>
-  <object id="6" name="enemy spawn point" type="enemy" x="759" y="125">
+  <object id="6" name="enemy spawn point" type="enemy_blob" x="759" y="125">
    <point/>
   </object>
-  <object id="7" name="enemy spawn point" type="enemy" x="602" y="363">
+  <object id="7" name="enemy spawn point" type="enemy_blob" x="602" y="363">
    <point/>
   </object>
   <object id="8" name="door" type="door" x="1237.17" y="322.839" width="40.6619" height="73.3227">

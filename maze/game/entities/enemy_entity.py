@@ -1,4 +1,4 @@
-from math import sqrt, atan2, pi
+from math import sqrt
 
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape, b2RayCastCallback, b2_staticBody
@@ -6,7 +6,6 @@ from pygame import mixer
 
 from maze.game.collision_masks import Category
 from maze.game.enemy_state import EnemyState
-from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
 from maze.game.particle_effect import ParticleEffect
@@ -42,10 +41,10 @@ class EnemyEntity(Entity):
         # animation:
         self.animation_length = 0.12  # controls speed of sprite animation
         self.img_dead_near = None
-        self.img_right = None
+        self.img_right1 = None
         self.img_dead = None
         self.img_down = None
-        self.img_left = None
+        self.img_left1 = None
         self.r_scale = None
         self.surface = None
         self.img_index = 0  # needed to iterate through the list of images
@@ -81,10 +80,7 @@ class EnemyEntity(Entity):
         self.create_new_body()
 
     def attack(self, full_duration, current_duration):
-        # where we're at in the animation:
-        progress = current_duration / full_duration
-        self.x = self.start_x + (self.goal_x - self.start_x) * progress
-        self.y = self.start_y + (self.goal_y - self.start_y) * progress
+        pass
 
     def check_if_walkable(self, end_point):
         # calculate middle ray starting point and direction:
@@ -191,9 +187,7 @@ class EnemyEntity(Entity):
                          1] + tile_h / 2))
 
     def retreat(self, full_duration, current_duration):
-        progress = current_duration / full_duration
-        self.x = self.goal_x + (self.start_x - self.goal_x) * progress
-        self.y = self.goal_y + (self.start_y - self.goal_y) * progress
+        pass
 
     def synchronize_body(self):  # entity gives new info to body
         self.body.position = (self.x * self.game.physics_scale,
@@ -239,7 +233,7 @@ class EnemyEntity(Entity):
         distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
-        duration = 0.07
+        attack_duration = 0.2  # TODO: change this to be enemy specific
 
         if char is not None:
             if self.state == EnemyState.following:
@@ -277,9 +271,9 @@ class EnemyEntity(Entity):
                             self.images = self.img_down
                     else:
                         if vector[0] < 0:
-                            self.images = self.img_left
+                            self.images = self.img_left1
                         else:
-                            self.images = self.img_right
+                            self.images = self.img_right1
 
                 # detect whether to attack:
                 if distance < 80:
@@ -290,23 +284,17 @@ class EnemyEntity(Entity):
 
             elif self.state == EnemyState.attacking:
                 self.current_attack_duration += delta_time
-                if self.current_attack_duration < duration:
-                    self.velocity = [0, 0]
-                    self.attack(duration, self.current_attack_duration)
-                    self.velocity = [0, 0]
+                if self.current_attack_duration < attack_duration:
+                    self.attack(attack_duration, self.current_attack_duration)
                 else:
-                    self.velocity = [0, 0]
                     self.state = EnemyState.retreating
                     self.current_retreat_duration = 0
 
             elif self.state == EnemyState.retreating:
                 self.current_retreat_duration += delta_time
-                if self.current_retreat_duration < duration:
-                    self.velocity = [0, 0]
-                    self.retreat(duration, self.current_retreat_duration)
-                    self.velocity = [0, 0]
+                if self.current_retreat_duration < attack_duration:
+                    self.retreat(attack_duration, self.current_retreat_duration)
                 else:
-                    self.velocity = [0, 0]
                     self.state = EnemyState.following
 
             elif self.state == EnemyState.dead:
@@ -315,23 +303,6 @@ class EnemyEntity(Entity):
                     self.images = self.img_dead_near
                 else:
                     self.images = self.img_dead
-
-        # shooting:
-        shot_timer = 0.4
-        self.initial_shot_timer -= delta_time
-        walkable = self.check_if_walkable(
-            (int(char.x / tile_width), int(char.y / tile_height)))
-        if walkable and self.state != EnemyState.dead:
-            delta_x = char.x - self.x
-            delta_y = char.y - self.y
-            angle = atan2(delta_y, delta_x) * 180 / pi
-            if self.initial_shot_timer <= 0:
-                pygame.mixer.stop()
-                self.shot_sound.play()
-                self.initial_shot_timer = shot_timer
-                self.game.add_entity(BulletEntity(
-                    self.game, self.x, self.y, angle, Category.ENEMY_BULLET,
-                    Category.CHARACTER | Category.WALL | Category.CORPSE))
 
         # particles:
         for item in self.particles:

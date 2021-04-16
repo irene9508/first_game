@@ -1,6 +1,13 @@
+from math import atan2, pi
+
 import pygame
 
 from pygame import image as img
+
+from maze.game.collision_masks import Category
+from maze.game.enemy_state import EnemyState
+from maze.game.entities.bullet_entity import BulletEntity
+from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.enemy_entity import EnemyEntity
 
 
@@ -12,10 +19,49 @@ class EnemyEntityBlob(EnemyEntity):
         self.health = 10
 
         # animation:
-        self.img_left = [img.load("data/images/e1/e1l1.png").convert_alpha()]
-        self.img_right = [img.load("data/images/e1/e1r1.png").convert_alpha()]
+        self.img_left1 = [img.load("data/images/e1/e1l1.png").convert_alpha()]
+        self.img_right1 = [img.load("data/images/e1/e1r1.png").convert_alpha()]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
         self.img_dead_near = [img.load("data/images/e1/e1dead_near.png").convert_alpha()]
         self.images = self.img_down
+
+    def attack(self, full_duration, current_duration):
+        self.velocity = [0, 0]
+        # where we're at in the animation:
+        progress = current_duration / full_duration
+        self.x = self.start_x + (self.goal_x - self.start_x) * progress
+        self.y = self.start_y + (self.goal_y - self.start_y) * progress
+        self.velocity = [0, 0]
+
+    def retreat(self, full_duration, current_duration):
+        self.velocity = [0, 0]
+        progress = current_duration / full_duration
+        self.x = self.goal_x + (self.start_x - self.goal_x) * progress
+        self.y = self.goal_y + (self.start_y - self.goal_y) * progress
+        self.velocity = [0, 0]
+
+    def update(self, delta_time):
+        super().update(delta_time)
+
+        tile_width = self.game.map.tilewidth
+        tile_height = self.game.map.tileheight
+        char = self.game.get_entity_of_category(CharacterEntity)
+
+        # shooting:
+        shot_timer = 0.4
+        self.initial_shot_timer -= delta_time
+        walkable = self.check_if_walkable(
+            (int(char.x / tile_width), int(char.y / tile_height)))
+        if walkable and self.state != EnemyState.dead:
+            delta_x = char.x - self.x
+            delta_y = char.y - self.y
+            angle = atan2(delta_y, delta_x) * 180 / pi
+            if self.initial_shot_timer <= 0:
+                pygame.mixer.stop()
+                self.shot_sound.play()
+                self.initial_shot_timer = shot_timer
+                self.game.add_entity(BulletEntity(
+                    self.game, self.x, self.y, angle, Category.ENEMY_BULLET,
+                    Category.CHARACTER | Category.WALL | Category.CORPSE))
