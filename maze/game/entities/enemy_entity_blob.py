@@ -1,6 +1,7 @@
 from math import atan2, pi
 
 import pygame
+from Box2D import b2FixtureDef, b2CircleShape
 
 from pygame import image as img
 
@@ -17,6 +18,8 @@ class EnemyEntityBlob(EnemyEntity):
 
         # properties:
         self.health = 10
+        self.radius = 32
+        self.create_new_body()
 
         # animation:
         self.img_left1 = [img.load("data/images/e1/e1l1.png").convert_alpha()]
@@ -35,7 +38,19 @@ class EnemyEntityBlob(EnemyEntity):
         self.y = self.start_y + (self.goal_y - self.start_y) * progress
         self.velocity = [0, 0]
 
+    def render(self, surface, r_scale):
+        self.r_scale, self.surface = r_scale, surface
+        sprite = self.images[self.img_index]
+        width, height = sprite.get_size()[0], sprite.get_size()[1]
+        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
+        sprite = pygame.transform.smoothscale(sprite, r_size)
+        r_position = (int(((self.x - width / 2) * r_scale[0])),
+                      int((self.y - height / 2) * r_scale[1]))
+
+        surface.blit(sprite, r_position)
+
     def retreat(self, full_duration, current_duration):
+        super().retreat(full_duration, current_duration)
         self.velocity = [0, 0]
         progress = current_duration / full_duration
         self.x = self.goal_x + (self.start_x - self.goal_x) * progress

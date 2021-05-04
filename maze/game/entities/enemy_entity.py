@@ -52,9 +52,8 @@ class EnemyEntity(Entity):
         self.images = None
 
         # collisions:
-        self.radius = 32
+        self.radius = None
         self.body = None
-        self.create_new_body()
 
         # movement:
         self.current_tile_pos_enemy = None
@@ -156,14 +155,6 @@ class EnemyEntity(Entity):
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
-        sprite = self.images[self.img_index]
-        width, height = sprite.get_size()[0], sprite.get_size()[1]
-        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
-        sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
-
-        surface.blit(sprite, r_position)
         super().render(surface, r_scale)
 
         # particles:

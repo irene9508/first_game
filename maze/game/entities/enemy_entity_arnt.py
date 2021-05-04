@@ -1,4 +1,6 @@
+import pygame
 from pygame import image as img
+
 from maze.game.entities.enemy_entity import EnemyEntity
 
 
@@ -8,6 +10,8 @@ class EnemyEntityArnt(EnemyEntity):
 
         # properties:
         self.health = 8
+        self.radius = 20
+        self.create_new_body()
 
         # animation:
         self.img_left1 = [img.load("data/images/e3/e3l1.png").convert_alpha()]
@@ -52,6 +56,18 @@ class EnemyEntityArnt(EnemyEntity):
                 self.images = self.img_right4
             elif progress <= 1:
                 self.images = self.img_right5
+
+    def render(self, surface, r_scale):
+        self.r_scale, self.surface = r_scale, surface
+        sprite = self.images[self.img_index]
+        width, height = sprite.get_size()[0], sprite.get_size()[1]
+        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
+        sprite = pygame.transform.smoothscale(sprite, r_size)
+        r_position = (int(((self.x - width / 2 - 20) * r_scale[0])),
+                      int((self.y - height / 2 - 80) * r_scale[1]))
+
+        surface.blit(sprite, r_position)
+        super().render(surface, r_scale)
 
     def retreat(self, full_duration, current_duration):
         progress = current_duration / full_duration
