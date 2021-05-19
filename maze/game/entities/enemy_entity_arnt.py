@@ -14,17 +14,20 @@ class EnemyEntityArnt(EnemyEntity):
         self.create_new_body()
 
         # animation:
-        self.img_left1 = [img.load("data/images/e3/e3l1.png").convert_alpha()]
-        self.img_left2 = [img.load("data/images/e3/e3l2.png").convert_alpha()]
-        self.img_left3 = [img.load("data/images/e3/e3l3.png").convert_alpha()]
-        self.img_left4 = [img.load("data/images/e3/e3l4.png").convert_alpha()]
-        self.img_left5 = [img.load("data/images/e3/e3l5.png").convert_alpha()]
+        self.img_l1 = [img.load("data/images/e3/e3l1.png").convert_alpha()]
+        self.img_l2 = [img.load("data/images/e3/e3l2.png").convert_alpha()]
+        self.img_l3 = [img.load("data/images/e3/e3l3.png").convert_alpha()]
+        self.img_l4 = [img.load("data/images/e3/e3l4.png").convert_alpha()]
+        self.img_l5 = [img.load("data/images/e3/e3l5.png").convert_alpha()]
 
-        self.img_right1 = [img.load("data/images/e3/e3r1.png").convert_alpha()]
-        self.img_right2 = [img.load("data/images/e3/e3r2.png").convert_alpha()]
-        self.img_right3 = [img.load("data/images/e3/e3r3.png").convert_alpha()]
-        self.img_right4 = [img.load("data/images/e3/e3r4.png").convert_alpha()]
-        self.img_right5 = [img.load("data/images/e3/e3r5.png").convert_alpha()]
+        self.img_r1 = [img.load("data/images/e3/e3r1.png").convert_alpha()]
+        self.img_r2 = [img.load("data/images/e3/e3r2.png").convert_alpha()]
+        self.img_r3 = [img.load("data/images/e3/e3r3.png").convert_alpha()]
+        self.img_r4 = [img.load("data/images/e3/e3r4.png").convert_alpha()]
+        self.img_r5 = [img.load("data/images/e3/e3r5.png").convert_alpha()]
+
+        self.imgs_right = [self.img_r1, self.img_r2, self.img_r3, self.img_r4, self.img_r5]
+        self.imgs_left = [self.img_l1, self.img_l2, self.img_l3, self.img_l4, self.img_l5]
 
         self.img_up = [img.load("data/images/e3/e3r1.png").convert_alpha()]
         self.img_down = [img.load("data/images/e3/e3r1.png").convert_alpha()]
@@ -34,28 +37,10 @@ class EnemyEntityArnt(EnemyEntity):
 
     def attack(self, full_duration, current_duration):
         progress = current_duration / full_duration
-        if self.images == self.img_left1 or self.images == self.img_left2 or self.images == self.img_left3 or self.images == self.img_left4 or self.images == self.img_left5:
-            if progress <= 0.2:
-                self.images = self.img_left1
-            elif progress <= 0.4:
-                self.images = self.img_left2
-            elif progress <= 0.6:
-                self.images = self.img_left3
-            elif progress <= 0.8:
-                self.images = self.img_left4
-            elif progress <= 1:
-                self.images = self.img_left5
-        elif self.images == self.img_right1 or self.images == self.img_right2 or self.images == self.img_right3 or self.images == self.img_right4 or self.images == self.img_right5:
-            if progress <= 0.2:
-                self.images = self.img_right1
-            elif progress <= 0.4:
-                self.images = self.img_right2
-            elif progress <= 0.6:
-                self.images = self.img_right3
-            elif progress <= 0.8:
-                self.images = self.img_right4
-            elif progress <= 1:
-                self.images = self.img_right5
+        if self.images in self.imgs_left:
+            self.images = self.imgs_left[int(progress * len(self.imgs_left))]
+        elif self.images in self.imgs_right:
+            self.images = self.imgs_right[int(progress * len(self.imgs_right))]
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
@@ -63,7 +48,7 @@ class EnemyEntityArnt(EnemyEntity):
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2 - 20) * r_scale[0])),
+        r_position = (int(((self.x - width / 2) * r_scale[0])),
                       int((self.y - height / 2 - 80) * r_scale[1]))
 
         surface.blit(sprite, r_position)
@@ -71,25 +56,7 @@ class EnemyEntityArnt(EnemyEntity):
 
     def retreat(self, full_duration, current_duration):
         progress = current_duration / full_duration
-        if self.images == self.img_left1 or self.images == self.img_left2 or self.images == self.img_left3 or self.images == self.img_left4 or self.images == self.img_left5:
-            if progress <= 0.2:
-                self.images = self.img_left5
-            elif progress <= 0.4:
-                self.images = self.img_left4
-            elif progress <= 0.6:
-                self.images = self.img_left3
-            elif progress <= 0.8:
-                self.images = self.img_left2
-            elif progress <= 1:
-                self.images = self.img_left1
-        elif self.images == self.img_right1 or self.images == self.img_right2 or self.images == self.img_right3 or self.images == self.img_right4 or self.images == self.img_right5:
-            if progress <= 0.2:
-                self.images = self.img_right5
-            elif progress <= 0.4:
-                self.images = self.img_right4
-            elif progress <= 0.6:
-                self.images = self.img_right3
-            elif progress <= 0.8:
-                self.images = self.img_right2
-            elif progress <= 1:
-                self.images = self.img_right1
+        if self.images in self.imgs_left:
+            self.images = self.imgs_left[1 - int(progress * len(self.imgs_left))]
+        elif self.images in self.imgs_right:
+            self.images = self.imgs_right[1 - int(progress * len(self.imgs_right))]

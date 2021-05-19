@@ -41,10 +41,10 @@ class EnemyEntity(Entity):
         # animation:
         self.animation_length = 0.12  # controls speed of sprite animation
         self.img_dead_near = None
-        self.img_right1 = None
+        self.img_r1 = None
         self.img_dead = None
         self.img_down = None
-        self.img_left1 = None
+        self.img_l1 = None
         self.r_scale = None
         self.surface = None
         self.img_index = 0  # needed to iterate through the list of images
@@ -262,9 +262,9 @@ class EnemyEntity(Entity):
                             self.images = self.img_down
                     else:
                         if vector[0] < 0:
-                            self.images = self.img_left1
+                            self.images = self.img_l1
                         else:
-                            self.images = self.img_right1
+                            self.images = self.img_r1
 
                 # detect whether to attack:
                 if distance < 80:
