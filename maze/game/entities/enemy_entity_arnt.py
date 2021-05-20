@@ -38,9 +38,13 @@ class EnemyEntityArnt(EnemyEntity):
     def attack(self, full_duration, current_duration):
         progress = current_duration / full_duration
         if self.images in self.imgs_left:
-            self.images = self.imgs_left[int(progress * len(self.imgs_left))]
+            image = int(progress * len(self.imgs_left))
+            print(image, progress)
+            self.images = self.imgs_left[image]
         elif self.images in self.imgs_right:
-            self.images = self.imgs_right[int(progress * len(self.imgs_right))]
+            image = int(progress * len(self.imgs_right))
+            print(image, progress)
+            self.images = self.imgs_right[image]
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
@@ -57,6 +61,10 @@ class EnemyEntityArnt(EnemyEntity):
     def retreat(self, full_duration, current_duration):
         progress = current_duration / full_duration
         if self.images in self.imgs_left:
-            self.images = self.imgs_left[1 - int(progress * len(self.imgs_left))]
+            image = int((1 - progress) * len(self.imgs_left))
+            print(image, progress)
+            self.images = self.imgs_left[image]
         elif self.images in self.imgs_right:
-            self.images = self.imgs_right[1 - int(progress * len(self.imgs_right))]
+            image = int((1 - progress) * len(self.imgs_right))
+            print(image, progress)
+            self.images = self.imgs_right[image]
