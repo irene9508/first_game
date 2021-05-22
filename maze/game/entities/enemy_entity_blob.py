@@ -1,9 +1,9 @@
 from math import atan2, pi
 
 import pygame
-from Box2D import b2FixtureDef, b2CircleShape
 
 from pygame import image as img
+from pygame.transform import flip
 
 from maze.game.collision_masks import Category
 from maze.game.enemy_state import EnemyState
@@ -22,8 +22,8 @@ class EnemyEntityBlob(EnemyEntity):
         self.create_new_body()
 
         # animation:
-        self.img_left1 = [img.load("data/images/e1/e1l1.png").convert_alpha()]
-        self.img_right1 = [img.load("data/images/e1/e1r1.png").convert_alpha()]
+        self.img_l1 = [img.load("data/images/e1/e1side.png").convert_alpha()]
+        self.img_r1 = [flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
@@ -67,8 +67,7 @@ class EnemyEntityBlob(EnemyEntity):
         # shooting:
         shot_timer = 0.4
         self.initial_shot_timer -= delta_time
-        walkable = self.check_if_walkable(
-            (int(char.x / tile_width), int(char.y / tile_height)))
+        walkable = self.check_if_walkable((int(char.x / tile_width), int(char.y / tile_height)))
         if walkable and self.state != EnemyState.dead:
             delta_x = char.x - self.x
             delta_y = char.y - self.y

@@ -17,7 +17,7 @@ class CharacterEntity(Entity):
 
         # animation:
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
-        self.img_left = [img.load("data/images/e1/e1l1.png").convert_alpha()]
+        self.img_left = [img.load("data/images/e1/e1side.png").convert_alpha()]
         self.img_right = [img.load("data/images/e2/e2r1.png").convert_alpha()]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_index = 0  # needed to iterate through the list of images

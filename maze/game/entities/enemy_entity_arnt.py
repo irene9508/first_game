@@ -1,5 +1,6 @@
 import pygame
 from pygame import image as img
+from pygame.transform import flip
 
 from maze.game.entities.enemy_entity import EnemyEntity
 
@@ -14,25 +15,25 @@ class EnemyEntityArnt(EnemyEntity):
         self.create_new_body()
 
         # animation:
-        self.img_l1 = [img.load("data/images/e3/e3l1.png").convert_alpha()]
-        self.img_l2 = [img.load("data/images/e3/e3l2.png").convert_alpha()]
-        self.img_l3 = [img.load("data/images/e3/e3l3.png").convert_alpha()]
-        self.img_l4 = [img.load("data/images/e3/e3l4.png").convert_alpha()]
-        self.img_l5 = [img.load("data/images/e3/e3l5.png").convert_alpha()]
+        self.img_l1 = [img.load("data/images/e3/e3-1.png").convert_alpha()]
+        self.img_l2 = [img.load("data/images/e3/e3-2.png").convert_alpha()]
+        self.img_l3 = [img.load("data/images/e3/e3-3.png").convert_alpha()]
+        self.img_l4 = [img.load("data/images/e3/e3-4.png").convert_alpha()]
+        self.img_l5 = [img.load("data/images/e3/e3-5.png").convert_alpha()]
 
-        self.img_r1 = [img.load("data/images/e3/e3r1.png").convert_alpha()]
-        self.img_r2 = [img.load("data/images/e3/e3r2.png").convert_alpha()]
-        self.img_r3 = [img.load("data/images/e3/e3r3.png").convert_alpha()]
-        self.img_r4 = [img.load("data/images/e3/e3r4.png").convert_alpha()]
-        self.img_r5 = [img.load("data/images/e3/e3r5.png").convert_alpha()]
+        self.img_r1 = [flip(img.load("data/images/e3/e3-1.png").convert_alpha(), True, False)]
+        self.img_r2 = [flip(img.load("data/images/e3/e3-2.png").convert_alpha(), True, False)]
+        self.img_r3 = [flip(img.load("data/images/e3/e3-3.png").convert_alpha(), True, False)]
+        self.img_r4 = [flip(img.load("data/images/e3/e3-4.png").convert_alpha(), True, False)]
+        self.img_r5 = [flip(img.load("data/images/e3/e3-5.png").convert_alpha(), True, False)]
 
-        self.imgs_right = [self.img_r1, self.img_r2, self.img_r3, self.img_r4, self.img_r5]
         self.imgs_left = [self.img_l1, self.img_l2, self.img_l3, self.img_l4, self.img_l5]
+        self.imgs_right = [self.img_r1, self.img_r2, self.img_r3, self.img_r4, self.img_r5]
 
-        self.img_up = [img.load("data/images/e3/e3r1.png").convert_alpha()]
-        self.img_down = [img.load("data/images/e3/e3r1.png").convert_alpha()]
-        self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
-        self.img_dead_near = [img.load("data/images/e1/e1dead.png").convert_alpha()]
+        self.img_up = [img.load("data/images/e3/e3-1.png").convert_alpha()]
+        self.img_down = [img.load("data/images/e3/e3-1.png").convert_alpha()]
+        self.img_dead = [img.load("data/images/e3/e3dead.png").convert_alpha()]
+        self.img_dead_near = [img.load("data/images/e3/e3dead.png").convert_alpha()]
         self.images = self.img_down
 
     def attack(self, full_duration, current_duration):
@@ -62,9 +63,7 @@ class EnemyEntityArnt(EnemyEntity):
         progress = current_duration / full_duration
         if self.images in self.imgs_left:
             image = int((1 - progress) * len(self.imgs_left))
-            print(image, progress)
             self.images = self.imgs_left[image]
         elif self.images in self.imgs_right:
             image = int((1 - progress) * len(self.imgs_right))
-            print(image, progress)
             self.images = self.imgs_right[image]

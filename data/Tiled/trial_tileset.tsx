@@ -2,7 +2,7 @@
 <tileset version="1.4" tiledversion="1.4.2" name="trial_tileset" tilewidth="80" tileheight="80" tilecount="27" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1" type="floor">
-  <image width="80" height="80" source="../images/floor - kopie.png"/>
+  <image width="80" height="80" source="../images/floor.png"/>
  </tile>
  <tile id="6" type="wall">
   <image width="80" height="80" source="../images/walls/facing_down/wall_3a.png"/>
