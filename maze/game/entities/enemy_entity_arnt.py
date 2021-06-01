@@ -2,6 +2,7 @@ import pygame
 from pygame import image as img
 from pygame.transform import flip
 
+from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.enemy_entity import EnemyEntity
 
 
@@ -11,7 +12,7 @@ class EnemyEntityArnt(EnemyEntity):
 
         # properties:
         self.health = 8
-        self.radius = 20
+        self.radius = 40
         self.create_new_body()
 
         # animation:
@@ -37,15 +38,16 @@ class EnemyEntityArnt(EnemyEntity):
         self.images = self.img_down
 
     def attack(self, full_duration, current_duration):
+        self.velocity = [0, 0]
         progress = current_duration / full_duration
-        if self.images in self.imgs_left:
+        char = self.game.get_entity_of_category(CharacterEntity)
+        if self.x >= char.x:
             image = int(progress * len(self.imgs_left))
-            print(image, progress)
             self.images = self.imgs_left[image]
-        elif self.images in self.imgs_right:
+        elif self.x < char.x:
             image = int(progress * len(self.imgs_right))
-            print(image, progress)
             self.images = self.imgs_right[image]
+        self.velocity = [0, 0]
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
@@ -60,6 +62,7 @@ class EnemyEntityArnt(EnemyEntity):
         super().render(surface, r_scale)
 
     def retreat(self, full_duration, current_duration):
+        self.velocity = [0, 0]
         progress = current_duration / full_duration
         if self.images in self.imgs_left:
             image = int((1 - progress) * len(self.imgs_left))
@@ -67,3 +70,4 @@ class EnemyEntityArnt(EnemyEntity):
         elif self.images in self.imgs_right:
             image = int((1 - progress) * len(self.imgs_right))
             self.images = self.imgs_right[image]
+        self.velocity = [0, 0]

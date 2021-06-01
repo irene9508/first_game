@@ -133,6 +133,9 @@ class EnemyEntity(Entity):
         if isinstance(other_fixture.body.userData, CharacterEntity):
             if self.state != EnemyState.dead:
                 other_fixture.body.userData.health -= 5
+                self.particles.append(
+                    ParticleEffect(other_fixture.body.userData.x, other_fixture.body.userData.y,
+                                   (0, 0, 0), [1, 5], [2, 7], [2, 20], 60, 0))
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
@@ -278,8 +281,11 @@ class EnemyEntity(Entity):
                 if self.current_attack_duration < attack_duration:
                     self.attack(attack_duration, self.current_attack_duration)
                 else:
+                    self.particles.append(ParticleEffect(char.x, char.y, (0, 0, 0), [1, 5], [2, 7],
+                                                         [2, 20], 60, 0))
                     self.state = EnemyState.retreating
                     self.current_retreat_duration = 0
+                    char.health -= 5
 
             elif self.state == EnemyState.retreating:
                 self.current_retreat_duration += delta_time
