@@ -3,6 +3,8 @@ from math import sqrt
 import pygame
 from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer, image as img
+from pygame.transform import flip
+
 
 from maze.game.collision_masks import Category
 from maze.game.enemy_state import EnemyState
@@ -17,8 +19,8 @@ class CharacterEntity(Entity):
 
         # animation:
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
-        self.img_left = [img.load("data/images/e1/e1side.png").convert_alpha()]
-        self.img_right = [img.load("data/images/e2/e2r1.png").convert_alpha()]
+        self.img_left = [flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)]
+        self.img_right = [img.load("data/images/e1/e1side.png").convert_alpha()]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_index = 0  # needed to iterate through the list of images
         self.images = self.img_down
@@ -41,7 +43,7 @@ class CharacterEntity(Entity):
 
         # properties:
         self.room_change_behavior = RoomChangeBehavior.nothing
-        self.health = 4000
+        self.health = 20
         self.velocity = [0, 0]
         self.x = 280
         self.y = 300
@@ -110,7 +112,7 @@ class CharacterEntity(Entity):
         if up or down or left or right:
             if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
-                self.shot_sound.play()
+                self.shot_sound.play()  # todo: make the sound consistent with the shot fired
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, self.y, self.rotation,

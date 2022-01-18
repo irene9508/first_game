@@ -12,7 +12,7 @@ class EnemyEntityArnt(EnemyEntity):
 
         # properties:
         self.health = 8
-        self.radius = 40
+        self.radius = 38
         self.create_new_body()
 
         # animation:

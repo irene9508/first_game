@@ -227,7 +227,7 @@ class EnemyEntity(Entity):
         distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
-        attack_duration = 0.2  # TODO: change this to be enemy specific
+        attack_duration = 0.2  # todo: change this to be enemy specific
 
         if char is not None:
             if self.state == EnemyState.following:

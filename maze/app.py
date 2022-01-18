@@ -17,7 +17,7 @@ class App:
         self.fps = 0
         self.playing = False
         self.next_screen = None
-        self.ref_res = (1280, 720)  # reference resolution
+        self.reference_resolution = (1280, 720)
         self.running = True
         self.render_scale = None
         self.surface = None
@@ -30,12 +30,12 @@ class App:
     def run(self):
         if sys.platform == "win32":
             ctypes.windll.shcore.SetProcessDpiAwareness(2)
-        environ["SDL_VIDEO_CENTERED"] = "1"
+        environ["SDL_VIDEO_CENTERED"] = "1"  # todo: what does this do again?
         pygame.init()
         monitor_size = [pygame.display.Info().current_w,
                         pygame.display.Info().current_h]
         self.surface = pygame.display.set_mode(
-            (1280, 720), flags=pygame.RESIZABLE)
+            (1280, 720), flags=pygame.RESIZABLE)  # todo: why is this not using monitor_size?
         self.current_screen = MenuScreen(self)
         fullscreen = False
 
@@ -91,8 +91,8 @@ class App:
                 fps_counter = 0
                 fps_start_time = current_time
 
-            self.render_scale = (self.surface.get_size()[0] / self.ref_res[0],
-                                 self.surface.get_size()[1] / self.ref_res[1])
+            self.render_scale = (self.surface.get_size()[0] / self.reference_resolution[0],
+                                 self.surface.get_size()[1] / self.reference_resolution[1])
 
             self.current_screen.render(self.surface, self.render_scale)
             pygame.display.flip()

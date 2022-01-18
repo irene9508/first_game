@@ -22,8 +22,8 @@ class EnemyEntityBlob(EnemyEntity):
         self.create_new_body()
 
         # animation:
-        self.img_l1 = [img.load("data/images/e1/e1side.png").convert_alpha()]
-        self.img_r1 = [flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)]
+        self.img_r1 = [img.load("data/images/e1/e1side.png").convert_alpha()]
+        self.img_l1 = [flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
