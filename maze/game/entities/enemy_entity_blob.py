@@ -32,7 +32,6 @@ class EnemyEntityBlob(EnemyEntity):
 
     def attack(self, full_duration, current_duration):
         self.velocity = [0, 0]
-        # where we're at in the animation:
         progress = current_duration / full_duration
         self.x = self.start_x + (self.goal_x - self.start_x) * progress
         self.y = self.start_y + (self.goal_y - self.start_y) * progress
@@ -48,6 +47,7 @@ class EnemyEntityBlob(EnemyEntity):
                       int((self.y - height / 2) * r_scale[1]))
 
         surface.blit(sprite, r_position)
+        super().render(surface, r_scale)
 
     def retreat(self, full_duration, current_duration):
         super().retreat(full_duration, current_duration)

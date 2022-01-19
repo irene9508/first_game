@@ -22,7 +22,7 @@
     <property name="target_y" type="int" value="360"/>
    </properties>
   </object>
-  <object id="6" name="enemy spawn point" type="enemy" x="606" y="361">
+  <object id="6" name="enemy spawn point" type="enemy_jorn" x="606" y="361">
    <point/>
   </object>
  </objectgroup>

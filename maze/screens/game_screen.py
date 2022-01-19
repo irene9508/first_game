@@ -43,7 +43,7 @@ class GameScreen(Screen):
 
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
-        if self.game.debugging and self.path is not None:
+        if self.game.debugging and self.path is not None:  # todo: does this work?
             # draw the path from character to mouse click:
             for index in range(len(self.path) - 1):
                 pygame.draw.line(

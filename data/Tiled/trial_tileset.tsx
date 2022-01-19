@@ -2,7 +2,7 @@
 <tileset version="1.4" tiledversion="1.4.2" name="trial_tileset" tilewidth="80" tileheight="80" tilecount="27" columns="0">
  <grid orientation="orthogonal" width="1" height="1"/>
  <tile id="1" type="floor">
-  <image width="80" height="80" source="../images/floor.png"/>
+  <image width="80" height="80" source="../images/floors/floor.png"/>
  </tile>
  <tile id="6" type="wall">
   <image width="80" height="80" source="../images/walls/facing_down/wall_3a.png"/>
@@ -77,9 +77,9 @@
   <image width="80" height="80" source="../images/walls/facing_down/fd_1.png"/>
  </tile>
  <tile id="35" type="floor">
-  <image width="80" height="80" source="../images/floor 1.png"/>
+  <image width="80" height="80" source="../images/floors/floor 1.png"/>
  </tile>
  <tile id="36" type="floor">
-  <image width="80" height="80" source="../images/floor_2.png"/>
+  <image width="80" height="80" source="../images/floors/floor_2.png"/>
  </tile>
 </tileset>
