@@ -31,6 +31,7 @@ class EnemyEntity(Entity):
         super().__init__(game)
 
         # properties:
+        self.attack_duration = None
         self.room_change_behavior = RoomChangeBehavior.deactivate
         self.state = EnemyState.following
         self.velocity = [0, 0]
@@ -227,7 +228,7 @@ class EnemyEntity(Entity):
         distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
-        attack_duration = 0.2  # todo: change this to be enemy specific
+        self.attack_duration = 0.2
 
         if char is not None:
             if self.state == EnemyState.following:
@@ -278,8 +279,8 @@ class EnemyEntity(Entity):
 
             elif self.state == EnemyState.attacking:
                 self.current_attack_duration += delta_time
-                if self.current_attack_duration < attack_duration:
-                    self.attack(attack_duration, self.current_attack_duration)
+                if self.current_attack_duration < self.attack_duration:
+                    self.attack(self.attack_duration, self.current_attack_duration)
                 else:
                     self.particles.append(ParticleEffect(char.x, char.y, (0, 0, 0), [1, 5], [2, 7],
                                                          [2, 20], 60, 0))
@@ -289,8 +290,8 @@ class EnemyEntity(Entity):
 
             elif self.state == EnemyState.retreating:
                 self.current_retreat_duration += delta_time
-                if self.current_retreat_duration < attack_duration:
-                    self.retreat(attack_duration, self.current_retreat_duration)
+                if self.current_retreat_duration < self.attack_duration:
+                    self.retreat(self.attack_duration, self.current_retreat_duration)
                 else:
                     self.state = EnemyState.following
 

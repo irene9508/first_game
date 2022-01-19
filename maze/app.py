@@ -29,13 +29,14 @@ class App:
 
     def run(self):
         if sys.platform == "win32":
-            ctypes.windll.shcore.SetProcessDpiAwareness(2)
-        environ["SDL_VIDEO_CENTERED"] = "1"  # todo: what does this do again?
+            ctypes.windll.shcore.SetProcessDpiAwareness(2)  # is for scaling
+        environ["SDL_VIDEO_CENTERED"] = "1"
         pygame.init()
         monitor_size = [pygame.display.Info().current_w,
                         pygame.display.Info().current_h]
         self.surface = pygame.display.set_mode(
-            (1280, 720), flags=pygame.RESIZABLE)  # todo: why is this not using monitor_size?
+            (1280, 720), flags=pygame.RESIZABLE)
+        pygame.display.set_caption("Room Game")
         self.current_screen = MenuScreen(self)
         fullscreen = False
 

@@ -24,7 +24,7 @@ class Node:
 
 class Game:
     def __init__(self, app):
-        self.background = pygame.image.load("data/images/bg.jpg").convert()
+        self.background = pygame.image.load("data/images/bg2.jpg").convert()
         self.debugging = False
         self.entities = []
         self.entity_queue = []
@@ -108,7 +108,7 @@ class Game:
 
     def on_room_exit(self):
         # destroy bullets, deactivate still living enemies:
-        for entity in self.entities:  # todo: reset to original position?
+        for entity in self.entities:  # todo: reset to original position? have enemy follow, or reset pos, or close off room until all enemies are dead. keep reference to body for later, then destroy
             if entity.room_change_behavior == RoomChangeBehavior.destroy:
                 entity.marked_for_destroy = True
             elif entity.room_change_behavior == RoomChangeBehavior.deactivate:

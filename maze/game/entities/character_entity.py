@@ -112,7 +112,7 @@ class CharacterEntity(Entity):
         if up or down or left or right:
             if self.initial_shot_timer <= 0:
                 pygame.mixer.stop()
-                self.shot_sound.play()  # todo: make the sound consistent with the shot fired
+                self.shot_sound.play()  # todo: make the sound consistent with the shot fired. Buffering? lower the buffer size (512)
                 self.initial_shot_timer = shot_timer
                 self.game.add_entity(BulletEntity(
                     self.game, self.x, self.y, self.rotation,
