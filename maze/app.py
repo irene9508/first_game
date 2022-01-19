@@ -49,11 +49,9 @@ class App:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     self.running = False
-
                 elif event.type == pygame.VIDEORESIZE and not fullscreen:
                     self.surface = pygame.display.set_mode(
                         (event.w, event.h), flags=pygame.RESIZABLE)
-
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
                     fullscreen = not fullscreen
                     if fullscreen:
@@ -62,7 +60,6 @@ class App:
                     else:
                         self.surface = pygame.display.set_mode(
                             (1280, 720), flags=pygame.RESIZABLE)
-
                 else:
                     self.current_screen.process_event(event)
 

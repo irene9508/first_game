@@ -15,6 +15,8 @@ class GameScreen(Screen):
         self.char = CharacterEntity(self.game)
         self.game.add_entity(self.char)
         self.path = None
+        self.sound_muted = False
+        self.timer = 0
 
     def process_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -24,6 +26,12 @@ class GameScreen(Screen):
                 self.game.show_debug_info()
             if event.key == pygame.K_r:
                 self.app.set_screen(GameScreen(self.app))
+            if event.key == pygame.K_m:
+                if self.sound_muted:
+                    pygame.mixer.music.unpause()
+                if not self.sound_muted:
+                    pygame.mixer.music.pause()
+                self.sound_muted = not self.sound_muted
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # todo: does this work?
             if self.game.debugging:
                 self.path = PathFinder(self.game.map).find_path(
@@ -55,7 +63,11 @@ class GameScreen(Screen):
 
     def update(self, delta_time):
         self.game.update(delta_time)
-        if self.game.debugging:
+
+        self.timer += delta_time
+        if self.timer > 5 and self.game.debugging:
             print(self.app.fps)
+            self.timer = 0
+
         if self.char.health <= 0:
             self.app.set_screen(menu_screen.MenuScreen(self.app))
