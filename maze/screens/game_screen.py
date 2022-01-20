@@ -32,7 +32,7 @@ class GameScreen(Screen):
                 if not self.sound_muted:
                     pygame.mixer.music.pause()
                 self.sound_muted = not self.sound_muted
-        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:  # todo: does this work?
+        if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
                 self.path = PathFinder(self.game.map).find_path(
                     (self.char.x, self.char.y), pygame.mouse.get_pos())
@@ -51,7 +51,7 @@ class GameScreen(Screen):
 
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
-        if self.game.debugging and self.path is not None:  # todo: does this work?
+        if self.game.debugging and self.path is not None:
             # draw the path from character to mouse click:
             for index in range(len(self.path) - 1):
                 pygame.draw.line(
