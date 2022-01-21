@@ -31,6 +31,7 @@ class EnemyEntity(Entity):
         super().__init__(game)
 
         # properties:
+        self.distance = None
         self.attack_duration = None
         self.room_change_behavior = RoomChangeBehavior.deactivate
         self.state = EnemyState.following
@@ -198,7 +199,8 @@ class EnemyEntity(Entity):
 
     def take_damage(self, damage):
         self.body.userData.health -= damage
-        self.particles.append(ParticleEffect(self.x, self.y, (0, 0, 0), [1, 5], [2, 7], [2, 20], 60, 0))
+        self.particles.append(ParticleEffect(self.x, self.y, (0, 0, 0), [1, 5], [2, 7], [2, 20],
+                                             60, 0))
 
     def update(self, delta_time):
         # animation, used in render():
@@ -225,7 +227,7 @@ class EnemyEntity(Entity):
         p1 = (self.x, self.y)
         char = self.game.get_entity_of_category(CharacterEntity)
         new_tile_pos_enemy = (int(p1[0] / tile_width), int(p1[1] / tile_height))
-        distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
+        self.distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
         new_tile_pos_char = (char.x / tile_width, char.y / tile_height)
         game_map = self.game.map
         self.attack_duration = 0.2
@@ -271,7 +273,7 @@ class EnemyEntity(Entity):
                             self.images = self.img_r1
 
                 # detect whether to attack:
-                if distance < 80:
+                if self.distance < 80:
                     self.state = EnemyState.attacking
                     self.start_x, self.start_y = self.x, self.y
                     self.goal_x, self.goal_y = char.x, char.y
@@ -296,14 +298,17 @@ class EnemyEntity(Entity):
                     self.state = EnemyState.following
 
             elif self.state == EnemyState.dead:
-                self.velocity = [0, 0]
-                if distance < 80:
-                    self.images = self.img_dead_near
-                else:
-                    self.images = self.img_dead
+                self.die()
 
         # particles:
         for item in self.particles:
             item.x = self.x
             item.y = self.y
             item.update(delta_time)
+
+    def die(self):
+        self.velocity = [0, 0]
+        if self.distance < 80:
+            self.images = self.img_dead_near
+        else:
+            self.images = self.img_dead

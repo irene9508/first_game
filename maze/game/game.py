@@ -66,8 +66,8 @@ class Game:
         self.entity_queue.clear()
 
     def load(self, room):
-        self.room = room
         self.on_room_exit()
+        self.room = room
         self.map = load_pygame(room)
 
         # if room is new, create enemies:

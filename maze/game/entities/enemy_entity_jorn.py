@@ -10,7 +10,7 @@ class EnemyEntityJorn(EnemyEntity):
         super().__init__(game, spawn_x, spawn_y)
 
         # properties:
-        self.health = 15
+        self.health = 30
         self.radius = 32
         self.create_new_body()
 
@@ -34,3 +34,6 @@ class EnemyEntityJorn(EnemyEntity):
 
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)
+
+    def die(self):
+        self.marked_for_destroy = True
