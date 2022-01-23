@@ -111,7 +111,7 @@ class Game:
 
     def on_room_exit(self):
         # destroy bullets, deactivate still living enemies:
-        for entity in self.entities:  # todo: reset to original position? have enemy follow, or reset pos, or close off room until all enemies are dead. keep reference to body for later, then destroy
+        for entity in self.entities:
             if entity.room_change_behavior == RoomChangeBehavior.destroy:
                 entity.marked_for_destroy = True
             elif entity.room_change_behavior == RoomChangeBehavior.deactivate:

@@ -31,6 +31,7 @@ class App:
         if sys.platform == "win32":
             ctypes.windll.shcore.SetProcessDpiAwareness(2)  # is for scaling
         environ["SDL_VIDEO_CENTERED"] = "1"
+        pygame.mixer.pre_init(44100, -16, 2, 1024)
         pygame.init()
         monitor_size = [pygame.display.Info().current_w,
                         pygame.display.Info().current_h]

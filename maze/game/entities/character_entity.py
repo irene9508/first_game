@@ -55,6 +55,31 @@ class CharacterEntity(Entity):
     def destroy(self):
         self.game.world.DestroyBody(self.body)
 
+    def render(self, surface, r_scale):
+        # character image:
+        char = self.images[self.img_index]
+        width, height = char.get_size()[0], char.get_size()[1]
+        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
+        char = pygame.transform.smoothscale(char, r_size)
+        r_position = (int(((self.x - width / 2) * r_scale[0])),
+                      int((self.y - height / 2) * r_scale[1]))
+
+        # surface:
+        surface.blit(char, r_position)
+        super().render(surface, r_scale)
+
+    def synchronize_body(self):  # entity gives new info to body
+        self.body.position = (self.x * self.game.physics_scale,
+                              self.y * self.game.physics_scale)
+        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
+                                    self.velocity[1] * self.game.physics_scale)
+
+    def synchronize_entity(self):  # body gives new info to entity
+        self.x = self.body.position[0] / self.game.physics_scale
+        self.y = self.body.position[1] / self.game.physics_scale
+        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
+                         self.body.linearVelocity[1] / self.game.physics_scale]
+
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
 
@@ -111,7 +136,7 @@ class CharacterEntity(Entity):
             self.rotation = 0
         if (up or down or left or right) and self.initial_shot_timer <= 0:
             pygame.mixer.stop()
-            self.shot_sound.play()  # todo: make the sound consistent with the shot fired. Buffering? lower the buffer size (512)
+            self.shot_sound.play()
             self.initial_shot_timer = shot_timer
             self.game.add_entity(BulletEntity(
                 self.game, self.x, self.y, self.rotation,
@@ -129,28 +154,3 @@ class CharacterEntity(Entity):
                         self.y = obj.target_y
                         self.game.load(obj.target_map)
                         break
-
-    def render(self, surface, r_scale):
-        # character image:
-        char = self.images[self.img_index]
-        width, height = char.get_size()[0], char.get_size()[1]
-        r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
-        char = pygame.transform.smoothscale(char, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
-
-        # surface:
-        surface.blit(char, r_position)
-        super().render(surface, r_scale)
-
-    def synchronize_body(self):  # entity gives new info to body
-        self.body.position = (self.x * self.game.physics_scale,
-                              self.y * self.game.physics_scale)
-        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
-                                    self.velocity[1] * self.game.physics_scale)
-
-    def synchronize_entity(self):  # body gives new info to entity
-        self.x = self.body.position[0] / self.game.physics_scale
-        self.y = self.body.position[1] / self.game.physics_scale
-        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
-                         self.body.linearVelocity[1] / self.game.physics_scale]

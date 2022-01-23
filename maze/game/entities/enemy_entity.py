@@ -146,9 +146,7 @@ class EnemyEntity(Entity):
             userData=self)
         fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
-            friction=0.2,
-            density=1.0,
-            categoryBits=Category.ENEMY,
+            friction=0.2, density=1.0, categoryBits=Category.ENEMY,
             maskBits=(Category.ENEMY | Category.CHARACTER |
                       Category.CHARACTER_BULLET | Category.WALL |
                       Category.CORPSE))
@@ -157,6 +155,13 @@ class EnemyEntity(Entity):
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
+
+    def die(self):
+        self.velocity = [0, 0]
+        if self.distance < 80:
+            self.images = self.img_dead_near
+        else:
+            self.images = self.img_dead
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
@@ -305,10 +310,3 @@ class EnemyEntity(Entity):
             item.x = self.x
             item.y = self.y
             item.update(delta_time)
-
-    def die(self):
-        self.velocity = [0, 0]
-        if self.distance < 80:
-            self.images = self.img_dead_near
-        else:
-            self.images = self.img_dead

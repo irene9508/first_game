@@ -20,9 +20,6 @@ class MyDraw(b2Draw):
              int(center[1] / self.physics_scale * self.app.render_scale[1])),
             int(radius / self.physics_scale * self.app.render_scale[0]))
 
-    def DrawSolidCircle(self, center, radius, axis, color):
-        self.DrawCircle(center, radius, color)
-
     # noinspection PyUnusedLocal
     def DrawPoint(self, p, size, color):
         gfxdraw.pixel(self.app.surface,
@@ -45,6 +42,9 @@ class MyDraw(b2Draw):
               vertices[2][1] / self.physics_scale * self.app.render_scale[1]),
              (vertices[3][0] / self.physics_scale * self.app.render_scale[0],
               vertices[3][1] / self.physics_scale * self.app.render_scale[1])))
+
+    def DrawSolidCircle(self, center, radius, axis, color):
+        self.DrawCircle(center, radius, color)
 
     def DrawSolidPolygon(self, vertices, color):
         self.DrawPolygon(vertices, color)

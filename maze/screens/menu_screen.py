@@ -7,6 +7,7 @@ from maze.screens.screen import Screen
 class MenuScreen(Screen):
     def __init__(self, app):
         super().__init__(app)
+        self.sound_muted = False
         self.background = pygame.image.load("data/images/bg2.jpg")
         self.letter_color = (255, 255, 255)
         self.shadow_color = (0, 0, 0)
@@ -32,6 +33,12 @@ class MenuScreen(Screen):
                 self.app.running = False
             if event.key == pygame.K_KP_ENTER or event.key == pygame.K_RETURN:
                 self.app.set_screen(game_screen.GameScreen(self.app))
+            if event.key == pygame.K_m:
+                if self.sound_muted:
+                    pygame.mixer.music.unpause()
+                if not self.sound_muted:
+                    pygame.mixer.music.pause()
+                self.sound_muted = not self.sound_muted
 
     def render(self, surface, r_scale):
         width = self.background.get_size()[0]

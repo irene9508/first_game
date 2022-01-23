@@ -13,8 +13,8 @@ class MyContactListener(b2ContactListener):
     def EndContact(self, contact):
         pass
 
-    def PreSolve(self, contact, old_manifold):
+    def PostSolve(self, contact, impulse):
         pass
 
-    def PostSolve(self, contact, impulse):
+    def PreSolve(self, contact, old_manifold):
         pass
