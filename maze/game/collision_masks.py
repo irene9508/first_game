@@ -6,5 +6,6 @@ class Category(IntFlag):
     ENEMY_BULLET = auto()
     CHARACTER = auto()
     CORPSE = auto()
+    PICKUP = auto()
     ENEMY = auto()
     WALL = auto()

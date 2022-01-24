@@ -1,5 +1,6 @@
 import pygame
 
+from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.enemy_entity import EnemyEntity
 from pygame.transform import flip
 from pygame import image as img
@@ -11,7 +12,7 @@ class EnemyEntityJorn(EnemyEntity):
         super().__init__(game, spawn_x, spawn_y)
 
         # properties:
-        self.health = 30
+        self.health = 5
         self.radius = 25
         self.create_new_body()
 
@@ -25,9 +26,9 @@ class EnemyEntityJorn(EnemyEntity):
         self.images = self.img_down
 
     def die(self):
+        char = self.game.get_entity_of_category(CharacterEntity)
         self.marked_for_destroy = True
-        pickup = PickupEntity(self.game)
-        pickup.create_pickup()
+        self.game.add_entity(PickupEntity(self.game, char.x, char.y))
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface
