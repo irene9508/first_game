@@ -52,11 +52,11 @@ class MenuScreen(Screen):
         surface.blit(self.title_shadow, (20, surface_height - 150))
         surface.blit(self.title, (15, surface_height - 155))
 
-        surface.blit(self.menu_shadow, (202, surface_height - 65))
-        surface.blit(self.menu, (200, surface_height - 67))
+        surface.blit(self.menu_shadow, (202, surface_height - 60))
+        surface.blit(self.menu, (200, surface_height - 62))
 
-        surface.blit(self.tutorial_shadow, (surface_width - 668, surface_height - 65))
-        surface.blit(self.tutorial, (surface_width - 670, surface_height - 67))
+        surface.blit(self.tutorial_shadow, (surface_width - 668, surface_height - 60))
+        surface.blit(self.tutorial, (surface_width - 670, surface_height - 62))
 
     def update(self, delta_time):
         pass

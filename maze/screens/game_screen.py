@@ -1,9 +1,13 @@
+from math import sqrt
+
 import pygame
 
 from maze.game.entities.character_entity import CharacterEntity
+from maze.game.entities.pickup_entity import PickupEntity
 from maze.game.path_finder import PathFinder
 from maze.game.game import Game
 from maze.screens import menu_screen
+from maze.screens.end_screen import EndScreen
 from maze.screens.screen import Screen
 
 
@@ -32,6 +36,13 @@ class GameScreen(Screen):
                 if not self.sound_muted:
                     pygame.mixer.music.pause()
                 self.sound_muted = not self.sound_muted
+            if event.key == pygame.K_e:
+                for entity in self.game.entities:
+                    if isinstance(entity, PickupEntity):
+                        char = self.game.get_entity_of_category(CharacterEntity)
+                        distance = sqrt((char.x - entity.x) ** 2 + (char.y - entity.y) ** 2)
+                        if distance < 80:
+                            self.game.app.set_screen(EndScreen(self.game.app))
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.game.debugging:
                 self.path = PathFinder(self.game.map).find_path(
