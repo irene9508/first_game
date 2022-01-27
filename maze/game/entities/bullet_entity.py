@@ -23,7 +23,7 @@ class BulletEntity(Entity):  # 25x25
         if category == Category.ENEMY_BULLET:
             self.img = img.load("data/images/bullet.png").convert_alpha()
         else:
-            self.img = img.load("data/images/bullet1.png").convert_alpha()
+            self.img = img.load("data/images/bullet.png").convert_alpha()
 
         # collisions:
         position = (self.x * game.physics_scale, self.y * game.physics_scale)
