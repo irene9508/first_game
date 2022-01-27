@@ -32,6 +32,7 @@ class Game:
         self.map = None
         self.room = None
         self.rooms = []
+        self.app = app
 
         # collisions:
         self.world = b2World(gravity=None, contactListener=MyContactListener())

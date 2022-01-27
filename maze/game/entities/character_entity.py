@@ -10,7 +10,9 @@ from maze.game.collision_masks import Category
 from maze.game.enemy_state import EnemyState
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
+from maze.game.entities.pickup_entity import PickupEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
+from maze.screens import menu_screen
 
 
 class CharacterEntity(Entity):
@@ -116,6 +118,10 @@ class CharacterEntity(Entity):
                     if distance < 80:
                         entity.marked_for_destroy = True
                         self.health += 5
+                if isinstance(entity, PickupEntity):
+                    distance = sqrt((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2)
+                    if distance < 80:
+                        self.game.app.set_screen(menu_screen.MenuScreen(self.game.app))
 
         # shooting:
         shot_timer = 0.3

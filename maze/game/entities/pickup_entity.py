@@ -5,7 +5,6 @@ from pygame import image as img
 from Box2D import b2FixtureDef, b2CircleShape
 
 from maze.game.collision_masks import Category
-from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.entity import Entity
 
 
@@ -40,7 +39,7 @@ class PickupEntity(Entity):
         super().render(surface, r_scale)
 
     def update(self, delta_time):
-        self.velocity = [0, 0]
+        from maze.game.entities.character_entity import CharacterEntity
 
         char = self.game.get_entity_of_category(CharacterEntity)
         distance = sqrt((char.x - self.x) ** 2 + (char.y - self.y) ** 2)
