@@ -4,9 +4,9 @@ from pytmx.util_pygame import load_pygame
 from math import ceil
 from Box2D import *  # pip install Box2D /or/ box2d-py
 
-from maze.game.entities.enemy_entity_arnt import EnemyEntityArnt
-from maze.game.entities.enemy_entity_blob import EnemyEntityBlob
-from maze.game.entities.enemy_entity_jorn import EnemyEntityJorn
+from maze.game.entities.enemy_entity_3 import EnemyEntityArnt
+from maze.game.entities.enemy_entity_1 import EnemyEntityBlob
+from maze.game.entities.enemy_entity_2 import EnemyEntityJorn
 from maze.game.room_change_behavior import RoomChangeBehavior
 from maze.game.my_contact_listener import MyContactListener
 from maze.game.collision_masks import Category
