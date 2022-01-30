@@ -5,7 +5,6 @@ from Box2D import b2FixtureDef, b2CircleShape
 from pygame import mixer, image as img
 from pygame.transform import flip
 
-
 from maze.game.collision_masks import Category
 from maze.game.enemy_state import EnemyState
 from maze.game.entities.bullet_entity import BulletEntity
@@ -27,17 +26,13 @@ class CharacterEntity(Entity):
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.body = game.world.CreateDynamicBody(
-            position=(
-                self.x * game.physics_scale, self.y * game.physics_scale),
-            userData=self)
-        fixt_def = b2FixtureDef(
-            shape=b2CircleShape(radius=0.4),
-            friction=0.2,
-            density=1.0,
-            categoryBits=Category.CHARACTER,
-            maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL |
-            Category.CORPSE)
+        self.body = game.world.CreateDynamicBody(position=(self.x * game.physics_scale,
+                                                           self.y * game.physics_scale),
+                                                 userData=self)
+        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2, density=1.0,
+                                categoryBits=Category.CHARACTER,
+                                maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL |
+                                         Category.CORPSE)
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -141,7 +136,7 @@ class CharacterEntity(Entity):
             self.game.add_entity(BulletEntity(
                 self.game, self.x, self.y, self.rotation,
                 Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL |
-                Category.CORPSE))
+                                           Category.CORPSE))
 
         # check for collision with door object:
         obj_layer = self.game.map.get_layer_by_name('object layer')

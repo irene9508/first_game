@@ -1,11 +1,12 @@
 from math import sqrt
 
 import pygame
-from pygame import image as img
 from Box2D import b2FixtureDef, b2CircleShape
+from pygame import image as img
 
 from maze.game.collision_masks import Category
 from maze.game.entities.entity import Entity
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class PickupEntity(Entity):
@@ -17,6 +18,7 @@ class PickupEntity(Entity):
         self.y = y
         self.surface = None
         self.r_scale = None
+        self.room_change_behavior = RoomChangeBehavior.deactivate
         self.img = img.load("data/images/star.png").convert_alpha()
 
         position = (self.x * self.game.physics_scale, self.y * self.game.physics_scale)
@@ -26,6 +28,7 @@ class PickupEntity(Entity):
                                 maskBits=(Category.ENEMY | Category.CHARACTER |
                                           Category.CHARACTER_BULLET | Category.WALL |
                                           Category.CORPSE))
+        fixture = self.body.CreateFixture(fixt_def)
 
     def render(self, surface, r_scale):
         self.r_scale, self.surface = r_scale, surface

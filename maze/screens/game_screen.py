@@ -4,8 +4,8 @@ import pygame
 
 from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.pickup_entity import PickupEntity
-from maze.game.path_finder import PathFinder
 from maze.game.game import Game
+from maze.game.path_finder import PathFinder
 from maze.screens import menu_screen
 from maze.screens.end_screen import EndScreen
 from maze.screens.screen import Screen

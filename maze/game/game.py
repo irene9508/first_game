@@ -1,16 +1,16 @@
-import pygame
-
-from pytmx.util_pygame import load_pygame
 from math import ceil
-from Box2D import *  # pip install Box2D /or/ box2d-py
 
-from maze.game.entities.enemy_entity_3 import EnemyEntityArnt
-from maze.game.entities.enemy_entity_1 import EnemyEntityBlob
-from maze.game.entities.enemy_entity_2 import EnemyEntityJorn
-from maze.game.room_change_behavior import RoomChangeBehavior
-from maze.game.my_contact_listener import MyContactListener
+import pygame
+from Box2D import *  # pip install Box2D /or/ box2d-py
+from pytmx.util_pygame import load_pygame
+
 from maze.game.collision_masks import Category
+from maze.game.entities.enemy_entity_1 import EnemyEntity1
+from maze.game.entities.enemy_entity_2 import EnemyEntity2
+from maze.game.entities.enemy_entity_boss import EnemyEntityBoss
+from maze.game.my_contact_listener import MyContactListener
 from maze.game.my_draw import MyDraw
+from maze.game.room_change_behavior import RoomChangeBehavior
 
 
 class Node:
@@ -75,12 +75,12 @@ class Game:
         if room not in self.rooms:
             obj_layer = self.map.get_layer_by_name('object layer')
             for obj in obj_layer:
-                if obj.type == 'enemy_blob':
-                    self.add_entity(EnemyEntityBlob(self, obj.x, obj.y))
-                elif obj.type == 'enemy_arnt':
-                    self.add_entity(EnemyEntityArnt(self, obj.x, obj.y))
-                elif obj.type == 'enemy_jorn':
-                    self.add_entity(EnemyEntityJorn(self, obj.x, obj.y))
+                if obj.type == 'enemy_1':
+                    self.add_entity(EnemyEntity1(self, obj.x, obj.y))
+                elif obj.type == 'enemy_2':
+                    self.add_entity(EnemyEntity2(self, obj.x, obj.y))
+                elif obj.type == 'enemy_boss':
+                    self.add_entity(EnemyEntityBoss(self, obj.x, obj.y))
 
         # if room is not new, activate its entities:
         if room in self.rooms:

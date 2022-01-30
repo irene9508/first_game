@@ -12,7 +12,7 @@ from maze.game.entities.character_entity import CharacterEntity
 from maze.game.entities.enemy_entity import EnemyEntity
 
 
-class EnemyEntityBlob(EnemyEntity):
+class EnemyEntity1(EnemyEntity):
     def __init__(self, game, spawn_x, spawn_y):
         super().__init__(game, spawn_x, spawn_y)
 
