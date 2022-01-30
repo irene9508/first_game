@@ -1,8 +1,9 @@
 import os
 import random
+import sys
 
 import pygame
-import sys
+
 if sys.platform == "win32":
     import ctypes
 
@@ -48,6 +49,8 @@ class App:
         # game loop:
         while self.running:
             for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_e:
+                    print(event)
                 if event.type == pygame.QUIT:
                     self.running = False
                 elif event.type == pygame.VIDEORESIZE and not fullscreen:
@@ -62,7 +65,9 @@ class App:
                         self.surface = pygame.display.set_mode(
                             (1280, 720), flags=pygame.RESIZABLE)
                 else:
+                    print("going to current_screen.process_event")
                     self.current_screen.process_event(event)
+                    print("processed events")
 
             # play background music:
             if not self.playing:

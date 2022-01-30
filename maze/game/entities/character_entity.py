@@ -9,6 +9,7 @@ from maze.game.collision_masks import Category
 from maze.game.enemy_state import EnemyState
 from maze.game.entities.bullet_entity import BulletEntity
 from maze.game.entities.entity import Entity
+from maze.game.entities.pickup_entity import PickupEntity
 from maze.game.room_change_behavior import RoomChangeBehavior
 
 
@@ -46,6 +47,7 @@ class CharacterEntity(Entity):
         # other:
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
         self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+        self.picked_up_star = False
 
     def destroy(self):
         self.game.world.DestroyBody(self.body)
@@ -111,7 +113,11 @@ class CharacterEntity(Entity):
                     if distance < 80:
                         entity.marked_for_destroy = True
                         self.health += 5
-
+                if isinstance(entity, PickupEntity):
+                    distance = sqrt((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2)
+                    if distance < 80:
+                        self.picked_up_star = True
+                        print("self.picked_up_star set to True")
         # shooting:
         shot_timer = 0.3
         self.initial_shot_timer -= delta_time
