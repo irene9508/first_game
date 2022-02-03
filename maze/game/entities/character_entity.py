@@ -19,7 +19,9 @@ class CharacterEntity(Entity):
 
         # animation:
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
-        self.img_left = [flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)]
+        self.img_left = [
+            flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)
+        ]
         self.img_right = [img.load("data/images/e1/e1side.png").convert_alpha()]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_index = 0  # needed to iterate through the list of images
@@ -27,13 +29,20 @@ class CharacterEntity(Entity):
         self.animation_length = 0.12  # controls speed of sprite animation
 
         # collisions:
-        self.body = game.world.CreateDynamicBody(position=(self.x * game.physics_scale,
-                                                           self.y * game.physics_scale),
-                                                 userData=self)
-        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.4), friction=0.2, density=1.0,
-                                categoryBits=Category.CHARACTER,
-                                maskBits=Category.ENEMY | Category.ENEMY_BULLET | Category.WALL |
-                                         Category.CORPSE)
+        self.body = game.world.CreateDynamicBody(
+            position=(self.x * game.physics_scale, self.y * game.physics_scale),
+            userData=self,
+        )
+        fixt_def = b2FixtureDef(
+            shape=b2CircleShape(radius=0.4),
+            friction=0.2,
+            density=1.0,
+            categoryBits=Category.CHARACTER,
+            maskBits=Category.ENEMY
+            | Category.ENEMY_BULLET
+            | Category.WALL
+            | Category.CORPSE,
+        )
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixt_def)
 
@@ -46,7 +55,7 @@ class CharacterEntity(Entity):
 
         # other:
         self.initial_shot_timer = 0.1  # prevents the bullets from rapid firing
-        self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+        self.shot_sound = mixer.Sound("data/sounds/laser.wav")
         self.picked_up_star = False
 
     def destroy(self):
@@ -58,24 +67,32 @@ class CharacterEntity(Entity):
         width, height = char.get_size()[0], char.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         char = pygame.transform.smoothscale(char, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
+        r_position = (
+            int(((self.x - width / 2) * r_scale[0])),
+            int((self.y - height / 2) * r_scale[1]),
+        )
 
         # surface:
         surface.blit(char, r_position)
         super().render(surface, r_scale)
 
     def synchronize_body(self):  # entity gives new info to body
-        self.body.position = (self.x * self.game.physics_scale,
-                              self.y * self.game.physics_scale)
-        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
-                                    self.velocity[1] * self.game.physics_scale)
+        self.body.position = (
+            self.x * self.game.physics_scale,
+            self.y * self.game.physics_scale,
+        )
+        self.body.linearVelocity = (
+            self.velocity[0] * self.game.physics_scale,
+            self.velocity[1] * self.game.physics_scale,
+        )
 
     def synchronize_entity(self):  # body gives new info to entity
         self.x = self.body.position[0] / self.game.physics_scale
         self.y = self.body.position[1] / self.game.physics_scale
-        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
-                         self.body.linearVelocity[1] / self.game.physics_scale]
+        self.velocity = [
+            self.body.linearVelocity[0] / self.game.physics_scale,
+            self.body.linearVelocity[1] / self.game.physics_scale,
+        ]
 
     def update(self, delta_time):
         keys = pygame.key.get_pressed()
@@ -106,6 +123,7 @@ class CharacterEntity(Entity):
 
         # health:
         from maze.game.entities.enemy_entity import EnemyEntity
+
         if keys[pygame.K_e]:
             for entity in self.game.entities:
                 if isinstance(entity, EnemyEntity) and entity.state == EnemyState.dead:
@@ -117,7 +135,9 @@ class CharacterEntity(Entity):
                     distance = sqrt((self.x - entity.x) ** 2 + (self.y - entity.y) ** 2)
                     if distance < 80:
                         self.picked_up_star = True
-                        print("self.picked_up_star set to True")
+                        print(
+                            "self.picked_up_star set to True"
+                        )  # TODO: this happens like 30 times
         # shooting:
         shot_timer = 0.3
         self.initial_shot_timer -= delta_time
@@ -139,15 +159,21 @@ class CharacterEntity(Entity):
             pygame.mixer.stop()
             self.shot_sound.play()
             self.initial_shot_timer = shot_timer
-            self.game.add_entity(BulletEntity(
-                self.game, self.x, self.y, self.rotation,
-                Category.CHARACTER_BULLET, Category.ENEMY | Category.WALL |
-                                           Category.CORPSE))
+            self.game.add_entity(
+                BulletEntity(
+                    self.game,
+                    self.x,
+                    self.y,
+                    self.rotation,
+                    Category.CHARACTER_BULLET,
+                    Category.ENEMY | Category.WALL | Category.CORPSE,
+                )
+            )
 
         # check for collision with door object:
-        obj_layer = self.game.map.get_layer_by_name('object layer')
+        obj_layer = self.game.map.get_layer_by_name("object layer")
         for obj in obj_layer:
-            if obj.type == 'door':
+            if obj.type == "door":
                 # if char.pos is inside the object box:
                 if obj.x < self.x < obj.x + obj.width:
                     if obj.y < self.y < obj.y + obj.height:

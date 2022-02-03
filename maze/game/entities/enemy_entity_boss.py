@@ -18,7 +18,9 @@ class EnemyEntityBoss(EnemyEntity):
 
         # animation:
         self.img_l1 = [pygame.image.load("data/images/e2/e2l1.png").convert_alpha()]
-        self.img_r1 = [flip(img.load("data/images/e2/e2l1.png").convert_alpha(), True, False)]
+        self.img_r1 = [
+            flip(img.load("data/images/e2/e2l1.png").convert_alpha(), True, False)
+        ]
         self.img_up = [pygame.image.load("data/images/e2/e2l1.png").convert_alpha()]
         self.img_down = [pygame.image.load("data/images/e2/e2l1.png").convert_alpha()]
         self.img_dead = [pygame.image.load("data/images/e2/e2l1.png").convert_alpha()]
@@ -36,8 +38,10 @@ class EnemyEntityBoss(EnemyEntity):
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
+        r_position = (
+            int((self.x - width / 2) * r_scale[0]),
+            int((self.y - height / 2) * r_scale[1]),
+        )
 
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)

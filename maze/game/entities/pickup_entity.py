@@ -23,11 +23,18 @@ class PickupEntity(Entity):
 
         position = (self.x * self.game.physics_scale, self.y * self.game.physics_scale)
         self.body = self.game.world.CreateDynamicBody(position=position, userData=self)
-        fixt_def = b2FixtureDef(shape=b2CircleShape(radius=0.1), isSensor=True,
-                                categoryBits=Category.PICKUP,
-                                maskBits=(Category.ENEMY | Category.CHARACTER |
-                                          Category.CHARACTER_BULLET | Category.WALL |
-                                          Category.CORPSE))
+        fixt_def = b2FixtureDef(
+            shape=b2CircleShape(radius=0.1),
+            isSensor=True,
+            categoryBits=Category.PICKUP,
+            maskBits=(
+                Category.ENEMY
+                | Category.CHARACTER
+                | Category.CHARACTER_BULLET
+                | Category.WALL
+                | Category.CORPSE
+            ),
+        )
         fixture = self.body.CreateFixture(fixt_def)
 
     def render(self, surface, r_scale):
@@ -35,8 +42,10 @@ class PickupEntity(Entity):
         width, height = self.img.get_size()[0], self.img.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(self.img, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
+        r_position = (
+            int(((self.x - width / 2) * r_scale[0])),
+            int((self.y - height / 2) * r_scale[1]),
+        )
 
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)

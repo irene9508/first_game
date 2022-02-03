@@ -34,10 +34,11 @@ class App:
         environ["SDL_VIDEO_CENTERED"] = "1"
         pygame.mixer.pre_init(44100, -16, 2, 1024)
         pygame.init()
-        monitor_size = [pygame.display.Info().current_w,
-                        pygame.display.Info().current_h]
-        self.surface = pygame.display.set_mode(
-            (1280, 720), flags=pygame.RESIZABLE)
+        monitor_size = [
+            pygame.display.Info().current_w,
+            pygame.display.Info().current_h,
+        ]
+        self.surface = pygame.display.set_mode((1280, 720), flags=pygame.RESIZABLE)
         pygame.display.set_caption("Room Game")
         self.current_screen = MenuScreen(self)
         fullscreen = False
@@ -55,15 +56,18 @@ class App:
                     self.running = False
                 elif event.type == pygame.VIDEORESIZE and not fullscreen:
                     self.surface = pygame.display.set_mode(
-                        (event.w, event.h), flags=pygame.RESIZABLE)
+                        (event.w, event.h), flags=pygame.RESIZABLE
+                    )
                 elif event.type == pygame.KEYDOWN and event.key == pygame.K_f:
                     fullscreen = not fullscreen
                     if fullscreen:
                         self.surface = pygame.display.set_mode(
-                            monitor_size, flags=pygame.FULLSCREEN)
+                            monitor_size, flags=pygame.FULLSCREEN
+                        )
                     else:
                         self.surface = pygame.display.set_mode(
-                            (1280, 720), flags=pygame.RESIZABLE)
+                            (1280, 720), flags=pygame.RESIZABLE
+                        )
                 else:
                     print("going to current_screen.process_event")
                     self.current_screen.process_event(event)
@@ -72,7 +76,11 @@ class App:
             # play background music:
             if not self.playing:
                 path = "data/sounds/music/"
-                all_music = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.mp3')]
+                all_music = [
+                    os.path.join(path, f)
+                    for f in os.listdir(path)
+                    if f.endswith(".mp3")
+                ]
                 randomfile = random.choice(all_music)
                 pygame.mixer.init()
                 pygame.mixer.music.load(randomfile)
@@ -94,8 +102,10 @@ class App:
                 fps_counter = 0
                 fps_start_time = current_time
 
-            self.render_scale = (self.surface.get_size()[0] / self.reference_resolution[0],
-                                 self.surface.get_size()[1] / self.reference_resolution[1])
+            self.render_scale = (
+                self.surface.get_size()[0] / self.reference_resolution[0],
+                self.surface.get_size()[1] / self.reference_resolution[1],
+            )
 
             self.current_screen.render(self.surface, self.render_scale)
             pygame.display.flip()

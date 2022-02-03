@@ -23,11 +23,15 @@ class EnemyEntity1(EnemyEntity):
 
         # animation:
         self.img_r1 = [img.load("data/images/e1/e1side.png").convert_alpha()]
-        self.img_l1 = [flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)]
+        self.img_l1 = [
+            flip(img.load("data/images/e1/e1side.png").convert_alpha(), True, False)
+        ]
         self.img_up = [img.load("data/images/e1/e1u1.png").convert_alpha()]
         self.img_down = [img.load("data/images/e1/e1d1.png").convert_alpha()]
         self.img_dead = [img.load("data/images/e1/e1dead.png").convert_alpha()]
-        self.img_dead_near = [img.load("data/images/e1/e1dead_near.png").convert_alpha()]
+        self.img_dead_near = [
+            img.load("data/images/e1/e1dead_near.png").convert_alpha()
+        ]
         self.images = self.img_down
 
     def attack(self, full_duration, current_duration):
@@ -43,8 +47,10 @@ class EnemyEntity1(EnemyEntity):
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2) * r_scale[1]))
+        r_position = (
+            int(((self.x - width / 2) * r_scale[0])),
+            int((self.y - height / 2) * r_scale[1]),
+        )
 
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)
@@ -67,7 +73,9 @@ class EnemyEntity1(EnemyEntity):
         # shooting:
         shot_timer = 0.4
         self.initial_shot_timer -= delta_time
-        walkable = self.check_if_walkable((int(char.x / tile_width), int(char.y / tile_height)))
+        walkable = self.check_if_walkable(
+            (int(char.x / tile_width), int(char.y / tile_height))
+        )
         if walkable and self.state != EnemyState.dead:
             delta_x = char.x - self.x
             delta_y = char.y - self.y
@@ -76,6 +84,13 @@ class EnemyEntity1(EnemyEntity):
                 pygame.mixer.stop()
                 self.shot_sound.play()
                 self.initial_shot_timer = shot_timer
-                self.game.add_entity(BulletEntity(
-                    self.game, self.x, self.y, angle, Category.ENEMY_BULLET,
-                    Category.CHARACTER | Category.WALL | Category.CORPSE))
+                self.game.add_entity(
+                    BulletEntity(
+                        self.game,
+                        self.x,
+                        self.y,
+                        angle,
+                        Category.ENEMY_BULLET,
+                        Category.CHARACTER | Category.WALL | Category.CORPSE,
+                    )
+                )

@@ -69,7 +69,7 @@ class EnemyEntity(Entity):
         self.path = None
 
         # shooting:
-        self.shot_sound = mixer.Sound('data/sounds/laser.wav')
+        self.shot_sound = mixer.Sound("data/sounds/laser.wav")
         self.initial_shot_timer = 0.5
 
         # particles:
@@ -88,42 +88,61 @@ class EnemyEntity(Entity):
         start2 = (self.x, self.y)
         tile_width = self.game.map.tilewidth
         tile_height = self.game.map.tileheight
-        finish2 = (end_point[0] * tile_width + tile_width / 2,
-                   end_point[1] * tile_height + tile_height / 2)
+        finish2 = (
+            end_point[0] * tile_width + tile_width / 2,
+            end_point[1] * tile_height + tile_height / 2,
+        )
         vector = (finish2[0] - start2[0], finish2[1] - start2[1])
         v_length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
         v_norm = (vector[0] / v_length, vector[1] / v_length)
 
         # calculate the starting point of the two outer rays:
         normal = (-v_norm[1], v_norm[0])
-        start1 = (start2[0] + normal[0] * self.radius,
-                  start2[1] + normal[1] * self.radius)
-        start3 = (start2[0] - normal[0] * self.radius,
-                  start2[1] - normal[1] * self.radius)
-        finish1 = (finish2[0] + normal[0] * self.radius,
-                   finish2[1] + normal[1] * self.radius)
-        finish3 = (finish2[0] - normal[0] * self.radius,
-                   finish2[1] - normal[1] * self.radius)
+        start1 = (
+            start2[0] + normal[0] * self.radius,
+            start2[1] + normal[1] * self.radius,
+        )
+        start3 = (
+            start2[0] - normal[0] * self.radius,
+            start2[1] - normal[1] * self.radius,
+        )
+        finish1 = (
+            finish2[0] + normal[0] * self.radius,
+            finish2[1] + normal[1] * self.radius,
+        )
+        finish3 = (
+            finish2[0] - normal[0] * self.radius,
+            finish2[1] - normal[1] * self.radius,
+        )
 
         # perform ray casts:
         callback1 = RayCastCallback()
-        self.game.world.RayCast(callback1,
-                                (start1[0] * self.game.physics_scale,
-                                 start1[1] * self.game.physics_scale),
-                                (finish1[0] * self.game.physics_scale,
-                                 finish1[1] * self.game.physics_scale))
+        self.game.world.RayCast(
+            callback1,
+            (start1[0] * self.game.physics_scale, start1[1] * self.game.physics_scale),
+            (
+                finish1[0] * self.game.physics_scale,
+                finish1[1] * self.game.physics_scale,
+            ),
+        )
         callback2 = RayCastCallback()
-        self.game.world.RayCast(callback2,
-                                (start2[0] * self.game.physics_scale,
-                                 start2[1] * self.game.physics_scale),
-                                (finish2[0] * self.game.physics_scale,
-                                 finish2[1] * self.game.physics_scale))
+        self.game.world.RayCast(
+            callback2,
+            (start2[0] * self.game.physics_scale, start2[1] * self.game.physics_scale),
+            (
+                finish2[0] * self.game.physics_scale,
+                finish2[1] * self.game.physics_scale,
+            ),
+        )
         callback3 = RayCastCallback()
-        self.game.world.RayCast(callback3,
-                                (start3[0] * self.game.physics_scale,
-                                 start3[1] * self.game.physics_scale),
-                                (finish3[0] * self.game.physics_scale,
-                                 finish3[1] * self.game.physics_scale))
+        self.game.world.RayCast(
+            callback3,
+            (start3[0] * self.game.physics_scale, start3[1] * self.game.physics_scale),
+            (
+                finish3[0] * self.game.physics_scale,
+                finish3[1] * self.game.physics_scale,
+            ),
+        )
 
         # if there are no obstructions:
         if callback1.fraction == callback2.fraction == callback3.fraction == 1:
@@ -136,20 +155,39 @@ class EnemyEntity(Entity):
             if self.state != EnemyState.dead:
                 other_fixture.body.userData.health -= 5
                 self.particles.append(
-                    ParticleEffect(other_fixture.body.userData.x, other_fixture.body.userData.y,
-                                   (0, 0, 0), [1, 5], [2, 7], [2, 20], 60, 0))
+                    ParticleEffect(
+                        other_fixture.body.userData.x,
+                        other_fixture.body.userData.y,
+                        (0, 0, 0),
+                        [1, 5],
+                        [2, 7],
+                        [2, 20],
+                        60,
+                        0,
+                    )
+                )
 
     def create_new_body(self):
         self.body = self.game.world.CreateDynamicBody(
-            position=(self.x * self.game.physics_scale,
-                      self.y * self.game.physics_scale),
-            userData=self)
+            position=(
+                self.x * self.game.physics_scale,
+                self.y * self.game.physics_scale,
+            ),
+            userData=self,
+        )
         fixture_def = b2FixtureDef(
             shape=b2CircleShape(radius=self.radius * self.game.physics_scale),
-            friction=0.2, density=1.0, categoryBits=Category.ENEMY,
-            maskBits=(Category.ENEMY | Category.CHARACTER |
-                      Category.CHARACTER_BULLET | Category.WALL |
-                      Category.CORPSE))
+            friction=0.2,
+            density=1.0,
+            categoryBits=Category.ENEMY,
+            maskBits=(
+                Category.ENEMY
+                | Category.CHARACTER
+                | Category.CHARACTER_BULLET
+                | Category.WALL
+                | Category.CORPSE
+            ),
+        )
         # noinspection PyUnusedLocal
         fixture = self.body.CreateFixture(fixture_def)
 
@@ -175,37 +213,51 @@ class EnemyEntity(Entity):
         if self.game.debugging and self.path is not None:
             tile_w = self.game.map.tilewidth
             tile_h = self.game.map.tileheight
-            end_pos = (self.path[0][0] * r_scale[0] * tile_w + tile_w / 2,
-                       self.path[0][1] * r_scale[1] * tile_w + tile_w / 2)
+            end_pos = (
+                self.path[0][0] * r_scale[0] * tile_w + tile_w / 2,
+                self.path[0][1] * r_scale[1] * tile_w + tile_w / 2,
+            )
             pygame.draw.line(surface, (0, 0, 255), (self.x, self.y), end_pos)
             for index in range(len(self.path) - 1):
                 pygame.draw.line(
-                    surface, (0, 0, 255),
-                    (self.path[index][0] * r_scale[0] * tile_w + tile_w / 2,
-                     self.path[index][1] * r_scale[1] * tile_h + tile_h / 2),
-                    (self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
-                     self.path[index + 1][1] * tile_h * r_scale[
-                         1] + tile_h / 2))
+                    surface,
+                    (0, 0, 255),
+                    (
+                        self.path[index][0] * r_scale[0] * tile_w + tile_w / 2,
+                        self.path[index][1] * r_scale[1] * tile_h + tile_h / 2,
+                    ),
+                    (
+                        self.path[index + 1][0] * tile_w * r_scale[0] + tile_w / 2,
+                        self.path[index + 1][1] * tile_h * r_scale[1] + tile_h / 2,
+                    ),
+                )
 
     def retreat(self, full_duration, current_duration):
         pass
 
     def synchronize_body(self):  # entity gives new info to body
-        self.body.position = (self.x * self.game.physics_scale,
-                              self.y * self.game.physics_scale)
-        self.body.linearVelocity = (self.velocity[0] * self.game.physics_scale,
-                                    self.velocity[1] * self.game.physics_scale)
+        self.body.position = (
+            self.x * self.game.physics_scale,
+            self.y * self.game.physics_scale,
+        )
+        self.body.linearVelocity = (
+            self.velocity[0] * self.game.physics_scale,
+            self.velocity[1] * self.game.physics_scale,
+        )
 
     def synchronize_entity(self):  # body gives new info to entity
         self.x = self.body.position[0] / self.game.physics_scale
         self.y = self.body.position[1] / self.game.physics_scale
-        self.velocity = [self.body.linearVelocity[0] / self.game.physics_scale,
-                         self.body.linearVelocity[1] / self.game.physics_scale]
+        self.velocity = [
+            self.body.linearVelocity[0] / self.game.physics_scale,
+            self.body.linearVelocity[1] / self.game.physics_scale,
+        ]
 
     def take_damage(self, damage):
         self.body.userData.health -= damage
-        self.particles.append(ParticleEffect(self.x, self.y, (0, 0, 0), [1, 5], [2, 7], [2, 20],
-                                             60, 0))
+        self.particles.append(
+            ParticleEffect(self.x, self.y, (0, 0, 0), [1, 5], [2, 7], [2, 20], 60, 0)
+        )
 
     def update(self, delta_time):
         # animation, used in render():
@@ -221,9 +273,13 @@ class EnemyEntity(Entity):
             self.state = EnemyState.dead
             self.body.fixtures[0].filterData.categoryBits = Category.CORPSE
             self.body.fixtures[0].filterData.maskBits = (
-                    Category.CHARACTER_BULLET | Category.ENEMY_BULLET |
-                    Category.CHARACTER | Category.ENEMY | Category.WALL |
-                    Category.CORPSE)
+                Category.CHARACTER_BULLET
+                | Category.ENEMY_BULLET
+                | Category.CHARACTER
+                | Category.ENEMY
+                | Category.WALL
+                | Category.CORPSE
+            )
 
         # movement:
         speed = 150
@@ -239,26 +295,29 @@ class EnemyEntity(Entity):
 
         if char is not None:
             if self.state == EnemyState.following:
-                if self.current_tile_pos_enemy != new_tile_pos_enemy \
-                        or self.current_tile_pos_char != new_tile_pos_char:
+                if (
+                    self.current_tile_pos_enemy != new_tile_pos_enemy
+                    or self.current_tile_pos_char != new_tile_pos_char
+                ):
                     # find path to char:
                     self.current_tile_pos_enemy = new_tile_pos_enemy
                     self.current_tile_pos_char = new_tile_pos_char
-                    self.path = PathFinder(game_map).find_path(
-                        p1, (char.x, char.y))
+                    self.path = PathFinder(game_map).find_path(p1, (char.x, char.y))
 
                 if self.path is not None:
                     # skip nodes that aren't needed:
                     while len(self.path) >= 2:
                         walkable = self.check_if_walkable(self.path[1])
                         if walkable:
-                            del (self.path[0])
+                            del self.path[0]
                         else:
                             break
 
                     # move towards next node:
-                    p2 = (self.path[0][0] * tile_width + tile_width / 2,
-                          self.path[0][1] * tile_height + tile_height / 2)
+                    p2 = (
+                        self.path[0][0] * tile_width + tile_width / 2,
+                        self.path[0][1] * tile_height + tile_height / 2,
+                    )
                     vector = (p2[0] - p1[0], p2[1] - p1[1])
                     length = sqrt(vector[0] * vector[0] + vector[1] * vector[1])
                     v_norm = (vector[0] / length, vector[1] / length)
@@ -289,8 +348,11 @@ class EnemyEntity(Entity):
                 if self.current_attack_duration < self.attack_duration:
                     self.attack(self.attack_duration, self.current_attack_duration)
                 else:
-                    self.particles.append(ParticleEffect(char.x, char.y, (0, 0, 0), [1, 5], [2, 7],
-                                                         [2, 20], 60, 0))
+                    self.particles.append(
+                        ParticleEffect(
+                            char.x, char.y, (0, 0, 0), [1, 5], [2, 7], [2, 20], 60, 0
+                        )
+                    )
                     self.state = EnemyState.retreating
                     self.current_retreat_duration = 0
                     char.health -= 5

@@ -73,13 +73,13 @@ class Game:
 
         # if room is new, create enemies:
         if room not in self.rooms:
-            obj_layer = self.map.get_layer_by_name('object layer')
+            obj_layer = self.map.get_layer_by_name("object layer")
             for obj in obj_layer:
-                if obj.type == 'enemy_1':
+                if obj.type == "enemy_1":
                     self.add_entity(EnemyEntity1(self, obj.x, obj.y))
-                elif obj.type == 'enemy_2':
+                elif obj.type == "enemy_2":
                     self.add_entity(EnemyEntity2(self, obj.x, obj.y))
-                elif obj.type == 'enemy_boss':
+                elif obj.type == "enemy_boss":
                     self.add_entity(EnemyEntityBoss(self, obj.x, obj.y))
 
         # if room is not new, activate its entities:
@@ -89,21 +89,25 @@ class Game:
                     entity.activate()
 
         # create bodies and fixtures for walls:
-        tile_layer = self.map.get_layer_by_name('tile layer')
+        tile_layer = self.map.get_layer_by_name("tile layer")
         for x, y, image in tile_layer.tiles():
             tile = self.map.get_tile_properties(x, y, 0)
-            if tile['type'] == 'wall':
+            if tile["type"] == "wall":
                 # set xy as middle of tile
                 x_pos = x * self.map.tilewidth + 0.5 * self.map.tilewidth
                 y_pos = y * self.map.tileheight + 0.5 * self.map.tileheight
                 tile_body = self.world.CreateStaticBody(
-                    position=(x_pos * self.physics_scale,
-                              y_pos * self.physics_scale))
+                    position=(x_pos * self.physics_scale, y_pos * self.physics_scale)
+                )
                 fixt_def = b2FixtureDef(
                     shape=b2PolygonShape(
-                        box=(0.5 * self.map.tilewidth * self.physics_scale,
-                             0.5 * self.map.tileheight * self.physics_scale)),
-                    categoryBits=Category.WALL)
+                        box=(
+                            0.5 * self.map.tilewidth * self.physics_scale,
+                            0.5 * self.map.tileheight * self.physics_scale,
+                        )
+                    ),
+                    categoryBits=Category.WALL,
+                )
                 # noinspection PyUnusedLocal
                 fixture = tile_body.CreateFixture(fixt_def)
 
@@ -120,14 +124,16 @@ class Game:
 
         # destroy bodies:
         for body in self.world.bodies:
-            if body.userData is None or body.userData.room_change_behavior \
-                    == RoomChangeBehavior.deactivate:
+            if (
+                body.userData is None
+                or body.userData.room_change_behavior == RoomChangeBehavior.deactivate
+            ):
                 self.world.DestroyBody(body)
 
     def render(self, surface, r_scale):
 
         # tiles:
-        tile_layer = self.map.get_layer_by_name('tile layer')
+        tile_layer = self.map.get_layer_by_name("tile layer")
         for x, y, image in tile_layer.tiles():
             width = ceil(image.get_size()[0] * r_scale[0])
             height = ceil(image.get_size()[1] * r_scale[1])

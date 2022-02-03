@@ -22,14 +22,36 @@ class EnemyEntity2(EnemyEntity):
         self.img_l4 = [img.load("data/images/e3/e3-4.png").convert_alpha()]
         self.img_l5 = [img.load("data/images/e3/e3-5.png").convert_alpha()]
 
-        self.img_r1 = [flip(img.load("data/images/e3/e3-1.png").convert_alpha(), True, False)]
-        self.img_r2 = [flip(img.load("data/images/e3/e3-2.png").convert_alpha(), True, False)]
-        self.img_r3 = [flip(img.load("data/images/e3/e3-3.png").convert_alpha(), True, False)]
-        self.img_r4 = [flip(img.load("data/images/e3/e3-4.png").convert_alpha(), True, False)]
-        self.img_r5 = [flip(img.load("data/images/e3/e3-5.png").convert_alpha(), True, False)]
+        self.img_r1 = [
+            flip(img.load("data/images/e3/e3-1.png").convert_alpha(), True, False)
+        ]
+        self.img_r2 = [
+            flip(img.load("data/images/e3/e3-2.png").convert_alpha(), True, False)
+        ]
+        self.img_r3 = [
+            flip(img.load("data/images/e3/e3-3.png").convert_alpha(), True, False)
+        ]
+        self.img_r4 = [
+            flip(img.load("data/images/e3/e3-4.png").convert_alpha(), True, False)
+        ]
+        self.img_r5 = [
+            flip(img.load("data/images/e3/e3-5.png").convert_alpha(), True, False)
+        ]
 
-        self.imgs_left = [self.img_l1, self.img_l2, self.img_l3, self.img_l4, self.img_l5]
-        self.imgs_right = [self.img_r1, self.img_r2, self.img_r3, self.img_r4, self.img_r5]
+        self.imgs_left = [
+            self.img_l1,
+            self.img_l2,
+            self.img_l3,
+            self.img_l4,
+            self.img_l5,
+        ]
+        self.imgs_right = [
+            self.img_r1,
+            self.img_r2,
+            self.img_r3,
+            self.img_r4,
+            self.img_r5,
+        ]
 
         self.img_up = [img.load("data/images/e3/e3-1.png").convert_alpha()]
         self.img_down = [img.load("data/images/e3/e3-1.png").convert_alpha()]
@@ -55,8 +77,10 @@ class EnemyEntity2(EnemyEntity):
         width, height = sprite.get_size()[0], sprite.get_size()[1]
         r_size = (int(width * r_scale[0]), int(height * r_scale[1]))
         sprite = pygame.transform.smoothscale(sprite, r_size)
-        r_position = (int(((self.x - width / 2) * r_scale[0])),
-                      int((self.y - height / 2 - 80) * r_scale[1]))
+        r_position = (
+            int(((self.x - width / 2) * r_scale[0])),
+            int((self.y - height / 2 - 80) * r_scale[1]),
+        )
 
         surface.blit(sprite, r_position)
         super().render(surface, r_scale)

@@ -5,7 +5,9 @@ import pygame
 
 
 class ParticleEffect:
-    def __init__(self, x, y, color, life_span, speed, radius, first_burst, emission_rate):
+    def __init__(
+        self, x, y, color, life_span, speed, radius, first_burst, emission_rate
+    ):
         self.emission_rate = emission_rate
         self.new_particle_timer = 0
         self.life_span = life_span  # tuple of integers
@@ -44,8 +46,14 @@ class ParticleEffect:
         if self.new_particle_timer <= 0 and self.emission_rate != 0:
             self.new_particle_timer = 0.005
             self.particles.append(
-                Particle(self.x, self.y, velocity, self.life_span,
-                         random.randint(self.radius[0], self.radius[1])))
+                Particle(
+                    self.x,
+                    self.y,
+                    velocity,
+                    self.life_span,
+                    random.randint(self.radius[0], self.radius[1]),
+                )
+            )
 
         # change existing particles:
         for particle in self.particles:
